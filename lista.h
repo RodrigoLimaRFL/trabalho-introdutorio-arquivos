@@ -1,11 +1,3 @@
-typedef struct lista LISTA;
-
-struct lista = {
-  int tamanho,
-  REGISTRO *registros,
-}
-
-
 #ifndef LISTA_H
 
   #define LISTA_H
@@ -16,14 +8,14 @@ struct lista = {
 
   LISTA *criarLista(void);
 
-  int adicionarRegistro(REGISTRO registro);
+  int adicionarRegistro(REGISTRO *registro);
 
   int modificarRegistro(int index);
 
-  int buscarRegistro(REGISTRO registro); // retorna o index do registro na lista
+  int buscarRegistro(int id); // retorna o index do registro na lista
 
   int removerRegistro(int index);
 
-  int apagarLista(LISTA **lista);
+  int apagarLista(LISTA *lista);
 
 #endif
