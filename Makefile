@@ -11,7 +11,7 @@ main.o:
 	gcc -c main.c -o main.o
 	 
 clean:
-	rm *.o main
+	rm *.o gerencia-arquivo
 
 run:
-	./main
+	./gerencia-arquivo
