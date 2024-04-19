@@ -16,4 +16,10 @@
 
   int getNroRem(CABECALHO cabecalho);
 
+  int setStatus(CABECALHO cabecalho, char status);
+
+  int setTopo(CABECALHO cabecalho, int topo);
+
+  int setProxByteOffset(CABECALHO cabecalho, double proxByteOffset)
+
 #endif
