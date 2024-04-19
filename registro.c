@@ -34,7 +34,7 @@ REGISTRO *criarRegistroNulo()
     return registro;
 }
 
-REGISTRO *criarRegistro(int removido, int tamanhoRegistro, long prox, int id, int idade, int tamNomeJogador, char *nomeJogador, int tamNacionalidade, char *nacionalidade, int tamNomeClube, char *nomeClube)
+REGISTRO *criarRegistro(char removido, int tamanhoRegistro, long prox, int id, int idade, int tamNomeJogador, char *nomeJogador, int tamNacionalidade, char *nacionalidade, int tamNomeClube, char *nomeClube)
 {
     REGISTRO *registro = (REGISTRO *)malloc(sizeof(REGISTRO));
     registro->removido = removido;

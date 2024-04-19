@@ -1,5 +1,5 @@
-﻿all: lista.o gerencia-arquivo.o registro.o main.o
-	gcc registro.o lista.o gerencia-arquivo.o main.o -o gerencia-arquivo -std=c99 -Wall
+﻿all: lista.o gerencia-arquivo.o registro.o interpreta-bin.o main.o
+	gcc registro.o lista.o gerencia-arquivo.o interpreta-bin.o main.o -o gerencia-arquivo -std=c99 -Wall
 
 lista.o:
 	gcc -c lista.c -o lista.o
@@ -9,6 +9,9 @@ gerencia-arquivo.o:
 
 registro.o:
 	gcc -c registro.c -o registro.o
+
+interpreta-bin.o:
+	gcc -c interpreta-bin.c -o interpreta-bin.o
 	  
 main.o:
 	gcc -c main.c -o main.o

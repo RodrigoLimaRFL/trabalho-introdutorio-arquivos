@@ -34,7 +34,10 @@ LISTA *lerCsv(char *nomeArquivo) {
         REGISTRO *registro = getRegistro(lista, i - 1);
         lerLinha(linha, dados);
 
-        registro = criarRegistro(0, 0, 0, dados->id,
+        registro = criarRegistro('0', 
+                                (33 + strlen(dados->nome_jogador) + strlen(dados->nacionalidade) + strlen(dados->nomeClube)), 
+                                -1,  
+                                dados->id,
                                 dados->idade,
                                 strlen(dados->nome_jogador), 
                                 dados->nome_jogador, 
@@ -49,6 +52,8 @@ LISTA *lerCsv(char *nomeArquivo) {
         printf("Nacionalidade: %s\n", get_nacionalidade(registro));
         printf("Clube: %s\n", get_nomeClube(registro));
         printf("\n");
+
+        adicionarRegistro(lista, registro);
 
         i++;
     }
@@ -126,7 +131,7 @@ void lerLinha(char *linha, DADOS *dados) {
 }
 
 void escreveBinario(LISTA *lista, char *binario) {
-  FILE *f = fopen(binario, "rb");
+  FILE *f = fopen(binario, "wb");
 
   for(int i=0; i<getTamanho(lista); i++) {
     int removido = get_removido(getRegistro(lista, i));
