@@ -12,7 +12,7 @@
 
   char getStatus(CABECALHO *cabecalho);
 
-  int getTopo(CABECALHO *cabecalho);
+  long getTopo(CABECALHO *cabecalho);
 
   int getProxByteOffset(CABECALHO *cabecalho);
 
@@ -22,7 +22,7 @@
 
   void setStatus(CABECALHO *cabecalho, char status);
 
-  void setTopo(CABECALHO *cabecalho, int topo);
+  void setTopo(CABECALHO *cabecalho, long topo);
 
   void setProxByteOffset(CABECALHO *cabecalho, double proxByteOffset);
 

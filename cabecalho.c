@@ -2,7 +2,7 @@
 
 struct cabecalho_{
   char status;
-  int topo;
+  long topo;
   long proxByteOffset;
   int nroRegArq;
   int nroRegRem;
@@ -16,13 +16,19 @@ CABECALHO *criarCabecalho(void) {
   cabecalho->nroRegArq = 0;
   cabecalho->nroRegRem = 0;
 }
+
 int setValoresCabecalho(CABECALHO *cabecalho, LISTA *lista) {
   for(int i=0; i<getTamanho(lista); i++) {
-    if(get_removido(getRegistro(lista, i)) == 0) {
-      
+    if(get_removido(getRegistro(lista, i)) == '0') {
+      (cabecalho->nroRegArq)++;
     } else {
-
+      (cabecalho->nroRegRem)++;
     }
+  }
+
+  int i = 0;
+  while(get_removido(getRegistro(lista, i)) == '1') {
+    cabecalho->proxByteOffset = get_prox(getRegistro(lista, i));
   }
 }
 
@@ -30,7 +36,7 @@ char getStatus(CABECALHO *cabecalho) {
   return cabecalho->status;
 }
 
-int getTopo(CABECALHO *cabecalho) {
+long getTopo(CABECALHO *cabecalho) {
   return cabecalho->topo;
 }
 
@@ -50,7 +56,7 @@ void setStatus(CABECALHO *cabecalho, char status) {
   cabecalho->status = status;
 }
 
-void setTopo(CABECALHO *cabecalho, int topo) {
+void setTopo(CABECALHO *cabecalho, long topo) {
   cabecalho->topo = topo;
 }
 
