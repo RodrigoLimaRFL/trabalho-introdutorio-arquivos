@@ -3,14 +3,14 @@
 struct lista_ {
   int tamanho;
   REGISTRO **registros;
-}
+};
 
 LISTA *criarLista() {
   LISTA *lista = (LISTA *) malloc(sizeof(LISTA));
-  LISTA->tamanho = 0;
-  lista->registros = (REGISTRO **) malloc(sizeof((REGISTRO *) * 1000));
+  lista->tamanho = 0;
+  lista->registros = (REGISTRO **) malloc(sizeof(REGISTRO *) * 1000);
 
-  return *lista;
+  return lista;
 }
 
 int adicionarRegistro(LISTA *lista, REGISTRO *registro) {
@@ -25,7 +25,7 @@ int modificarRegistro(LISTA *lista, int index, REGISTRO *novoRegistro) {
 
 int buscarRegistro(LISTA *lista, int id) {
   for(int i=0; i<lista->tamanho; i++) {
-    if((lista->registros[i]).id == id) {
+    if(get_id(lista->registros[i]) == id){
       return i;
     }
   }

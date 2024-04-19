@@ -10,7 +10,7 @@
 
   int adicionarRegistro(LISTA *lista, REGISTRO *registro);
 
-  int modificarRegistro(LISTA *lista, int index);
+  int modificarRegistro(LISTA *lista, int index, REGISTRO *novoRegistro);
 
   int buscarRegistro(LISTA *lista, int id); // retorna o index do registro na lista
 
