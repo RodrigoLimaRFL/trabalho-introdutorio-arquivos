@@ -19,6 +19,8 @@ CABECALHO *criarCabecalho(void) {
 int setValoresCabecalho(CABECALHO *cabecalho, LISTA *lista) {
   for(int i=0; i<getTamanho(lista); i++) {
     if(get_removido(getRegistro(lista, i)) == 0) {
+      
+    } else {
 
     }
   }
