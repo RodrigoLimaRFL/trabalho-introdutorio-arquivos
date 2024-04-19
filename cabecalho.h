@@ -2,12 +2,13 @@
 
   #define CABECALHO_H
 
-  #include <stdio.h>
-  #include <stdlib.h>
+  #include "lista.h"
 
   typedef struct cabecalho_ CABECALHO;
 
   CABECALHO *criarCabecalho(void);
+
+  int setValoresCabecalho(CABECALHO *cabecalho, LISTA *lista);
 
   char getStatus(CABECALHO *cabecalho);
 
@@ -19,16 +20,16 @@
 
   int getNroRem(CABECALHO *cabecalho);
 
-  int setStatus(CABECALHO *cabecalho, char status);
+  void setStatus(CABECALHO *cabecalho, char status);
 
-  int setTopo(CABECALHO *cabecalho, int topo);
+  void setTopo(CABECALHO *cabecalho, int topo);
 
-  int setProxByteOffset(CABECALHO *cabecalho, double proxByteOffset);
+  void setProxByteOffset(CABECALHO *cabecalho, double proxByteOffset);
 
-  int setNroRegArq(CABECALHO *cabecalho, int nroRegArq);
+  void setNroRegArq(CABECALHO *cabecalho, int nroRegArq);
 
-  int setNroRem(CABECALHO *cabecalho, int nroRem);
+  void setNroRem(CABECALHO *cabecalho, int nroRem);
 
-  int apagarCabecalho(CABECALHO *cabecalho);
+  void apagarCabecalho(CABECALHO *cabecalho);
 
 #endif

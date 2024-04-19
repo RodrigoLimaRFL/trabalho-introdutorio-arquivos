@@ -16,6 +16,13 @@ CABECALHO *criarCabecalho(void) {
   cabecalho->nroRegArq = 0;
   cabecalho->nroRegRem = 0;
 }
+int setValoresCabecalho(CABECALHO *cabecalho, LISTA *lista) {
+  for(int i=0; i<getTamanho(lista); i++) {
+    if(get_removido(getRegistro(lista, i)) == 0) {
+
+    }
+  }
+}
 
 char getStatus(CABECALHO *cabecalho) {
   return cabecalho->status;
@@ -37,26 +44,26 @@ int getNroRem(CABECALHO *cabecalho) {
   return cabecalho->nroRegRem;
 }
 
-int setStatus(CABECALHO *cabecalho, char status) {
+void setStatus(CABECALHO *cabecalho, char status) {
   cabecalho->status = status;
 }
 
-int setTopo(CABECALHO *cabecalho, int topo) {
+void setTopo(CABECALHO *cabecalho, int topo) {
   cabecalho->topo = topo;
 }
 
-int setProxByteOffset(CABECALHO *cabecalho, double proxByteOffset) {
+void setProxByteOffset(CABECALHO *cabecalho, double proxByteOffset) {
   cabecalho->proxByteOffset = proxByteOffset;
 }
 
-int setNroRegArq(CABECALHO *cabecalho, int nroRegArq) {
+void setNroRegArq(CABECALHO *cabecalho, int nroRegArq) {
   cabecalho->nroRegArq = nroRegArq;
 }
 
-int setNroRem(CABECALHO *cabecalho, int nroRem) {
+void setNroRem(CABECALHO *cabecalho, int nroRem) {
   cabecalho->nroRegRem = nroRem;
 }
 
-int apagarCabecalho(CABECALHO *cabecalho) {
+void apagarCabecalho(CABECALHO *cabecalho) {
   free(cabecalho);
 }
