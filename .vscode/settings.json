@@ -2,6 +2,7 @@
     "files.associations": {
         "stdlib.h": "c",
         "interpreta-bin.h": "c",
-        "registro.h": "c"
+        "registro.h": "c",
+        "cabecalho.h": "c"
     }
 }

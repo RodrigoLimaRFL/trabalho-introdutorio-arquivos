@@ -1,4 +1,28 @@
 #include "interpreta-bin.h"
+#include "cabecalho.h"
+
+void lerCabecalhoFromBin(FILE *file, CABECALHO *cabecalho)
+{
+    char status;
+    fread(&status, sizeof(char), 1, file);
+    setStatus(cabecalho, status);
+
+    int topo;
+    fread(&topo, sizeof(int), 1, file);
+    setTopo(cabecalho, topo);
+
+    int proxByteOffset;
+    fread(&proxByteOffset, sizeof(int), 1, file);
+    setProxByteOffset(cabecalho, proxByteOffset);
+
+    int nroRegArq;
+    fread(&nroRegArq, sizeof(int), 1, file);
+    setNroRegArq(cabecalho, nroRegArq);
+
+    int nroRem;
+    fread(&nroRem, sizeof(int), 1, file);
+    setNroRem(cabecalho, nroRem);
+}
 
 void lerRegistroFromBin(FILE *file, REGISTRO *registro)
 {
@@ -60,6 +84,22 @@ void lerRegistroFromBin(FILE *file, REGISTRO *registro)
     printf("\n");
 }
 
+CABECALHO *getCabecalhoFromBin(char *filePath)
+{
+    FILE *file = fopen(filePath, "rb");
+    if (file == NULL)
+    {
+        printf("Erro ao abrir o arquivo %s\n", filePath);
+        return NULL;
+    }
+
+    CABECALHO *cabecalho = criarCabecalho();
+    lerCabecalhoFromBin(file, cabecalho);
+
+    fclose(file);
+    return cabecalho;
+}
+
 LISTA *getRegistrosFromBin(char *filePath)
 {
     FILE *file = fopen(filePath, "rb");
@@ -71,6 +111,10 @@ LISTA *getRegistrosFromBin(char *filePath)
 
     int i = 0;
     LISTA *lista = criarLista();
+
+    CABECALHO *cabecalho = criarCabecalho();
+    lerCabecalhoFromBin(file, NULL);
+    
     while (1)
     {
         REGISTRO *registro = criarRegistroNulo();
