@@ -3,6 +3,7 @@ typedef struct registro REGISTRO;
 #include <stdio.h>
 #include <stdlib.h>
 
+REGISTRO *criarRegistroNulo();
 REGISTRO* criarRegistro(int removido, int tamanhoRegistro, long prox, int id, int idade, int tamNomeJogador, char *nomeJogador, int tamNacionalidade, char *nacionalidade, int tamNomeClube, char *nomeClube);
 int get_removido(REGISTRO *registro);
 int get_tamanhoRegistro(REGISTRO *registro);
