@@ -7,12 +7,12 @@ void lerCabecalhoFromBin(FILE *file, CABECALHO *cabecalho)
     fread(&status, sizeof(char), 1, file);
     setStatus(cabecalho, status);
 
-    int topo;
-    fread(&topo, sizeof(int), 1, file);
+    long topo;
+    fread(&topo, sizeof(long), 1, file);
     setTopo(cabecalho, topo);
 
-    int proxByteOffset;
-    fread(&proxByteOffset, sizeof(int), 1, file);
+    long proxByteOffset;
+    fread(&proxByteOffset, sizeof(long), 1, file);
     setProxByteOffset(cabecalho, proxByteOffset);
 
     int nroRegArq;
@@ -22,6 +22,14 @@ void lerCabecalhoFromBin(FILE *file, CABECALHO *cabecalho)
     int nroRem;
     fread(&nroRem, sizeof(int), 1, file);
     setNroRem(cabecalho, nroRem);
+
+    printf("Status: %c\n", getStatus(cabecalho));
+    printf("Topo: %li\n", getTopo(cabecalho));
+    printf("ProxByteOffset: %li\n", getProxByteOffset(cabecalho));
+    printf("NroRegArq: %d\n", getNroRegArq(cabecalho));
+    printf("NroRem: %d\n", getNroRem(cabecalho));
+
+    printf("\n");
 }
 
 void lerRegistroFromBin(FILE *file, REGISTRO *registro)
@@ -112,8 +120,7 @@ LISTA *getRegistrosFromBin(char *filePath)
     int i = 0;
     LISTA *lista = criarLista();
 
-    CABECALHO *cabecalho = criarCabecalho();
-    lerCabecalhoFromBin(file, NULL);
+    fseek(file, 25, SEEK_SET); // Pula o cabeçalho
     
     while (1)
     {
