@@ -1,9 +1,11 @@
 #include <stdio.h>
 
 #include "gerencia-arquivo.h"
+#include "lista.h"
 
 int main() {
-    lerCsv("Jogador.csv");
+    LISTA *lista = lerCsv("Jogador.csv");
+    
     //teste();
     return 0;
 }

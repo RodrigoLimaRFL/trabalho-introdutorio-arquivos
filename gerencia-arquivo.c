@@ -141,4 +141,6 @@ void escreveBinario(LISTA *lista, char *binario) {
     fwrite(get_tamNomeClube(getRegistro(lista, i)), 4, 1, f);
     fwrite(get_nomeClube(getRegistro(lista, i)), 1, get_tamNomeClube(getRegistro(lista, i)), f);
   }
+
+  fclose(f);
 }
