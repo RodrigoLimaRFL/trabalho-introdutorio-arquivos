@@ -17,8 +17,13 @@ REGISTRO *getRegistro(LISTA *lista, int index) {
   return lista->registros[index];
 }
 
+int getTamanho(LISTA *lista) {
+  return lista->tamanho;
+}
+
 int adicionarRegistro(LISTA *lista, REGISTRO *registro) {
   lista->registros[lista->tamanho] = registro;
+  (lista->tamanho)++;
   return 1;
 }
 

@@ -1,12 +1,14 @@
-#ifndef LISTA_H
+#ifndef CABECALHO_H
 
-  #define LISTA_H
+  #define CABECALHO_H
 
-  #include "registro.h"
+  typedef struct cabecalho CABECALHO;
 
-  typedef struct lista_ LISTA;
+  CABECALHO *criarCabecalho(void);
 
-  LISTA *criarLista(void);
+  char getStatus(CABECALHO cabecalho);
+
+  int 
 
   REGISTRO *getRegistro(LISTA *lista, int index);
 
