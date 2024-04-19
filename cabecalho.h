@@ -8,20 +8,12 @@
 
   char getStatus(CABECALHO cabecalho);
 
-  int 
+  int getTopo(CABECALHO cabecalho);
 
-  REGISTRO *getRegistro(LISTA *lista, int index);
+  int getProxByteOffset(CABECALHO cabecalho);
 
-  int getTamanho(LISTA *lista);
+  int getNroRegArq(CABECALHO cabecalho);
 
-  int adicionarRegistro(LISTA *lista, REGISTRO *registro);
-
-  int modificarRegistro(LISTA *lista, int index, REGISTRO *novoRegistro);
-
-  int buscarRegistro(LISTA *lista, int id); // retorna o index do registro na lista
-
-  int removerRegistro(LISTA *lista, int index);
-
-  int apagarLista(LISTA *lista);
+  int getNroRem(CABECALHO cabecalho);
 
 #endif

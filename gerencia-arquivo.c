@@ -13,7 +13,7 @@ struct dados {
     char *nomeClube;
 };
 
-void lerCsv(char *nomeArquivo) {
+LISTA *lerCsv(char *nomeArquivo) {
     FILE *arquivo = fopen(nomeArquivo, "r");
     if (arquivo == NULL) {
         printf("Erro ao abrir o arquivo %s\n", nomeArquivo);
@@ -52,6 +52,8 @@ void lerCsv(char *nomeArquivo) {
 
         i++;
     }
+
+    return lista;
 
     fclose(arquivo);
 }
