@@ -1,8 +1,11 @@
 #ifndef CABECALHO_H
 
   #define CABECALHO_H
+  
+  #include <stdio.h>
+  #include <stdlib.h>
 
-  typedef struct cabecalho CABECALHO;
+  typedef struct cabecalho_ CABECALHO;
 
   CABECALHO *criarCabecalho(void);
 
@@ -20,6 +23,10 @@
 
   int setTopo(CABECALHO cabecalho, int topo);
 
-  int setProxByteOffset(CABECALHO cabecalho, double proxByteOffset)
+  int setProxByteOffset(CABECALHO cabecalho, double proxByteOffset);
+
+  int setNroRegArq(CABECALHO cabecalho, int nroRegArq);
+
+  int setNroRem(CABECALHO cabecalho, int nroRem);
 
 #endif

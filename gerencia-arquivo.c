@@ -129,16 +129,28 @@ void escreveBinario(LISTA *lista, char *binario) {
   FILE *f = fopen(binario, "rb");
 
   for(int i=0; i<getTamanho(lista); i++) {
-    fwrite(get_removido(getRegistro(lista, i)), 1, 1, f);
-    fwrite(get_tamanhoRegistro(getRegistro(lista, i)), 4, 1, f);
-    fwrite(get_prox(getRegistro(lista, i)), 8, 1, f);
-    fwrite(get_id(getRegistro(lista, i)), 4, 1, f);
-    fwrite(get_idade(getRegistro(lista, i)), 4, 1, f);
-    fwrite(get_tamNomeJogador(getRegistro(lista, i)), 4, 1, f);
-    fwrite(get_nomeJogador(getRegistro(lista, i)), 1, get_tamNomeJogador(getRegistro(lista, i)), f);
-    fwrite(get_tamNacionalidade(getRegistro(lista, i)), 4, 1, f);
-    fwrite(get_nacionalidade(getRegistro(lista, i)), 1, get_tamNacionalidade(getRegistro(lista, i)), f);
-    fwrite(get_tamNomeClube(getRegistro(lista, i)), 4, 1, f);
-    fwrite(get_nomeClube(getRegistro(lista, i)), 1, get_tamNomeClube(getRegistro(lista, i)), f);
+    int removido = get_removido(getRegistro(lista, i));
+    int tamRegistro = get_tamanhoRegistro(getRegistro(lista, i));
+    long prox = get_prox(getRegistro(lista, i));
+    int id = get_id(getRegistro(lista, i));
+    int idade = get_idade(getRegistro(lista, i));
+    int tamNomeJogador = get_tamNomeJogador(getRegistro(lista, i));
+    char *nomeJogador = get_nomeJogador(getRegistro(lista, i));
+    int tamNacionalidade = get_tamNacionalidade(getRegistro(lista, i));
+    char *nacionalidade = get_nacionalidade(getRegistro(lista, i));
+    int tamNomeClube = get_tamNomeClube(getRegistro(lista, i));
+    char *nomeClube = get_nomeClube(getRegistro(lista, i));
+
+    fwrite(&removido, 1, 1, f);
+    fwrite(&tamRegistro, 4, 1, f);
+    fwrite(&prox, 8, 1, f);
+    fwrite(&id, 4, 1, f);
+    fwrite(&idade, 4, 1, f);
+    fwrite(&tamNomeJogador, 4, 1, f);
+    fwrite(nomeJogador, 1, get_tamNomeJogador(getRegistro(lista, i)), f);
+    fwrite(&tamNacionalidade, 4, 1, f);
+    fwrite(nacionalidade, 1, get_tamNacionalidade(getRegistro(lista, i)), f);
+    fwrite(&tamNomeClube, 4, 1, f);
+    fwrite(nomeClube, 1, get_tamNomeClube(getRegistro(lista, i)), f);
   }
 }
