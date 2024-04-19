@@ -8,13 +8,13 @@
 
   LISTA *criarLista(void);
 
-  int adicionarRegistro(REGISTRO *registro);
+  int adicionarRegistro(LISTA *lista, REGISTRO *registro);
 
-  int modificarRegistro(int index);
+  int modificarRegistro(LISTA *lista, int index);
 
-  int buscarRegistro(int id); // retorna o index do registro na lista
+  int buscarRegistro(LISTA *lista, int id); // retorna o index do registro na lista
 
-  int removerRegistro(int index);
+  int removerRegistro(LISTA *lista, int index);
 
   int apagarLista(LISTA *lista);
 
