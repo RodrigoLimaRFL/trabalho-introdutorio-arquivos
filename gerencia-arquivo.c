@@ -4,6 +4,7 @@
 
 #include "gerencia-arquivo.h"
 #include "lista.h"
+#include "cabecalho.h"
 
 struct dados {
     int id;
@@ -130,8 +131,20 @@ void lerLinha(char *linha, DADOS *dados) {
     dados->nomeClube = nomeClube;
 }
 
-void escreveBinario(LISTA *lista, char *binario) {
+void escreveBinario(CABECALHO *cabecalho, LISTA *lista, char *binario) {
   FILE *f = fopen(binario, "wb");
+
+  char status = getStatus(cabecalho);
+  int topo = getTopo(cabecalho);
+  long proxByteOffset = getProxByteOffset(cabecalho);
+  int nroRegArq = getNroRegArq(cabecalho);
+  int nroRegRem = getNroRem(cabecalho);
+
+  fwrite(&status, 1, 1, f);
+  fwrite(&topo, 4, 1, f);
+  fwrite(&proxByteOffset, 8, 1, f);
+  fwrite(&nroRegArq, 4, 1, f);
+  fwrite(&nroRegRem, 4, 1, f);
 
   for(int i=0; i<getTamanho(lista); i++) {
     int removido = get_removido(getRegistro(lista, i));
