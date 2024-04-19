@@ -3,8 +3,10 @@
 #include "gerencia-arquivo.h"
 #include "lista.h"
 #include "interpreta-bin.h"
+#include "cabecalho.h"
 
 int main() {
+    CABECALHO *cabecalho = criarCabecalho();
     LISTA *lista = lerCsv("Jogador.csv");
     escreveBinario(lista, "bin");
     LISTA *lista2 = getRegistrosFromBin("bin");

@@ -1,6 +1,7 @@
 typedef struct dados DADOS;
 
 #include "lista.h"
+#include "cabecalho.h"
 
 LISTA *lerCsv(char *nomeArquivo);
 void lerLinha(char *linha, DADOS *dados);
