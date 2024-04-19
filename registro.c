@@ -4,7 +4,7 @@
 #include "registro.h"
 
 struct registro {
-    int removido;
+    char removido;
     int tamanhoRegistro;
     long prox;
     int id;
@@ -16,6 +16,23 @@ struct registro {
     int tamNomeClube;
     char *nomeClube;
 };
+
+REGISTRO *criarRegistroNulo()
+{
+    REGISTRO *registro = (REGISTRO *)malloc(sizeof(REGISTRO));
+    registro->removido = '1';
+    registro->tamanhoRegistro = 0;
+    registro->prox = -1;
+    registro->id = -1;
+    registro->idade = -1;
+    registro->tamNomeJogador = -1;
+    registro->nomeJogador = NULL;
+    registro->tamNacionalidade = -1;
+    registro->nacionalidade = NULL;
+    registro->tamNomeClube = -1;
+    registro->nomeClube = NULL;
+    return registro;
+}
 
 REGISTRO *criarRegistro(int removido, int tamanhoRegistro, long prox, int id, int idade, int tamNomeJogador, char *nomeJogador, int tamNacionalidade, char *nacionalidade, int tamNomeClube, char *nomeClube)
 {
@@ -34,7 +51,7 @@ REGISTRO *criarRegistro(int removido, int tamanhoRegistro, long prox, int id, in
     return registro;
 }
 
-int get_removido(REGISTRO *registro)
+char get_removido(REGISTRO *registro)
 {
     return registro->removido;
 }
