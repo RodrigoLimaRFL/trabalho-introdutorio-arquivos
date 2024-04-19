@@ -8,6 +8,8 @@
 
   LISTA *criarLista(void);
 
+  REGISTRO *getRegistro(LISTA *lista, int index);
+
   int adicionarRegistro(LISTA *lista, REGISTRO *registro);
 
   int modificarRegistro(LISTA *lista, int index, REGISTRO *novoRegistro);

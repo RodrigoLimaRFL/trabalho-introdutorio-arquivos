@@ -22,45 +22,34 @@ void lerCsv(char *nomeArquivo) {
 
     char linha[1090];
     int i = 0;
-    while (fgets(linha, 100, arquivo) != NULL && i < 7) {
-        int id;
-        char *idString = strtok(linha, ",");
-        if (idString == NULL|| strcmp(idString, "") == 0 || strcmp(idString, "\0") == 0 ) {
-            id = -1;
-        }
-        else {
-            id = atoi(idString);
-        }
 
-        int idade;
-        char *idadeString = strtok(NULL, ",");
-        if (idadeString == NULL || strcmp(idadeString, "") == 0 || strcmp(idString, "\r") == 0 ) {
-            idade = -1;
-        } else {
-            idade = atoi(idadeString);
-        }
+    LISTA *lista = criarLista();
 
-        char *nome_jogador = strtok(NULL, ",");
-        if (nome_jogador == NULL || strcmp(nome_jogador, "") == 0) {
-            nome_jogador = "$$$";
+    while(fgets(linha, 1090, arquivo) != NULL) {
+        if (i == 0) {
+            i++;
+            continue;
         }
+        DADOS *dados = (DADOS *) malloc(sizeof(DADOS));
+        REGISTRO *registro = getRegistro(lista, i - 1);
+        lerLinha(linha, dados);
 
-        char *nacionalidade = strtok(NULL, ",");
-        if (nacionalidade == NULL || strcmp(nacionalidade, "") == 0) {
-            nacionalidade = "$$$";
-        }
+        registro = criarRegistro(0, 0, 0, dados->id,
+                                dados->idade,
+                                strlen(dados->nome_jogador), 
+                                dados->nome_jogador, 
+                                strlen(dados->nacionalidade), 
+                                dados->nacionalidade, 
+                                strlen(dados->nomeClube), 
+                                dados->nomeClube);
 
-        char *nomeClube = strtok(NULL, ",");
-        if (nomeClube == NULL || strcmp(nomeClube, "") == 0) {
-            nomeClube = "$$$";
-        }
-
-        printf("ID: %d\n", id);
-        printf("Idade: %d\n", idade);
-        printf("Nome: %s\n", nome_jogador);
-        printf("Nacionalidade: %s\n", nacionalidade);
-        printf("Clube: %s\n", nomeClube);
+        printf("ID: %d\n", get_id(registro));
+        printf("Idade: %d\n", get_idade(registro));
+        printf("Nome: %s\n", get_nomeJogador(registro));
+        printf("Nacionalidade: %s\n", get_nacionalidade(registro));
+        printf("Clube: %s\n", get_nomeClube(registro));
         printf("\n");
+
         i++;
     }
 

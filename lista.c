@@ -8,9 +8,13 @@ struct lista_ {
 LISTA *criarLista() {
   LISTA *lista = (LISTA *) malloc(sizeof(LISTA));
   lista->tamanho = 0;
-  lista->registros = (REGISTRO **) malloc(sizeof(REGISTRO *) * 1000);
+  lista->registros = (REGISTRO **) malloc(sizeof(REGISTRO *) * 1500);
 
   return lista;
+}
+
+REGISTRO *getRegistro(LISTA *lista, int index) {
+  return lista->registros[index];
 }
 
 int adicionarRegistro(LISTA *lista, REGISTRO *registro) {

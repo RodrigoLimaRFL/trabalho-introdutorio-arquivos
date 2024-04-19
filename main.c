@@ -3,7 +3,7 @@
 #include "gerencia-arquivo.h"
 
 int main() {
-    //lerCsv("Jogador.csv");
-    teste();
+    lerCsv("Jogador.csv");
+    //teste();
     return 0;
 }
