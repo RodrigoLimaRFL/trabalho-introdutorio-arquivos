@@ -135,13 +135,13 @@ void escreveBinario(CABECALHO *cabecalho, LISTA *lista, char *binario) {
   FILE *f = fopen(binario, "wb");
 
   char status = getStatus(cabecalho);
-  int topo = getTopo(cabecalho);
+  long topo = getTopo(cabecalho);
   long proxByteOffset = getProxByteOffset(cabecalho);
   int nroRegArq = getNroRegArq(cabecalho);
   int nroRegRem = getNroRem(cabecalho);
 
   fwrite(&status, 1, 1, f);
-  fwrite(&topo, 4, 1, f);
+  fwrite(&topo, 8, 1, f);
   fwrite(&proxByteOffset, 8, 1, f);
   fwrite(&nroRegArq, 4, 1, f);
   fwrite(&nroRegRem, 4, 1, f);
