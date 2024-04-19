@@ -14,7 +14,7 @@
 
   long getTopo(CABECALHO *cabecalho);
 
-  int getProxByteOffset(CABECALHO *cabecalho);
+  long getProxByteOffset(CABECALHO *cabecalho);
 
   int getNroRegArq(CABECALHO *cabecalho);
 
