@@ -124,7 +124,11 @@ void lerLinha(char *linha, DADOS *dados) {
 }
 
 void escreveBinario(CABECALHO *cabecalho, LISTA *lista, char *binario) {
+  setStatus(cabecalho, '0');
   FILE *f = fopen(binario, "wb");
+  if(f == NULL) {
+    return;
+  }
 
   char status = getStatus(cabecalho);
   long topo = getTopo(cabecalho);
@@ -132,11 +136,16 @@ void escreveBinario(CABECALHO *cabecalho, LISTA *lista, char *binario) {
   int nroRegArq = getNroRegArq(cabecalho);
   int nroRegRem = getNroRem(cabecalho);
 
-  fwrite(&status, 1, 1, f);
-  fwrite(&topo, 8, 1, f);
-  fwrite(&proxByteOffset, 8, 1, f);
-  fwrite(&nroRegArq, 4, 1, f);
-  fwrite(&nroRegRem, 4, 1, f);
+  setStatus(cabecalho, '0');
+  if(
+    fwrite(&status, sizeof(char), 1, f) == 1 &&
+    fwrite(&topo, sizeof(long), 1, f) == 1 &&
+    fwrite(&proxByteOffset, sizeof(long), 1, f) == 1 &&
+    fwrite(&nroRegArq, sizeof(int), 1, f) == 1 &&
+    fwrite(&nroRegRem, sizeof(int), 1, f) == 1
+  ) {
+    setStatus(cabecalho, '1');
+  }
 
   for(int i=0; i<getTamanho(lista); i++) {
     int removido = get_removido(getRegistro(lista, i));
@@ -151,17 +160,22 @@ void escreveBinario(CABECALHO *cabecalho, LISTA *lista, char *binario) {
     int tamNomeClube = get_tamNomeClube(getRegistro(lista, i));
     char *nomeClube = get_nomeClube(getRegistro(lista, i));
 
-    fwrite(&removido, 1, 1, f);
-    fwrite(&tamRegistro, 4, 1, f);
-    fwrite(&prox, 8, 1, f);
-    fwrite(&id, 4, 1, f);
-    fwrite(&idade, 4, 1, f);
-    fwrite(&tamNomeJogador, 4, 1, f);
-    fwrite(nomeJogador, 1, get_tamNomeJogador(getRegistro(lista, i)), f);
-    fwrite(&tamNacionalidade, 4, 1, f);
-    fwrite(nacionalidade, 1, get_tamNacionalidade(getRegistro(lista, i)), f);
-    fwrite(&tamNomeClube, 4, 1, f);
-    fwrite(nomeClube, 1, get_tamNomeClube(getRegistro(lista, i)), f);
+    setStatus(cabecalho, '0');
+    if(
+        fwrite(&removido, sizeof(char), 1, f) > 0 &&
+        fwrite(&tamRegistro, sizeof(int), 1, f) > 0 &&
+        fwrite(&prox, sizeof(long), 1, f) > 0 &&
+        fwrite(&id, sizeof(int), 1, f) > 0 &&
+        fwrite(&idade, sizeof(int), 1, f) > 0 &&
+        fwrite(&tamNomeJogador, sizeof(int), 1, f) > 0 &&
+        fwrite(nomeJogador, sizeof(char), tamNomeJogador, f) > 0 &&
+        fwrite(&tamNacionalidade, sizeof(int), 1, f) > 0 &&
+        fwrite(nacionalidade, sizeof(char), tamNacionalidade, f) > 0 &&
+        fwrite(&tamNomeClube, sizeof(int), 1, f) > 0 &&
+        fwrite(nomeClube, sizeof(char), tamNomeClube, f) > 0
+    ) {
+        setStatus(cabecalho, '1');
+    }
   }
 
   fclose(f);
