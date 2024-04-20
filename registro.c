@@ -6,6 +6,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "registro.h"
 
@@ -25,9 +26,10 @@ struct registro {
 
 void imprimirRegistros(REGISTRO **registros)
 {
-    if(registros[0] == NULL)
+    if(registros == NULL || registros[0] == NULL)
     {
-        printf("VAZIO\n");
+        printf("Registro inexistente.\n");
+        printf("\n");
         return;
     }
     for (int i = 0; registros[i] != NULL; i++)
@@ -126,6 +128,10 @@ int get_tamNomeJogador(REGISTRO *registro)
 
 char *get_nomeJogador(REGISTRO *registro)
 {
+    if (strcmp(registro->nomeJogador, "") == 0)
+    {
+        return "SEM DADO";
+    }
     return registro->nomeJogador;
 }
 
@@ -136,6 +142,10 @@ int get_tamNacionalidade(REGISTRO *registro)
 
 char *get_nacionalidade(REGISTRO *registro)
 {
+    if (strcmp(registro->nacionalidade, "") == 0)
+    {
+        return "SEM DADO";
+    }
     return registro->nacionalidade;
 }
 
@@ -146,6 +156,10 @@ int get_tamNomeClube(REGISTRO *registro)
 
 char *get_nomeClube(REGISTRO *registro)
 {
+    if (strcmp(registro->nomeClube, "") == 0)
+    {
+        return "SEM DADO";
+    }
     return registro->nomeClube;
 }
 void set_removido(REGISTRO *registro, int removido)

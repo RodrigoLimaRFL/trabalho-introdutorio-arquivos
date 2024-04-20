@@ -47,6 +47,8 @@ int main() {
 
         for (int i = 0; i < numOperacoes; i++)
         {
+            printf("BUSCA %d\n", i + 1);
+
             int m;
             scanf("%i", &m);
             REGISTRO **registros;
@@ -72,7 +74,7 @@ int main() {
                 else if(strcmp(campo, "nome") == 0)
                 {
                     char nome[50];
-                    scanf("%s", nome);
+                    scan_quote_string(nome);
                     if(j == 0)
                     {
                         registros = buscaPorNome(lista, nome);
@@ -95,10 +97,10 @@ int main() {
                         registros = intersecaoDoisRegistros(registros, buscaPorIdade(lista, idade));
                     }
                 }
-                else if(strcmp(campo, "clube") == 0)
+                else if(strcmp(campo, "nomeClube") == 0)
                 {
                     char clube[50];
-                    scanf("%s", clube);
+                    scan_quote_string(clube);
                     if(j == 0)
                     {
                         registros = buscaPorClube(lista, clube);
@@ -111,7 +113,7 @@ int main() {
                 else if(strcmp(campo, "nacionalidade") == 0)
                 {
                     char nacionalidade[50];
-                    scanf("%s", nacionalidade);
+                    scan_quote_string(nacionalidade);
                     if(j == 0)
                     {
                         registros = buscaPorNacionalidade(lista, nacionalidade);
