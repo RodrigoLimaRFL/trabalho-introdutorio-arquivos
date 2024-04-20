@@ -41,6 +41,41 @@ int buscarRegistro(LISTA *lista, int id) {
   return -1;
 }
 
+REGISTRO **buscarPorNacionalidadeEIdadeAux(LISTA *lista, char *nacionalidade, int idade)
+{
+  REGISTRO **registros = (REGISTRO **)malloc(0);
+  int quantidade = 0;
+  for (int i = 0; i < lista->tamanho; i++)
+  {
+    if (strcmp(get_nacionalidade(lista->registros[i]), nacionalidade) == 0 && get_idade(lista->registros[i]) == idade)
+    {
+      registros = (REGISTRO **)realloc(registros, sizeof(REGISTRO *) * (quantidade + 1));
+      registros[quantidade] = lista->registros[i];
+      quantidade++;
+    }
+  }
+  registros = (REGISTRO **)realloc(registros, sizeof(REGISTRO *) * (quantidade + 1));
+  registros[quantidade] = NULL;
+  return registros;
+
+}
+
+void BuscaNacionalidadeEIdade(LISTA *lista, char *nacionalidade, int idade)
+{
+  REGISTRO **registros = buscarPorNacionalidadeEIdadeAux(lista, nacionalidade, idade);
+  for (int i = 0; registros[i] != NULL; i++)
+  {
+    printf("Registro %d\n", i);
+    printf("Id: %d\n", get_id(registros[i]));
+    printf("Idade: %d\n", get_idade(registros[i]));
+    printf("Nome do jogador: %s\n", get_nomeJogador(registros[i]));
+    printf("Nacionalidade: %s\n", get_nacionalidade(registros[i]));
+    printf("Nome do clube: %s\n", get_nomeClube(registros[i]));
+    printf("\n");
+  }
+  free(registros);
+}
+
 int removerRegistro(LISTA *lista, int index) {
   for(int i=index; i<lista->tamanho-1; i++) {
     lista->registros[i] = lista->registros[i+1];
