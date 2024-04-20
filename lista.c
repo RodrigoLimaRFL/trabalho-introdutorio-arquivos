@@ -49,7 +49,7 @@ REGISTRO **buscaPorId(LISTA *lista, int id)
   int quantidade = 0;
   for (int i = 0; i < lista->tamanho; i++)
   {
-    if (get_id(lista->registros[i]) == id)
+    if (get_id(lista->registros[i]) == id && get_removido(lista->registros[i]) == '0')
     {
       registros = (REGISTRO **)realloc(registros, sizeof(REGISTRO *) * (quantidade + 1));
       registros[quantidade] = lista->registros[i];
@@ -68,7 +68,7 @@ REGISTRO **buscaPorNome(LISTA *lista, char *nome)
   int quantidade = 0;
   for (int i = 0; i < lista->tamanho; i++)
   {
-    if (strcmp(get_nomeJogador(lista->registros[i]), nome) == 0)
+    if (strcmp(get_nomeJogador(lista->registros[i]), nome) == 0 && get_removido(lista->registros[i]) == '0')
     {
       registros = (REGISTRO **)realloc(registros, sizeof(REGISTRO *) * (quantidade + 1));
       registros[quantidade] = lista->registros[i];
@@ -86,7 +86,7 @@ REGISTRO **buscaPorIdade(LISTA *lista, int idade)
   int quantidade = 0;
   for (int i = 0; i < lista->tamanho; i++)
   {
-    if (get_idade(lista->registros[i]) == idade)
+    if (get_idade(lista->registros[i]) == idade && get_removido(lista->registros[i]) == '0')
     {
       registros = (REGISTRO **)realloc(registros, sizeof(REGISTRO *) * (quantidade + 1));
       registros[quantidade] = lista->registros[i];
@@ -104,7 +104,7 @@ REGISTRO **buscaPorClube(LISTA *lista, char *clube)
   int quantidade = 0;
   for (int i = 0; i < lista->tamanho; i++)
   {
-    if (strcmp(get_nomeClube(lista->registros[i]), clube) == 0)
+    if (strcmp(get_nomeClube(lista->registros[i]), clube) == 0 && get_removido(lista->registros[i]) == '0')
     {
       registros = (REGISTRO **)realloc(registros, sizeof(REGISTRO *) * (quantidade + 1));
       registros[quantidade] = lista->registros[i];
@@ -122,7 +122,7 @@ REGISTRO **buscaPorNacionalidade(LISTA *lista, char *nacionalidade)
   int quantidade = 0;
   for (int i = 0; i < lista->tamanho; i++)
   {
-    if (strcmp(get_nacionalidade(lista->registros[i]), nacionalidade) == 0)
+    if (strcmp(get_nacionalidade(lista->registros[i]), nacionalidade) == 0 && get_removido(lista->registros[i]) == '0')
     {
       registros = (REGISTRO **)realloc(registros, sizeof(REGISTRO *) * (quantidade + 1));
       registros[quantidade] = lista->registros[i];
@@ -175,11 +175,18 @@ void setProxRegistros(LISTA *lista, int index) {
 
 // Função que imprime os campos de todos os registros da lista
 void imprimirLista(LISTA *lista) {
+  int impressoes = 0;
   for(int i=0; i<lista->tamanho; i++) {
     if(get_removido(lista->registros[i]) == '0') {
+      impressoes++;
       printf("Nome do Jogador: %s\n", get_nomeJogador(lista->registros[i]));
       printf("Nacionalidade do Jogador: %s\n", get_nacionalidade(lista->registros[i]));
       printf("Clube do Jogador: %s\n\n", get_nomeClube(lista->registros[i]));
     }
+  }
+
+  if(impressoes == 0)
+  {
+    printf("Registro inexistente.\n\n");
   }
 }

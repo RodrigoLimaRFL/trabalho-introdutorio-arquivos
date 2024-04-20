@@ -18,8 +18,11 @@ int main() {
         char arquivoBin[50];
         scanf("%s", arquivoBin);
 
+        
+
         CABECALHO *cabecalho = criarCabecalho();
         LISTA *lista = lerCsv(arquivoCsv);
+        setValoresCabecalho(cabecalho, lista);
         escreveBinario(cabecalho, lista, arquivoBin);
 
         binarioNaTela(arquivoBin);
@@ -32,7 +35,8 @@ int main() {
 
         LISTA *lista = getRegistrosFromBin(arquivoBin);
 
-        imprimirLista(lista);
+        if (lista)
+            imprimirLista(lista);
     }
     else if (strcmp(operacao, "3") == 0)
     {
@@ -47,7 +51,8 @@ int main() {
 
         for (int i = 0; i < numOperacoes; i++)
         {
-            printf("BUSCA %d\n", i + 1);
+            printf("Busca %d\n", i + 1);
+            printf("\n");
 
             int m;
             scanf("%i", &m);

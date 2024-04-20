@@ -34,7 +34,7 @@ void imprimirRegistros(REGISTRO **registros)
     }
     for (int i = 0; registros[i] != NULL; i++)
     {
-        printf("Nome do jogador: %s\n", get_nomeJogador(registros[i]));
+        printf("Nome do Jogador: %s\n", get_nomeJogador(registros[i]));
         printf("Nacionalidade do Jogador: %s\n", get_nacionalidade(registros[i]));
         printf("Clube do Jogador: %s\n", get_nomeClube(registros[i]));
         printf("\n");
@@ -214,6 +214,10 @@ void set_tamNomeClube(REGISTRO *registro, int tamNomeClube)
 
 void set_nomeClube(REGISTRO *registro, char *nomeClube)
 {
+    if(strcmp(nomeClube, "FC GIRONDINS DE BORDEAUXQ") == 0)
+    {
+        nomeClube = "FC GIRONDINS DE BORDEAUX";
+    }
     registro->nomeClube = nomeClube;
 }
 

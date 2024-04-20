@@ -76,7 +76,7 @@ CABECALHO *getCabecalhoFromBin(char *filePath)
     FILE *file = fopen(filePath, "rb");
     if (file == NULL)
     {
-        printf("Erro ao abrir o arquivo %s\n", filePath);
+        printf("Falha no processamento do arquivo.");
         return NULL;
     }
 
@@ -92,7 +92,7 @@ LISTA *getRegistrosFromBin(char *filePath)
     FILE *file = fopen(filePath, "rb");
     if (file == NULL)
     {
-        printf("Erro ao abrir o arquivo %s\n", filePath);
+        printf("Falha no processamento do arquivo.");
         return NULL;
     }
 
@@ -103,10 +103,17 @@ LISTA *getRegistrosFromBin(char *filePath)
     lerCabecalhoFromBin(file, cabecalho);
 
     long byteOffset = getProxByteOffset(cabecalho);
-    int numRegistros = getNroRegArq(cabecalho);
+    int numRegistros = getNroRegArq(cabecalho) + getNroRem(cabecalho);
     byteOffset = 25;
+
+    if(numRegistros == 0)
+    {
+        printf("Registro inexistente.\n");
+        fclose(file);
+        return lista;
+    }
     
-    for (i = 0; i < 1000; i++)
+    for (i = 0; i < numRegistros; i++)
     {
         fseek(file, byteOffset, SEEK_SET);
         REGISTRO *registro = criarRegistroNulo();
