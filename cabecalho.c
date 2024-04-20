@@ -34,7 +34,7 @@ void setValoresCabecalho(CABECALHO *cabecalho, LISTA *lista) {
     cabecalho->proxByteOffset = get_prox(getRegistro(lista, i-1));
   }
 
-  int i = 0;
+  i = 0;
   while(get_removido(getRegistro(lista, i)) == '0' && (i<getTamanho(lista))) {
     i++;
   }
