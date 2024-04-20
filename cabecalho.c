@@ -27,23 +27,24 @@ void setValoresCabecalho(CABECALHO *cabecalho, LISTA *lista) {
   }
 
   int i = 0;
+  cabecalho->proxByteOffset = 25;
   while(get_removido(getRegistro(lista, i)) == '1' && (i<getTamanho(lista))) {
+    cabecalho->proxByteOffset += get_tamanhoRegistro(getRegistro(lista, i));
     i++;
   }
-  if(i<getTamanho(lista) && i>0) {
-    cabecalho->proxByteOffset = get_prox(getRegistro(lista, i-1));
+  if(i>=getTamanho(lista)) {
+    cabecalho->proxByteOffset = 0;
   }
 
   i = 0;
+  cabecalho->topo = 25;
   while(get_removido(getRegistro(lista, i)) == '0' && (i<getTamanho(lista))) {
+    cabecalho->topo += get_tamanhoRegistro(getRegistro(lista, i));
     i++;
   }
-  if(i<getTamanho(lista)) {
-    if(i=0) {
-      cabecalho->topo = 0;
-    } else {
-      cabecalho->topo = get_prox(getRegistro(lista, i-1));
-    }
+  if(i>=getTamanho(lista)) {
+    cabecalho->topo = -1;
+    
   }
 }
 
