@@ -32,6 +32,8 @@
 
   int removerRegistro(LISTA *lista, int index);
 
+  void imprimirLista(LISTA *lista);
+
   int apagarLista(LISTA *lista);
 
 #endif

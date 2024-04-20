@@ -172,3 +172,12 @@ void setProxRegistros(LISTA *lista, int index) {
     prox += get_tamanhoRegistro(lista->registros[i]);
   }
 }
+
+// Função que imprime os campos de todos os registros da lista
+void imprimirLista(LISTA *lista) {
+  for(int i=0; i<lista->tamanho; i++) {
+    printf("Nome do Jogador: %s\n", get_nomeJogador(lista->registros[i]));
+    printf("Nacionalidade do Jogador: %s\n", get_nacionalidade(lista->registros[i]));
+    printf("Clube do Jogador: %s\n\n", get_nomeClube(lista->registros[i]));
+  }
+}
