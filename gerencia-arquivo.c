@@ -46,14 +46,6 @@ LISTA *lerCsv(char *nomeArquivo) {
                                 dados->nacionalidade, 
                                 strlen(dados->nomeClube), 
                                 dados->nomeClube);
-
-        printf("ID: %d\n", get_id(registro));
-        printf("Idade: %d\n", get_idade(registro));
-        printf("Nome: %s\n", get_nomeJogador(registro));
-        printf("Nacionalidade: %s\n", get_nacionalidade(registro));
-        printf("Clube: %s\n", get_nomeClube(registro));
-        printf("\n");
-
         adicionarRegistro(lista, registro);
 
         i++;

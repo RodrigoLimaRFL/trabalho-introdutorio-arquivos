@@ -120,16 +120,19 @@ LISTA *getRegistrosFromBin(char *filePath)
     int i = 0;
     LISTA *lista = criarLista();
 
-    fseek(file, 25, SEEK_SET); // Pula o cabeçalho
+    CABECALHO *cabecalho = criarCabecalho();
+    lerCabecalhoFromBin(file, cabecalho);
+
+    long byteOffset = getProxByteOffset(cabecalho);
+    int numRegistros = getNroRegArq(cabecalho);
+    byteOffset = 25;
     
-    while (1)
+    for (i = 0; i < 1000; i++)
     {
+        fseek(file, byteOffset, SEEK_SET);
         REGISTRO *registro = criarRegistroNulo();
         lerRegistroFromBin(file, registro);
-        if (feof(file))
-        {
-            break;
-        }
+        byteOffset += get_tamanhoRegistro(registro);
         adicionarRegistro(lista, registro);
     }
 
