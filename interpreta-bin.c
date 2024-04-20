@@ -22,14 +22,6 @@ void lerCabecalhoFromBin(FILE *file, CABECALHO *cabecalho)
     int nroRem;
     fread(&nroRem, sizeof(int), 1, file);
     setNroRem(cabecalho, nroRem);
-
-    printf("Status: %c\n", getStatus(cabecalho));
-    printf("Topo: %li\n", getTopo(cabecalho));
-    printf("ProxByteOffset: %li\n", getProxByteOffset(cabecalho));
-    printf("NroRegArq: %d\n", getNroRegArq(cabecalho));
-    printf("NroRem: %d\n", getNroRem(cabecalho));
-
-    printf("\n");
 }
 
 void lerRegistroFromBin(FILE *file, REGISTRO *registro)
@@ -77,19 +69,6 @@ void lerRegistroFromBin(FILE *file, REGISTRO *registro)
     char *nomeClube = (char *)malloc(tamNomeClube);
     fread(nomeClube, sizeof(char), tamNomeClube, file);
     set_nomeClube(registro, nomeClube);
-
-    printf("Removido: %c\n", get_removido(registro));
-    printf("Tamanho do registro: %d\n", get_tamanhoRegistro(registro));
-    printf("Prox: %ld\n", get_prox(registro));
-    printf("Id: %d\n", get_id(registro));
-    printf("Idade: %d\n", get_idade(registro));
-    printf("Tamanho do nome do jogador: %d\n", get_tamNomeJogador(registro));
-    printf("Nome do jogador: %s\n", get_nomeJogador(registro));
-    printf("Tamanho da nacionalidade: %d\n", get_tamNacionalidade(registro));
-    printf("Nacionalidade: %s\n", get_nacionalidade(registro));
-    printf("Tamanho do nome do clube: %d\n", get_tamNomeClube(registro));
-    printf("Nome do clube: %s\n", get_nomeClube(registro));
-    printf("\n");
 }
 
 CABECALHO *getCabecalhoFromBin(char *filePath)
