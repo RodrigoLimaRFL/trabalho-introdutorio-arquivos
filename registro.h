@@ -3,6 +3,8 @@ typedef struct registro REGISTRO;
 #include <stdio.h>
 #include <stdlib.h>
 
+void imprimirRegistros(REGISTRO **registros);
+REGISTRO **intersecaoDoisRegistros(REGISTRO **registro1, REGISTRO **registro2);
 REGISTRO *criarRegistroNulo();
 REGISTRO* criarRegistro(char removido, int tamanhoRegistro, long prox, int id, int idade, int tamNomeJogador, char *nomeJogador, int tamNacionalidade, char *nacionalidade, int tamNomeClube, char *nomeClube);
 char get_removido(REGISTRO *registro);

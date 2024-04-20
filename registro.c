@@ -23,6 +23,43 @@ struct registro {
     char *nomeClube;
 };
 
+void imprimirRegistros(REGISTRO **registros)
+{
+    if(registros[0] == NULL)
+    {
+        printf("VAZIO\n");
+        return;
+    }
+    for (int i = 0; registros[i] != NULL; i++)
+    {
+        printf("Nome do jogador: %s\n", get_nomeJogador(registros[i]));
+        printf("Nacionalidade do Jogador: %s\n", get_nacionalidade(registros[i]));
+        printf("Clube do Jogador: %s\n", get_nomeClube(registros[i]));
+        printf("\n");
+    }
+}
+
+REGISTRO **intersecaoDoisRegistros(REGISTRO **registro1, REGISTRO **registro2)
+{
+    REGISTRO **intersecao = (REGISTRO **)malloc(0);
+    int quantidade = 0;
+    for (int i = 0; registro1[i] != NULL; i++)
+    {
+        for (int j = 0; registro2[j] != NULL; j++)
+        {
+            if (get_id(registro1[i]) == get_id(registro2[j]))
+            {
+                intersecao = (REGISTRO **)realloc(intersecao, sizeof(REGISTRO *) * (quantidade + 1));
+                intersecao[quantidade] = registro1[i];
+                quantidade++;
+            }
+        }
+    }
+    intersecao = (REGISTRO **)realloc(intersecao, sizeof(REGISTRO *) * (quantidade + 1));
+    intersecao[quantidade] = NULL;
+    return intersecao;
+}
+
 REGISTRO *criarRegistroNulo()
 {
     REGISTRO *registro = (REGISTRO *)malloc(sizeof(REGISTRO));

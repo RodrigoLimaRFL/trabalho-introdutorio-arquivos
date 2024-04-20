@@ -20,7 +20,15 @@
 
   int buscarRegistro(LISTA *lista, int id); // retorna o index do registro na lista
 
-  void BuscaNacionalidadeEIdade(LISTA *lista, char *nacionalidade, int idade);
+  REGISTRO **buscaPorId(LISTA *lista, int id);
+
+  REGISTRO **buscaPorNome(LISTA *lista, char *nome);
+
+  REGISTRO **buscaPorIdade(LISTA *lista, int idade);
+
+  REGISTRO **buscaPorClube(LISTA *lista, char *clube);
+
+  REGISTRO **buscaPorNacionalidade(LISTA *lista, char *nacionalidade);
 
   int removerRegistro(LISTA *lista, int index);
 
