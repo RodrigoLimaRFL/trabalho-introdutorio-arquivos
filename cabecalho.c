@@ -17,7 +17,7 @@ CABECALHO *criarCabecalho(void) {
   cabecalho->nroRegRem = 0;
 }
 
-int setValoresCabecalho(CABECALHO *cabecalho, LISTA *lista) {
+void setValoresCabecalho(CABECALHO *cabecalho, LISTA *lista) {
   for(int i=0; i<getTamanho(lista); i++) {
     if(get_removido(getRegistro(lista, i)) == '0') {
       (cabecalho->nroRegArq)++;

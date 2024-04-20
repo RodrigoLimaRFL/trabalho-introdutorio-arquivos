@@ -8,7 +8,7 @@
 
   CABECALHO *criarCabecalho(void);
 
-  int setValoresCabecalho(CABECALHO *cabecalho, LISTA *lista);
+  void setValoresCabecalho(CABECALHO *cabecalho, LISTA *lista);
 
   char getStatus(CABECALHO *cabecalho);
 
