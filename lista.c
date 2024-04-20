@@ -1,4 +1,5 @@
 #include "lista.h"
+#include "cabecalho.h"
 
 struct lista_ {
   int tamanho;
@@ -99,4 +100,21 @@ int apagarLista(LISTA *lista) {
   }
 
   free(lista);
+}
+
+void setProxRegistros(LISTA *lista, int index) {
+  int ultimoRemovido = 0;
+  long prox = 25;
+
+  for(int i = 0; i < lista->tamanho; i++) {
+
+    if(get_removido(lista->registros[i]) == '1') {
+      for (int j = ultimoRemovido; j < i; j++) {
+        set_prox(lista->registros[j], prox);
+        ultimoRemovido = i;
+      }
+    }
+
+    prox += get_tamanhoRegistro(lista->registros[i]);
+  }
 }

@@ -4,6 +4,8 @@
 
   #include "registro.h"
 
+  #include <string.h>
+
   typedef struct lista_ LISTA;
 
   LISTA *criarLista(void);
@@ -17,6 +19,8 @@
   int modificarRegistro(LISTA *lista, int index, REGISTRO *novoRegistro);
 
   int buscarRegistro(LISTA *lista, int id); // retorna o index do registro na lista
+
+  void BuscaNacionalidadeEIdade(LISTA *lista, char *nacionalidade, int idade);
 
   int removerRegistro(LISTA *lista, int index);
 
