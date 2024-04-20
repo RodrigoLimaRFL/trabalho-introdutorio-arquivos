@@ -16,6 +16,8 @@ CABECALHO *criarCabecalho(void) {
   cabecalho->proxByteOffset = 0;
   cabecalho->nroRegArq = 0;
   cabecalho->nroRegRem = 0;
+
+  return cabecalho;
 }
 
 // Função que atualiza os valores dos campos do cabeçalho
@@ -76,6 +78,8 @@ int getNroRegArq(CABECALHO *cabecalho) {
 int getNroRem(CABECALHO *cabecalho) {
   return cabecalho->nroRegRem;
 }
+
+// Funções de set para atribuir um valor aos campos do cabeçalho de acordo com os valores passados como parâmetro nas funções
 
 void setStatus(CABECALHO *cabecalho, char status) {
   cabecalho->status = status;
