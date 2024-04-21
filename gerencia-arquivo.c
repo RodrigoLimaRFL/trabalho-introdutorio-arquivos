@@ -117,7 +117,10 @@ void lerLinha(char *linha, DADOS *dados) {
     }
     nomeClube[contadores[4]] = '\0';
     dados->id = atoi(id);
-    dados->idade = atoi(idade);
+    if(atoi(idade) == 0)
+        dados->idade = -1;
+    else
+        dados->idade = atoi(idade);
     dados->nome_jogador = nome_jogador;
     dados->nacionalidade = nacionalidade;
     dados->nomeClube = nomeClube;

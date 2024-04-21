@@ -226,6 +226,11 @@ void set_id(REGISTRO *registro, int id)
 
 void set_idade(REGISTRO *registro, int idade)
 {
+    if(idade == 0)
+    {
+        registro->idade = -1;
+        return;
+    }
     registro->idade = idade;
 }
 
