@@ -2,8 +2,8 @@
 
 struct cabecalho_{
   char status; // indica a conscistência de um arquivo
-  long topo; // byte offset de um registro removido
-  long proxByteOffset; // próximo byte offset disponível
+  long long int topo; // byte offset de um registro removido
+  long long int proxByteOffset; // próximo byte offset disponível
   int nroRegArq; // número de registros não removidos
   int nroRegRem; // número de registros removidos
 };
@@ -32,7 +32,7 @@ void setValoresCabecalho(CABECALHO *cabecalho, LISTA *lista) {
   int i = 0;
   cabecalho->proxByteOffset = 25; // Inicia o valor do proxByteOffset com 25, que é a quantidade de bytes do cabeçalho
   // enquanto não encontrou um registro não removido, incrementa o valor do proxyByteOffset com o valor do tamanho do registro atual
-  while(get_removido(getRegistro(lista, i)) == '1' && (i<getTamanho(lista))) { 
+  while(get_removido(getRegistro(lista, i)) != '1' && (i<getTamanho(lista) - 1)) { 
     cabecalho->proxByteOffset += get_tamanhoRegistro(getRegistro(lista, i));
     i++;
   }
@@ -43,9 +43,14 @@ void setValoresCabecalho(CABECALHO *cabecalho, LISTA *lista) {
   i = 0;
   cabecalho->topo = 25; // Inicia o valor do proxByteOffset com 25, que é a quantidade de bytes do cabeçalho
   // enquanto não encontrou um registro removido, incrementa o valor do proxyByteOffset com o valor do tamanho do registro atual
-  while(get_removido(getRegistro(lista, i)) == '0' && (i<getTamanho(lista) - 1)) {
-    cabecalho->topo += get_tamanhoRegistro(getRegistro(lista, i));
-    i++;
+  if(cabecalho->nroRegRem == 0) {
+    cabecalho->topo = -1;
+  }
+  else{
+    while(get_removido(getRegistro(lista, i)) == '0' && (i<getTamanho(lista) - 1)) {
+      cabecalho->topo += get_tamanhoRegistro(getRegistro(lista, i));
+      i++;
+    }
   }
 
   if(i>=getTamanho(lista)) { // se o valor do i não for menor que o tamanho da lista, atribui o valor -1 para o topo
@@ -60,12 +65,12 @@ char getStatus(CABECALHO *cabecalho) {
 }
 
 // retorna o valor do topo do cabeçalho
-long getTopo(CABECALHO *cabecalho) {
+long long int getTopo(CABECALHO *cabecalho) {
   return cabecalho->topo;
 }
 
 // retorna o valor do proxByteOffset do cabeçalho
-long getProxByteOffset(CABECALHO *cabecalho) {
+long long int getProxByteOffset(CABECALHO *cabecalho) {
   return cabecalho->proxByteOffset;
 }
 
@@ -85,11 +90,11 @@ void setStatus(CABECALHO *cabecalho, char status) {
   cabecalho->status = status;
 }
 
-void setTopo(CABECALHO *cabecalho, long topo) {
+void setTopo(CABECALHO *cabecalho, long long int topo) {
   cabecalho->topo = topo;
 }
 
-void setProxByteOffset(CABECALHO *cabecalho, double proxByteOffset) {
+void setProxByteOffset(CABECALHO *cabecalho, long long int proxByteOffset) {
   cabecalho->proxByteOffset = proxByteOffset;
 }
 

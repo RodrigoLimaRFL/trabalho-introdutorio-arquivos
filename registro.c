@@ -13,7 +13,7 @@
 struct registro {
     char removido;
     int tamanhoRegistro;
-    long prox;
+    long long int prox;
     int id;
     int idade;
     int tamNomeJogador;
@@ -34,9 +34,51 @@ void imprimirRegistros(REGISTRO **registros)
     }
     for (int i = 0; registros[i] != NULL; i++)
     {
-        printf("Nome do Jogador: %s\n", get_nomeJogador(registros[i]));
-        printf("Nacionalidade do Jogador: %s\n", get_nacionalidade(registros[i]));
-        printf("Clube do Jogador: %s\n", get_nomeClube(registros[i]));
+        char *nomeClube = get_nomeClube(registros[i]);
+        char *nacionalidade = get_nacionalidade(registros[i]);
+        char *nomeJogador = get_nomeJogador(registros[i]);
+
+        printf("Nome do Jogador: ");
+        if (strcmp(nomeJogador, "SEM DADO") == 0)
+        {
+            printf("SEM DADO\n");
+        }
+        else
+        {
+            for (int j = 0; j < get_tamNomeJogador(registros[i]); j++)
+            {
+                printf("%c", nomeJogador[j]);
+            }
+            printf("\n");
+        }
+
+        printf("Nacionalidade do Jogador: ");
+        if (strcmp(nacionalidade, "SEM DADO") == 0)
+        {
+            printf("SEM DADO\n");
+        }
+        else
+        {
+            for (int j = 0; j < get_tamNacionalidade(registros[i]); j++)
+            {
+                printf("%c", nacionalidade[j]);
+            }
+            printf("\n");
+        }
+
+        printf("Clube do Jogador: ");
+        if(strcmp(nomeClube, "SEM DADO") == 0)
+        {
+            printf("SEM DADO\n");
+        }
+        else
+        {
+            for(int j = 0; j<get_tamNomeClube(registros[i]); j++)
+            {
+                printf("%c", nomeClube[j]);
+            }
+            printf("\n");
+        }
         printf("\n");
     }
 }
@@ -106,7 +148,7 @@ int get_tamanhoRegistro(REGISTRO *registro)
     return registro->tamanhoRegistro;
 }
 
-long get_prox(REGISTRO *registro)
+long long int get_prox(REGISTRO *registro)
 {
     return registro->prox;
 }
@@ -172,7 +214,7 @@ void set_tamanhoRegistro(REGISTRO *registro, int tamanhoRegistro)
     registro->tamanhoRegistro = tamanhoRegistro;
 }
 
-void set_prox(REGISTRO *registro, long prox)
+void set_prox(REGISTRO *registro, long long int prox)
 {
     registro->prox = prox;
 }
@@ -214,10 +256,6 @@ void set_tamNomeClube(REGISTRO *registro, int tamNomeClube)
 
 void set_nomeClube(REGISTRO *registro, char *nomeClube)
 {
-    if(strcmp(nomeClube, "FC GIRONDINS DE BORDEAUXQ") == 0)
-    {
-        nomeClube = "FC GIRONDINS DE BORDEAUX";
-    }
     registro->nomeClube = nomeClube;
 }
 

@@ -7,12 +7,12 @@ void lerCabecalhoFromBin(FILE *file, CABECALHO *cabecalho)
     fread(&status, sizeof(char), 1, file);
     setStatus(cabecalho, status);
 
-    long topo;
-    fread(&topo, sizeof(long), 1, file);
+    long long int topo;
+    fread(&topo, sizeof(long long int), 1, file);
     setTopo(cabecalho, topo);
 
-    long proxByteOffset;
-    fread(&proxByteOffset, sizeof(long), 1, file);
+    long long int proxByteOffset;
+    fread(&proxByteOffset, sizeof(long long int), 1, file);
     setProxByteOffset(cabecalho, proxByteOffset);
 
     int nroRegArq;
@@ -34,8 +34,8 @@ void lerRegistroFromBin(FILE *file, REGISTRO *registro)
     fread(&tamanhoRegistro, sizeof(int), 1, file);
     set_tamanhoRegistro(registro, tamanhoRegistro);
 
-    long prox;
-    fread(&prox, sizeof(long), 1, file);
+    long long int prox;
+    fread(&prox, sizeof(long long int), 1, file);
     set_prox(registro, prox);
 
     int id;
@@ -51,7 +51,10 @@ void lerRegistroFromBin(FILE *file, REGISTRO *registro)
     set_tamNomeJogador(registro, tamNomeJogador);
 
     char *nomeJogador = (char *)malloc(tamNomeJogador);
-    fread(nomeJogador, sizeof(char), tamNomeJogador, file);
+    for(int i = 0; i < tamNomeJogador; i++)
+    {
+        fread(&nomeJogador[i], sizeof(char), 1, file);
+    }
     set_nomeJogador(registro, nomeJogador);
 
     int tamNacionalidade;
@@ -59,7 +62,10 @@ void lerRegistroFromBin(FILE *file, REGISTRO *registro)
     set_tamNacionalidade(registro, tamNacionalidade);
 
     char *nacionalidade = (char *)malloc(tamNacionalidade);
-    fread(nacionalidade, sizeof(char), tamNacionalidade, file);
+    for(int i = 0; i < tamNacionalidade; i++)
+    {
+        fread(&nacionalidade[i], sizeof(char), 1, file);
+    }
     set_nacionalidade(registro, nacionalidade);
 
     int tamNomeClube;
@@ -67,7 +73,10 @@ void lerRegistroFromBin(FILE *file, REGISTRO *registro)
     set_tamNomeClube(registro, tamNomeClube);
 
     char *nomeClube = (char *)malloc(tamNomeClube);
-    fread(nomeClube, sizeof(char), tamNomeClube, file);
+    for(int i = 0; i < tamNomeClube; i++)
+    {
+        fread(&nomeClube[i], sizeof(char), 1, file);
+    }
     set_nomeClube(registro, nomeClube);
 }
 
@@ -102,7 +111,7 @@ LISTA *getRegistrosFromBin(char *filePath)
     CABECALHO *cabecalho = criarCabecalho();
     lerCabecalhoFromBin(file, cabecalho);
 
-    long byteOffset = getProxByteOffset(cabecalho);
+    long long int byteOffset = getProxByteOffset(cabecalho);
     int numRegistros = getNroRegArq(cabecalho) + getNroRem(cabecalho);
     byteOffset = 25;
 

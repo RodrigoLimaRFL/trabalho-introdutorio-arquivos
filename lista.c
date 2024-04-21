@@ -179,9 +179,52 @@ void imprimirLista(LISTA *lista) {
   for(int i=0; i<lista->tamanho; i++) {
     if(get_removido(lista->registros[i]) == '0') {
       impressoes++;
-      printf("Nome do Jogador: %s\n", get_nomeJogador(lista->registros[i]));
-      printf("Nacionalidade do Jogador: %s\n", get_nacionalidade(lista->registros[i]));
-      printf("Clube do Jogador: %s\n\n", get_nomeClube(lista->registros[i]));
+      char *nomeClube = get_nomeClube(lista->registros[i]);
+        char *nacionalidade = get_nacionalidade(lista->registros[i]);
+        char *nomeJogador = get_nomeJogador(lista->registros[i]);
+
+        printf("Nome do Jogador: ");
+        if (strcmp(nomeJogador, "SEM DADO") == 0)
+        {
+            printf("SEM DADO\n");
+        }
+        else
+        {
+            for (int j = 0; j < get_tamNomeJogador(lista->registros[i]); j++)
+            {
+                printf("%c", nomeJogador[j]);
+            }
+            printf("\n");
+        }
+
+        printf("Nacionalidade do Jogador: ");
+        if (strcmp(nacionalidade, "SEM DADO") == 0)
+        {
+            printf("SEM DADO\n");
+        }
+        else
+        {
+            for (int j = 0; j < get_tamNacionalidade(lista->registros[i]); j++)
+            {
+                printf("%c", nacionalidade[j]);
+            }
+            printf("\n");
+        }
+
+        printf("Clube do Jogador: ");
+        if(strcmp(nomeClube, "SEM DADO") == 0)
+        {
+            printf("SEM DADO\n");
+        }
+        else
+        {
+            for(int j = 0; j<get_tamNomeClube(lista->registros[i]); j++)
+            {
+                printf("%c", nomeClube[j]);
+            }
+            printf("\n");
+        }
+        printf("\n");
     }
   }
 

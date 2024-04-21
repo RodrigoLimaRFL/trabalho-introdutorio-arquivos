@@ -12,9 +12,9 @@
 
   char getStatus(CABECALHO *cabecalho);
 
-  long getTopo(CABECALHO *cabecalho);
+  long long int getTopo(CABECALHO *cabecalho);
 
-  long getProxByteOffset(CABECALHO *cabecalho);
+  long long int getProxByteOffset(CABECALHO *cabecalho);
 
   int getNroRegArq(CABECALHO *cabecalho);
 
@@ -22,9 +22,9 @@
 
   void setStatus(CABECALHO *cabecalho, char status);
 
-  void setTopo(CABECALHO *cabecalho, long topo);
+  void setTopo(CABECALHO *cabecalho, long long int topo);
 
-  void setProxByteOffset(CABECALHO *cabecalho, double proxByteOffset);
+  void setProxByteOffset(CABECALHO *cabecalho, long long int proxByteOffset);
 
   void setNroRegArq(CABECALHO *cabecalho, int nroRegArq);
 

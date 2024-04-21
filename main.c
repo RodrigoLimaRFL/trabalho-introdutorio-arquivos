@@ -21,6 +21,8 @@ int main() {
         
 
         CABECALHO *cabecalho = criarCabecalho();
+        setStatus(cabecalho, '1');
+        setProxByteOffset(cabecalho, 0);
         LISTA *lista = lerCsv(arquivoCsv);
         setValoresCabecalho(cabecalho, lista);
         escreveBinario(cabecalho, lista, arquivoBin);
