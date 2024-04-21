@@ -24,6 +24,7 @@ struct registro {
     char *nomeClube;
 };
 
+// Função que imprime os registros de acordo com os parâmetros de busca
 void imprimirRegistros(REGISTRO **registros)
 {
     if(registros == NULL || registros[0] == NULL)
@@ -32,18 +33,18 @@ void imprimirRegistros(REGISTRO **registros)
         printf("\n");
         return;
     }
-    for (int i = 0; registros[i] != NULL; i++)
+    for (int i = 0; registros[i] != NULL; i++) // Percorre o vetor de registros até encontrar um registro nulo
     {
         char *nomeClube = get_nomeClube(registros[i]);
         char *nacionalidade = get_nacionalidade(registros[i]);
         char *nomeJogador = get_nomeJogador(registros[i]);
 
         printf("Nome do Jogador: ");
-        if (strcmp(nomeJogador, "SEM DADO") == 0)
+        if (strcmp(nomeJogador, "SEM DADO") == 0) // se o nome do jogador for "SEM DADO", imprime "SEM DADO"
         {
             printf("SEM DADO\n");
         }
-        else
+        else // se não, imprime cada caractere do nome do jogador
         {
             for (int j = 0; j < get_tamNomeJogador(registros[i]); j++)
             {
@@ -53,11 +54,11 @@ void imprimirRegistros(REGISTRO **registros)
         }
 
         printf("Nacionalidade do Jogador: ");
-        if (strcmp(nacionalidade, "SEM DADO") == 0)
+        if (strcmp(nacionalidade, "SEM DADO") == 0) // se a nacionalidade do jogador for "SEM DADO", imprime "SEM DADO"
         {
             printf("SEM DADO\n");
         }
-        else
+        else // se não, imprime cada caractere da nacionalidade
         {
             for (int j = 0; j < get_tamNacionalidade(registros[i]); j++)
             {
@@ -67,11 +68,11 @@ void imprimirRegistros(REGISTRO **registros)
         }
 
         printf("Clube do Jogador: ");
-        if(strcmp(nomeClube, "SEM DADO") == 0)
+        if(strcmp(nomeClube, "SEM DADO") == 0) // se o nome do clube do jogador for "SEM DADO", imprime "SEM DADO"
         {
             printf("SEM DADO\n");
         }
-        else
+        else // se não, imprime cada caractere do nome do clube
         {
             for(int j = 0; j<get_tamNomeClube(registros[i]); j++)
             {
@@ -83,15 +84,18 @@ void imprimirRegistros(REGISTRO **registros)
     }
 }
 
+// Função que retorna a intersecao de dois vetores de registros, verificando se cada registro do primeiro vetor está no segundo vetor 
 REGISTRO **intersecaoDoisRegistros(REGISTRO **registro1, REGISTRO **registro2)
 {
     REGISTRO **intersecao = (REGISTRO **)malloc(0);
     int quantidade = 0;
+
+    // para cada registro do primeiro vetor, verifica se existe um registro do segundo vetor que é igual a ele (possui o mesmo id)
     for (int i = 0; registro1[i] != NULL; i++)
     {
         for (int j = 0; registro2[j] != NULL; j++)
         {
-            if (get_id(registro1[i]) == get_id(registro2[j]))
+            if (get_id(registro1[i]) == get_id(registro2[j])) // se forem iguais, adiciona o registro no vetor da intersecao
             {
                 intersecao = (REGISTRO **)realloc(intersecao, sizeof(REGISTRO *) * (quantidade + 1));
                 intersecao[quantidade] = registro1[i];
@@ -99,11 +103,14 @@ REGISTRO **intersecaoDoisRegistros(REGISTRO **registro1, REGISTRO **registro2)
             }
         }
     }
+
+    // adiciona mais um registro com o valor nulo no vetor intersecao para indicar o fim do vetor
     intersecao = (REGISTRO **)realloc(intersecao, sizeof(REGISTRO *) * (quantidade + 1));
     intersecao[quantidade] = NULL;
     return intersecao;
 }
 
+// Função que cria um registro com os valores iniciais
 REGISTRO *criarRegistroNulo()
 {
     REGISTRO *registro = (REGISTRO *)malloc(sizeof(REGISTRO));
@@ -121,6 +128,7 @@ REGISTRO *criarRegistroNulo()
     return registro;
 }
 
+// Função que cria um registro com os valores passados por parâmetro na função
 REGISTRO *criarRegistro(char removido, int tamanhoRegistro, long prox, int id, int idade, int tamNomeJogador, char *nomeJogador, int tamNacionalidade, char *nacionalidade, int tamNomeClube, char *nomeClube)
 {
     REGISTRO *registro = (REGISTRO *)malloc(sizeof(REGISTRO));
@@ -137,6 +145,8 @@ REGISTRO *criarRegistro(char removido, int tamanhoRegistro, long prox, int id, i
     registro->nomeClube = nomeClube;
     return registro;
 }
+
+// Funções get para que seja possível acessar os atributos dos registros em outras partes do código
 
 char get_removido(REGISTRO *registro)
 {
@@ -170,7 +180,7 @@ int get_tamNomeJogador(REGISTRO *registro)
 
 char *get_nomeJogador(REGISTRO *registro)
 {
-    if (strcmp(registro->nomeJogador, "") == 0)
+    if (strcmp(registro->nomeJogador, "") == 0) // se a string do nome do jogador estiver vazia, retorna "SEM DADO"
     {
         return "SEM DADO";
     }
@@ -184,7 +194,7 @@ int get_tamNacionalidade(REGISTRO *registro)
 
 char *get_nacionalidade(REGISTRO *registro)
 {
-    if (strcmp(registro->nacionalidade, "") == 0)
+    if (strcmp(registro->nacionalidade, "") == 0) // se a string da nacionalidade estiver vazia, retorna "SEM DADO"
     {
         return "SEM DADO";
     }
@@ -198,12 +208,15 @@ int get_tamNomeClube(REGISTRO *registro)
 
 char *get_nomeClube(REGISTRO *registro)
 {
-    if (strcmp(registro->nomeClube, "") == 0)
+    if (strcmp(registro->nomeClube, "") == 0) // se a string do nome do clube estiver vazia, retorna "SEM DADO"
     {
         return "SEM DADO";
     }
     return registro->nomeClube;
 }
+
+// Funções set para que seja possível alterar o valor de um atributo de um registro em outras partes do código
+
 void set_removido(REGISTRO *registro, int removido)
 {
     registro->removido = removido;
@@ -226,7 +239,7 @@ void set_id(REGISTRO *registro, int id)
 
 void set_idade(REGISTRO *registro, int idade)
 {
-    if(idade == 0)
+    if(idade == 0) // se idade for igual a 0, muda o valor do atributo idade do registro para -1 para indicar que é uma idade inválida
     {
         registro->idade = -1;
         return;
@@ -264,6 +277,7 @@ void set_nomeClube(REGISTRO *registro, char *nomeClube)
     registro->nomeClube = nomeClube;
 }
 
+// Função que libera o espaço de memória do registro e de seus atributos
 void liberarRegistro(REGISTRO *registro)
 {
     free(registro->nomeJogador);

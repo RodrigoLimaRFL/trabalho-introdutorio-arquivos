@@ -39,11 +39,11 @@ void setValoresCabecalho(CABECALHO *cabecalho, LISTA *lista) {
   
   i = 0;
   cabecalho->topo = 25; // Inicia o valor do proxByteOffset com 25, que é a quantidade de bytes do cabeçalho
-  // enquanto não encontrou um registro removido, incrementa o valor do proxyByteOffset com o valor do tamanho do registro atual
-  if(cabecalho->nroRegRem == 0) {
+  if(cabecalho->nroRegRem == 0) { // se não houver nenhum registro removido, atribui o valor -1 ao campo topo do cabeçalho
     cabecalho->topo = -1;
   }
   else{
+  // enquanto não encontrou um registro removido, incrementa o valor do proxyByteOffset com o valor do tamanho do registro atual
     while(get_removido(getRegistro(lista, i)) == '0' && (i<getTamanho(lista) - 1)) {
       cabecalho->topo += get_tamanhoRegistro(getRegistro(lista, i));
       i++;
