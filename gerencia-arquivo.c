@@ -53,27 +53,14 @@ LISTA *lerCsv(char *nomeArquivo) {
                                 dados->nomeClube);
         adicionarRegistro(lista, registro); // adiciona o registro criado na lista
 
+        free(dados); // libera a memória da variável dados
+
         i++;
     }
 
-    return lista; // retorna a lista com os valores dos registros lidos do arquivo csv
-
     fclose(arquivo); // fecha o arquivo csv
-}
 
-
-// Função para testar a função lerLinha
-void teste() {
-    DADOS *dados = (DADOS *) malloc(sizeof(DADOS));
-    char *linha = "1, 33, Messi, Argentina, Barcelona";
-    lerLinha(linha, dados); // salva os dados da linha na variável dados
-
-    // exibe os valores dos atributos dos dados
-    printf("ID: %d\n", dados->id);
-    printf("Idade: %d\n", dados->idade);
-    printf("Nome: %s\n", dados->nome_jogador);
-    printf("Nacionalidade: %s\n", dados->nacionalidade);
-    printf("Clube: %s\n", dados->nomeClube);
+    return lista; // retorna a lista com os valores dos registros lidos do arquivo csv
 }
 
 // Função que lê uma linha do arquivo csv e salva os valores lidos na variável dados
@@ -132,10 +119,13 @@ void lerLinha(char *linha, DADOS *dados) {
     nomeClube[contadores[4]] = '\0';
 
     dados->id = atoi(id); // converte o id lido para inteiro e salva em dados->id
+    free(id); // libera a memória da string id
+
     if(atoi(idade) == 0) // se idade é 0, salva como -1 para indicar que é uma idade inválida
         dados->idade = -1;
     else // se não, salva ela como um inteiro
         dados->idade = atoi(idade);
+    free(idade); // libera a memória da string idade
     
     // salva as strings dos dados na variável dados
     dados->nome_jogador = nome_jogador;

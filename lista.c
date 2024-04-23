@@ -158,9 +158,13 @@ int removerRegistro(LISTA *lista, int index) {
 
 // Função que libera a memória da lista e de seus registros
 int apagarLista(LISTA *lista) {
+  if(lista == NULL)
+    return 0;
+
   for(int i=0; i<lista->tamanho; i++) {
     liberarRegistro(lista->registros[i]);
   }
+  free(lista->registros);
 
   free(lista);
 }
@@ -193,51 +197,51 @@ void imprimirLista(LISTA *lista) {
 
       // recebe o valor dos atributos do registro
       char *nomeClube = get_nomeClube(lista->registros[i]);
-        char *nacionalidade = get_nacionalidade(lista->registros[i]);
-        char *nomeJogador = get_nomeJogador(lista->registros[i]);
+      char *nacionalidade = get_nacionalidade(lista->registros[i]);
+      char *nomeJogador = get_nomeJogador(lista->registros[i]);
 
-        printf("Nome do Jogador: ");
-        if (strcmp(nomeJogador, "SEM DADO") == 0) // se o nome do jogador for "SEM DADO", imprime "SEM DADO"
-        {
-            printf("SEM DADO\n");
-        }
-        else // se não, imprime cada caractere do nome do jogador
-        {
-            for (int j = 0; j < get_tamNomeJogador(lista->registros[i]); j++)
-            {
-                printf("%c", nomeJogador[j]);
-            }
-            printf("\n");
-        }
+      printf("Nome do Jogador: ");
+      if (strcmp(nomeJogador, "SEM DADO") == 0) // se o nome do jogador for "SEM DADO", imprime "SEM DADO"
+      {
+          printf("SEM DADO\n");
+      }
+      else // se não, imprime cada caractere do nome do jogador
+      {
+          for (int j = 0; j < get_tamNomeJogador(lista->registros[i]); j++)
+          {
+              printf("%c", nomeJogador[j]);
+          }
+          printf("\n");
+      }
 
-        printf("Nacionalidade do Jogador: ");
-        if (strcmp(nacionalidade, "SEM DADO") == 0) // se a nacionalidade for "SEM DADO", imprime "SEM DADO"
-        {
-            printf("SEM DADO\n");
-        }
-        else // se não, imprime cada caractere da nacionalidade
-        {
-            for (int j = 0; j < get_tamNacionalidade(lista->registros[i]); j++)
-            {
-                printf("%c", nacionalidade[j]);
-            }
-            printf("\n");
-        }
+      printf("Nacionalidade do Jogador: ");
+      if (strcmp(nacionalidade, "SEM DADO") == 0) // se a nacionalidade for "SEM DADO", imprime "SEM DADO"
+      {
+          printf("SEM DADO\n");
+      }
+      else // se não, imprime cada caractere da nacionalidade
+      {
+          for (int j = 0; j < get_tamNacionalidade(lista->registros[i]); j++)
+          {
+              printf("%c", nacionalidade[j]);
+          }
+          printf("\n");
+      }
 
-        printf("Clube do Jogador: ");
-        if(strcmp(nomeClube, "SEM DADO") == 0) // se o nome do clube for "SEM DADO", imprime "SEM DADO"
-        {
-            printf("SEM DADO\n");
-        }
-        else // se não, imprime cada caractere do nome do clube
-        {
-            for(int j = 0; j<get_tamNomeClube(lista->registros[i]); j++)
-            {
-                printf("%c", nomeClube[j]);
-            }
-            printf("\n");
-        }
-        printf("\n");
+      printf("Clube do Jogador: ");
+      if(strcmp(nomeClube, "SEM DADO") == 0) // se o nome do clube for "SEM DADO", imprime "SEM DADO"
+      {
+          printf("SEM DADO\n");
+      }
+      else // se não, imprime cada caractere do nome do clube
+      {
+          for(int j = 0; j<get_tamNomeClube(lista->registros[i]); j++)
+          {
+              printf("%c", nomeClube[j]);
+          }
+          printf("\n");
+      }
+      printf("\n");
     }
   }
 

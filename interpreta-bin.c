@@ -88,10 +88,6 @@ void lerRegistroFromBin(FILE *file, REGISTRO *registro)
         fread(&nomeClube[i], sizeof(char), 1, file);
     }
     set_nomeClube(registro, nomeClube);
-
-    free(nomeJogador);
-    free(nacionalidade);
-    free(nomeClube);
 }
 
 // Função que pega o cabeçalho do arquivo binário e salva em uma struct do tipo CABECALHO

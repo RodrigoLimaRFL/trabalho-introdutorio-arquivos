@@ -27,6 +27,9 @@ int main() {
         escreveBinario(cabecalho, lista, arquivoBin); // escreve os dados do cabeçalho e dos registros no arquivo binário
 
         binarioNaTela(arquivoBin);
+
+        apagarCabecalho(cabecalho); // libera a memória do cabeçalho
+        apagarLista(lista); // libera a memória da lista de registros
     }
     else if (strcmp(operacao, "2") == 0)
     {
@@ -38,6 +41,8 @@ int main() {
 
         if (lista)
             imprimirLista(lista); // imprime todos os registros da lista
+
+        apagarLista(lista); // libera a memória da lista de registros
     }
     else if (strcmp(operacao, "3") == 0)
     {
@@ -135,7 +140,9 @@ int main() {
                 }
             }
             imprimirRegistros(registros); // imprime os registros que satisfazem as condições de busca
+            free(registros); // libera a memória do vetor de registros
         }
+        apagarLista(lista); // libera a memória da lista de registros
     }
     else // se a operação for diferente de 1, 2 ou 3, imprime, imprime que a operação é inválida
     {

@@ -27,3 +27,6 @@ clean:
 
 run:
 	./gerencia-arquivo
+
+valgrind:
+	valgrind --leak-check=full ./gerencia-arquivo
