@@ -149,7 +149,7 @@ LISTA *getRegistrosFromBin(char *filePath)
         adicionarRegistro(lista, registro); // adiciona o registro criado na lista
     }
 
-    apagarCabecalho(cabecalho);
+    apagarCabecalho(cabecalho); // libera a memória do cabeçalho
 
     fclose(file); // fecha o arquivo
     return lista;
