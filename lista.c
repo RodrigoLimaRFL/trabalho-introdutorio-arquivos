@@ -159,7 +159,7 @@ int removerRegistro(LISTA *lista, int index) {
 // Função que libera a memória da lista e de seus registros
 int apagarLista(LISTA *lista) {
   for(int i=0; i<lista->tamanho; i++) {
-    free(lista->registros[i]);
+    liberarRegistro(lista->registros[i]);
   }
 
   free(lista);
