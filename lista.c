@@ -247,6 +247,6 @@ void imprimirLista(LISTA *lista) {
 
   if(impressoes == 0)
   {
-    printf("Registro inexistente.\n\n");
+    //printf("Registro inexistente.\n\n");
   }
 }

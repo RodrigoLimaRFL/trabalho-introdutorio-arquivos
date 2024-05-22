@@ -125,6 +125,13 @@ LISTA *getRegistrosFromBin(char *filePath)
     CABECALHO *cabecalho = criarCabecalho();
     lerCabecalhoFromBin(file, cabecalho);
 
+    if (getStatus(cabecalho) == '0')
+    {
+        printf("Falha no processamento do arquivo.");
+        fclose(file); // fecha o arquivo
+        return lista;
+    }
+
     long long int byteOffset = getProxByteOffset(cabecalho);
     int numRegistros = getNroRegArq(cabecalho) + getNroRem(cabecalho); // número total de registros
     byteOffset = 25;

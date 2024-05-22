@@ -38,7 +38,7 @@ int main() {
         scanf("%s", arquivoBin);
 
         LISTA *lista = getRegistrosFromBin(arquivoBin); // armazena os registros do arquivo binário na lista
-
+        
         if (lista)
             imprimirLista(lista); // imprime todos os registros da lista
 
