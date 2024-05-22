@@ -1,5 +1,5 @@
-all: lista.o cabecalho.o funcoes_fornecidas.o gerencia-arquivo.o registro.o interpreta-bin.o main.o
-	gcc registro.o lista.o cabecalho.o gerencia-arquivo.o interpreta-bin.o funcoes_fornecidas.o main.o -o gerencia-arquivo -std=c99 -Wall
+all: lista.o cabecalho.o funcoes_fornecidas.o gerencia-arquivo.o registro.o interpreta-bin.o indice.o criarIndice.o main.o
+	gcc registro.o lista.o cabecalho.o gerencia-arquivo.o interpreta-bin.o funcoes_fornecidas.o indice.o criarIndice.o main.o -o gerencia-arquivo -std=c99 -Wall
 
 funcoes_fornecidas.o:
 	gcc -c funcoes_fornecidas.c -o funcoes_fornecidas.o
@@ -18,6 +18,12 @@ interpreta-bin.o:
 
 cabecalho.o:
 	gcc -c cabecalho.c -o cabecalho.o
+
+indice.o:
+	gcc -c indice.c -o indice.o
+
+criarIndice.o:
+	gcc -c criarIndice.c -o criarIndice.o
 	  
 main.o:
 	gcc -c main.c -o main.o

@@ -5,6 +5,7 @@
 #include "interpreta-bin.h"
 #include "cabecalho.h"
 #include "funcoes_fornecidas.h"
+#include "criarIndice.h"
 
 int main() {
     char operacao[2];
@@ -143,6 +144,19 @@ int main() {
             free(registros); // libera a memória do vetor de registros
         }
         apagarLista(lista); // libera a memória da lista de registros
+    }
+    else if(strcmp(operacao, "4") == 0)
+    {
+        // adicionar nome do indice
+        // Ler binario
+        char arquivoBin[50];
+        scanf("%s", arquivoBin);
+
+        LISTA *lista = getRegistrosFromBin(arquivoBin); // armazena os registros do arquivo binário na lista
+        CABECALHO *cabecalho = criarCabecalho();
+        
+        if (lista)
+            criarArquivoDeIndice(lista,cabecalho);
     }
     else // se a operação for diferente de 1, 2 ou 3, imprime, imprime que a operação é inválida
     {
