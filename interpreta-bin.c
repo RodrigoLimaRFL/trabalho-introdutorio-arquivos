@@ -131,7 +131,7 @@ LISTA *getRegistrosFromBin(char *filePath)
 
     if(numRegistros == 0) // verifica se o arquivo não possui registros
     {
-        printf("Registro inexistente.\n");
+        printf("Registro inexistente.\n\n");
         fclose(file); // fecha o arquivo
         return lista;
     }
