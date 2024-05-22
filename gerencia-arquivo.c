@@ -112,6 +112,10 @@ void lerLinha(char *linha, DADOS *dados) {
     }
     nacionalidade[contadores[3]] = '\0';
     i++;
+
+    if (contadores[4] == 1)
+      contadores[4]--; // contadores 4 está sempre com um a mais por algum motivo quando esta vazio. Suspeitaa: falta de virgula no final.
+
     for(j = 0; j < contadores[4]; j++) {
         nomeClube[j] = linha[i];
         i++;
