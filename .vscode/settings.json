@@ -3,6 +3,7 @@
         "stdlib.h": "c",
         "interpreta-bin.h": "c",
         "registro.h": "c",
-        "cabecalho.h": "c"
+        "cabecalho.h": "c",
+        "registrodedados.h": "c"
     }
 }
