@@ -8,6 +8,7 @@
         "lista.h": "c",
         "percorrecsv.h": "c",
         "gerencia-arquivo.h": "c",
-        "funcoes_fornecidas.h": "c"
+        "funcoes_fornecidas.h": "c",
+        "indice.h": "c"
     }
 }

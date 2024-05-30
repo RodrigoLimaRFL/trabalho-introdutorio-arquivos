@@ -1,8 +1,8 @@
-/*#include "indice.h"
+#include "indice.h"
 #include <stdio.h>
 #include <stdlib.h>
 
-struct _registro_dados {
+/*struct _registro_dados {
     int index;
     long long int byteOffset;
 };
@@ -40,7 +40,7 @@ void apagarRegistroDados(REGISTRO_DADOS *registro) {
 
 void apagarIndice(INDICE *indice) {
     for(int i = 0; i < indice->quantidade; i++)
-        apagarRegistroDados(&indice->dados[i]);
+        apagarRegistroDados(indice->dados[i]);
     free(indice->dados);
     free(indice);
 }
@@ -65,7 +65,7 @@ int getQuantidadeIndice(INDICE *indice) {
     return indice->quantidade;
 }
 
-setDadoIndice(INDICE *indice, REGISTRO_DADOS *dado, int pos) {
+void setDadoIndice(INDICE *indice, REGISTRO_DADOS *dado, int pos) {
     indice->dados[pos] = dado;
 }
 
@@ -116,7 +116,7 @@ bool binarySearchIndice(INDICE *indice, int index, int *pos) {
 
 void shiftRegistrosRight(INDICE *indice, int pos) {
     // Allocate more memory to accommodate the new element
-    indice->dados = (REGISTRO_DADOS *) realloc(indice->dados, indice->quantidade * sizeof(REGISTRO_DADOS));
+    indice->dados = (REGISTRO_DADOS **) realloc(indice->dados, indice->quantidade * sizeof(REGISTRO_DADOS*));
     if(!indice->dados)
         return;
 
@@ -130,7 +130,7 @@ void insertRegistroIndice(INDICE *indice, REGISTRO_DADOS *registro) {
     int posicao = 0;
 
     if(indice->quantidade == 0) {
-        indice->dados = (REGISTRO_DADOS *) malloc(sizeof(REGISTRO_DADOS));
+        indice->dados = (REGISTRO_DADOS **) malloc(sizeof(REGISTRO_DADOS*));
         if(!indice->dados)
             return;
 
@@ -152,7 +152,7 @@ void insertRegistroIndice(INDICE *indice, REGISTRO_DADOS *registro) {
 }
 
 void printRegistrosIndice(INDICE *indice) {
-    indice->dados = (REGISTRO_DADOS *) realloc(indice->dados, indice->quantidade * sizeof(REGISTRO_DADOS));
+    indice->dados = (REGISTRO_DADOS **) realloc(indice->dados, indice->quantidade * sizeof(REGISTRO_DADOS*));
     if(!indice->dados)
         return;
     for(int i = 0; i < indice->quantidade; i++) {

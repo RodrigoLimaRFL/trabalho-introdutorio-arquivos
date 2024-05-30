@@ -285,3 +285,68 @@ void liberarRegistro(REGISTRO *registro)
     free(registro->nomeClube);
     free(registro);
 }
+
+REGISTRO *lerRegistroFromBin(int posicao, FILE *arquivoBin)
+{
+    fseek(arquivoBin, posicao, SEEK_SET);
+
+    REGISTRO *registro = criarRegistroNulo();
+
+    char removido;
+    fread(&removido, sizeof(char), 1, arquivoBin); // lê o caractere "removido" de um registro do arquivo e salva na variável removido
+    set_removido(registro, removido);
+
+    int tamanhoRegistro;
+    fread(&tamanhoRegistro, sizeof(int), 1, arquivoBin); // lê o tamanho de um registro do arquivo e salva na variável tamanhoRegistro
+    set_tamanhoRegistro(registro, tamanhoRegistro);
+
+    long long int prox;
+    fread(&prox, sizeof(long long int), 1, arquivoBin); // lê a posição do próximo registro removido do arquivo e salva na variável prox
+    set_prox(registro, prox);
+
+    int id;
+    fread(&id, sizeof(int), 1, arquivoBin); // lê o id de um registro do arquivo e salva na variável id
+    set_id(registro, id);
+
+    int idade;
+    fread(&idade, sizeof(int), 1, arquivoBin); // lê a idade do jogador de um registro do arquivo e salva na variável idade
+    set_idade(registro, idade);
+
+    int tamNomeJogador;
+    fread(&tamNomeJogador, sizeof(int), 1, arquivoBin); // lê o tamanho do nome do jogador de um registro do arquivo e salva na variável tamNomeJogador
+    set_tamNomeJogador(registro, tamNomeJogador);
+
+    char *nomeJogador = (char *)malloc(tamNomeJogador);
+    // lê cada caractere do nome do jogador de um registro no arquivo e salva na variavel nomeJogador
+    for(int i = 0; i < tamNomeJogador; i++)
+    {
+        fread(&nomeJogador[i], sizeof(char), 1, arquivoBin);
+    }
+    set_nomeJogador(registro, nomeJogador);
+
+    int tamNacionalidade;
+    fread(&tamNacionalidade, sizeof(int), 1, arquivoBin); // lê o tamanho da string nacionalidade de um registro do arquivo e salva na variável tamNacionalidade
+    set_tamNacionalidade(registro, tamNacionalidade);
+
+    char *nacionalidade = (char *)malloc(tamNacionalidade);
+    // lê cada caractere da string nacionalidade um registro no arquivo e salva na variavel nacionalidade
+    for(int i = 0; i < tamNacionalidade; i++)
+    {
+        fread(&nacionalidade[i], sizeof(char), 1, arquivoBin);
+    }
+    set_nacionalidade(registro, nacionalidade);
+
+    int tamNomeClube;
+    fread(&tamNomeClube, sizeof(int), 1, arquivoBin); // lê o tamanho do nome do clube de um registro do arquivo e salva na variável tamNomeClube
+    set_tamNomeClube(registro, tamNomeClube);
+
+    char *nomeClube = (char *)malloc(tamNomeClube);
+    // lê cada caractere do nome do clube um registro no arquivo e salva na variavel nomeClube
+    for(int i = 0; i < tamNomeClube; i++)
+    {
+        fread(&nomeClube[i], sizeof(char), 1, arquivoBin);
+    }
+    set_nomeClube(registro, nomeClube);
+
+    return registro;
+}

@@ -4,6 +4,6 @@
     #include "registro.h"
     #include "cabecalho.h"
 
-    CABECALHO *getCabecalhoFromBin(char *filePath);
-    LISTA *getRegistrosFromBin(char *filePath);
+    CABECALHO *getCabecalhoFromBin(FILE *file);
+    //LISTA *getRegistrosFromBin(char *filePath);
 #endif

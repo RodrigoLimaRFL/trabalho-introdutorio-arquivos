@@ -7,7 +7,8 @@
     #include "indice.h"
     #include "lista.h"
     #include "cabecalho.h"
+    #include "registroIndice.h"
+    #include "interpreta-bin.h"
 
-    //INDICE *criarArquivoDeIndice(LISTA *listaRegistros, CABECALHO *cabecalho);
-    //void escreveIndiceBinario(INDICE *indice, char *nomeArquivo);
+    void lerBinCriarIndice(char *arquivoBin, char *arquivoIndice);
 #endif

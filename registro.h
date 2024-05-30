@@ -33,4 +33,5 @@
     void set_tamNomeClube(REGISTRO *registro, int tamNomeClube);
     void set_nomeClube(REGISTRO *registro, char *nomeClube);
     void liberarRegistro(REGISTRO *registro);
+    REGISTRO *lerRegistroFromBin(int posicao, FILE *arquivoBin);
 #endif

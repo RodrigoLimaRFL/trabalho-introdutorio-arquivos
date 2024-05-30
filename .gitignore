@@ -1,5 +1,8 @@
-.bin
-.csv
+*.bin
+*.csv
+*.in
+*.out
+*.json
 
 # Prerequisites
 *.d

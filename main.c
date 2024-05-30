@@ -35,6 +35,7 @@ int main() {
     }
     else if (strcmp(operacao, "3") == 0)
     {
+        /*
         // Buscar
         char arquivoBin[50];
         scanf("%s", arquivoBin);
@@ -132,10 +133,10 @@ int main() {
             free(registros); // libera a memória do vetor de registros
         }
         apagarLista(lista); // libera a memória da lista de registros
+        */
     }
     else if(strcmp(operacao, "4") == 0)
     {
-        /*
         // adicionar nome do indice
         // Ler binario
         char arquivoBin[50];
@@ -143,7 +144,11 @@ int main() {
         char arquivoIndice[50];
         scanf("%s", arquivoIndice);
 
-        LISTA *lista = getRegistrosFromBin(arquivoBin); // armazena os registros do arquivo binário na lista
+        lerBinCriarIndice(arquivoBin, arquivoIndice);
+
+        binarioNaTela(arquivoIndice);
+
+        /*LISTA *lista = getRegistrosFromBin(arquivoBin); // armazena os registros do arquivo binário na lista
         CABECALHO *cabecalho = criarCabecalho();
         
         if (lista)
@@ -156,8 +161,7 @@ int main() {
         binarioNaTela(arquivoIndice);
 
         apagarCabecalho(cabecalho); // libera a memória do cabeçalho
-        apagarLista(lista); // libera a memória da lista de registros
-        */
+        apagarLista(lista); // libera a memória da lista de registros*/
     }
     else // se a operação for diferente de 1, 2 ou 3, imprime, imprime que a operação é inválida
     {

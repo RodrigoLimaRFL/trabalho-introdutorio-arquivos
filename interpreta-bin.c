@@ -30,6 +30,7 @@ void lerCabecalhoFromBin(FILE *file, CABECALHO *cabecalho)
     setNroRem(cabecalho, nroRem);
 }
 
+/*
 // Função que lê os valores de um registro do arquivo binário e salva em um registro
 void lerRegistroFromBin(FILE *file, REGISTRO *registro)
 {
@@ -89,25 +90,19 @@ void lerRegistroFromBin(FILE *file, REGISTRO *registro)
     }
     set_nomeClube(registro, nomeClube);
 }
+*/
 
 // Função que pega o cabeçalho do arquivo binário e salva em uma struct do tipo CABECALHO
-CABECALHO *getCabecalhoFromBin(char *filePath)
+CABECALHO *getCabecalhoFromBin(FILE *file)
 {
-    FILE *file = fopen(filePath, "rb");
-    if (file == NULL) // verifica se ocorreu um erro ao abrir o arquivo no modo leitura
-    {
-        printf("Falha no processamento do arquivo.");
-        return NULL;
-    }
-
     // cria um cabeçalho e chama a função lerCabecalhoFromBin para atribuir os valores a ele
     CABECALHO *cabecalho = criarCabecalho();
     lerCabecalhoFromBin(file, cabecalho);
 
-    fclose(file); // fecha o arquivo
     return cabecalho;
 }
 
+/*
 // Função que pega os registros do arquivo binário e salva na lista de registros
 LISTA *getRegistrosFromBin(char *filePath)
 {
@@ -156,4 +151,4 @@ LISTA *getRegistrosFromBin(char *filePath)
 
     fclose(file); // fecha o arquivo
     return lista;
-}
+}*/
