@@ -4,6 +4,10 @@
         "interpreta-bin.h": "c",
         "registro.h": "c",
         "cabecalho.h": "c",
-        "registrodedados.h": "c"
+        "registrodedados.h": "c",
+        "lista.h": "c",
+        "percorrecsv.h": "c",
+        "gerencia-arquivo.h": "c",
+        "funcoes_fornecidas.h": "c"
     }
 }

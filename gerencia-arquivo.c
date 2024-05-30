@@ -6,6 +6,7 @@
 #include "lista.h"
 #include "cabecalho.h"
 
+/*
 struct dados {
     int id;
     int idade;
@@ -207,3 +208,4 @@ void escreveBinario(CABECALHO *cabecalho, LISTA *lista, char *binario) {
   }
   fclose(f); // fecha o arquivo
 }
+*/

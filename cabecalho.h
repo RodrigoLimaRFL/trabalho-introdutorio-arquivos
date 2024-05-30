@@ -1,35 +1,44 @@
 #ifndef CABECALHO_H
+    #define CABECALHO_H
 
-  #define CABECALHO_H
+    #include "lista.h"
 
-  #include "lista.h"
+    typedef struct cabecalho_ CABECALHO;
 
-  typedef struct cabecalho_ CABECALHO;
+    CABECALHO *criarCabecalho(void);
 
-  CABECALHO *criarCabecalho(void);
+    void setValoresCabecalho(CABECALHO *cabecalho, LISTA *lista);
 
-  void setValoresCabecalho(CABECALHO *cabecalho, LISTA *lista);
+    char getStatus(CABECALHO *cabecalho);
 
-  char getStatus(CABECALHO *cabecalho);
+    long long int getTopo(CABECALHO *cabecalho);
 
-  long long int getTopo(CABECALHO *cabecalho);
+    long long int getProxByteOffset(CABECALHO *cabecalho);
 
-  long long int getProxByteOffset(CABECALHO *cabecalho);
+    int getNroRegArq(CABECALHO *cabecalho);
 
-  int getNroRegArq(CABECALHO *cabecalho);
+    int getNroRem(CABECALHO *cabecalho);
 
-  int getNroRem(CABECALHO *cabecalho);
+    void setStatus(CABECALHO *cabecalho, char status);
 
-  void setStatus(CABECALHO *cabecalho, char status);
+    void setTopo(CABECALHO *cabecalho, long long int topo);
 
-  void setTopo(CABECALHO *cabecalho, long long int topo);
+    void setProxByteOffset(CABECALHO *cabecalho, long long int proxByteOffset);
 
-  void setProxByteOffset(CABECALHO *cabecalho, long long int proxByteOffset);
+    void setNroRegArq(CABECALHO *cabecalho, int nroRegArq);
 
-  void setNroRegArq(CABECALHO *cabecalho, int nroRegArq);
+    void setNroRem(CABECALHO *cabecalho, int nroRem);
 
-  void setNroRem(CABECALHO *cabecalho, int nroRem);
+    void apagarCabecalho(CABECALHO *cabecalho);
 
-  void apagarCabecalho(CABECALHO *cabecalho);
+    void writeStatusCabecalho(CABECALHO *cabecalho, FILE *arquivoBin);
+
+    void writeTopoCabecalho(CABECALHO *cabecalho, FILE *arquivoBin);
+
+    void writeProxByteOffsetCabecalho(CABECALHO *cabecalho, FILE *arquivoBin);
+
+    void writeNroRegArqCabecalho(CABECALHO *cabecalho, FILE *arquivoBin);
+
+    void writeNroRegRemCabecalho(CABECALHO *cabecalho, FILE *arquivoBin);
 
 #endif

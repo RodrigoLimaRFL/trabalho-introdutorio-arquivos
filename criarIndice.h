@@ -8,6 +8,6 @@
     #include "lista.h"
     #include "cabecalho.h"
 
-    void criarArquivoDeIndice(LISTA *listaRegistros, CABECALHO *cabecalho);
-
+    //INDICE *criarArquivoDeIndice(LISTA *listaRegistros, CABECALHO *cabecalho);
+    //void escreveIndiceBinario(INDICE *indice, char *nomeArquivo);
 #endif

@@ -1,4 +1,4 @@
-#include "indice.h"
+/*#include "indice.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -10,7 +10,7 @@ struct _registro_dados {
 struct _indice {
     char status;
     int quantidade; // nao insere no arquivo
-    REGISTRO_DADOS *dados;
+    REGISTRO_DADOS **dados;
 };
 
 #pragma region Criar e Apagar
@@ -57,10 +57,6 @@ void setQuantidadeIndice(INDICE *indice, int quantidade) {
     indice->quantidade = quantidade;
 }
 
-void setDadosIndice(INDICE *indice, REGISTRO_DADOS *dados) {
-    indice->dados = dados;
-}
-
 char getStatusIndice(INDICE *indice) {
     return indice->status;
 }
@@ -69,7 +65,15 @@ int getQuantidadeIndice(INDICE *indice) {
     return indice->quantidade;
 }
 
-REGISTRO_DADOS *getDadosIndice(INDICE *indice) {
+setDadoIndice(INDICE *indice, REGISTRO_DADOS *dado, int pos) {
+    indice->dados[pos] = dado;
+}
+
+REGISTRO_DADOS *getDadoIndice(INDICE *indice, int pos) {
+    return indice->dados[pos];
+}
+
+REGISTRO_DADOS **getDadosIndice(INDICE *indice) {
     return indice->dados;
 }
 
@@ -97,11 +101,11 @@ bool binarySearchIndice(INDICE *indice, int index, int *pos) {
     int meio;
     while(inicio <= fim) {
         meio = (inicio + fim) / 2;
-        if(indice->dados[meio].index == index) {
+        if(getIndexRegistroIndice(indice->dados[meio]) == index) {
             *pos = meio;
             return true;
         }
-        if(indice->dados[meio].index < index)
+        if((getIndexRegistroIndice(indice->dados[meio])) < index)
             inicio = meio + 1;
         else
             fim = meio - 1;
@@ -129,7 +133,8 @@ void insertRegistroIndice(INDICE *indice, REGISTRO_DADOS *registro) {
         indice->dados = (REGISTRO_DADOS *) malloc(sizeof(REGISTRO_DADOS));
         if(!indice->dados)
             return;
-        indice->dados[0] = *registro;
+
+        setDadoIndice(indice, registro, 0);
         indice->quantidade++;
         return;
     }
@@ -143,9 +148,7 @@ void insertRegistroIndice(INDICE *indice, REGISTRO_DADOS *registro) {
     shiftRegistrosRight(indice, posicao);
 
     // Insert the new record at the correct position
-    indice->dados[posicao] = *registro;
-
-    printf("Indice dado index: %i, byteOffset: %lld\n", indice->dados[posicao].index, indice->dados[posicao].byteOffset);
+    setDadoIndice(indice, registro, posicao);
 }
 
 void printRegistrosIndice(INDICE *indice) {
@@ -153,6 +156,7 @@ void printRegistrosIndice(INDICE *indice) {
     if(!indice->dados)
         return;
     for(int i = 0; i < indice->quantidade; i++) {
-        printf("index: %d, byteOffset: %lld\n", indice->dados[i].index, indice->dados[i].byteOffset);
+        REGISTRO_DADOS *dado = getDadoIndice(indice, i);
+        printf("index: %d, byteOffset: %lld\n", getIndexRegistroIndice(dado), getByteOffsetRegistroIndice(dado));
     }
-}
+}*/

@@ -6,6 +6,7 @@
 #include "cabecalho.h"
 #include "funcoes_fornecidas.h"
 #include "criarIndice.h"
+#include "percorreCsv.h"
 
 int main() {
     char operacao[2];
@@ -19,18 +20,9 @@ int main() {
         char arquivoBin[50];
         scanf("%s", arquivoBin); // lê o nome do arquivo binário
 
-        CABECALHO *cabecalho = criarCabecalho();
-        setStatus(cabecalho, '1');
-        setProxByteOffset(cabecalho, 0);
-
-        LISTA *lista = lerCsv(arquivoCsv); // armazena os dados do arquivo csv na lista de registros
-        setValoresCabecalho(cabecalho, lista); // define os valores dos campos do cabeçalho
-        escreveBinario(cabecalho, lista, arquivoBin); // escreve os dados do cabeçalho e dos registros no arquivo binário
+        lerCsvEscreveBin(arquivoCsv, arquivoBin);
 
         binarioNaTela(arquivoBin);
-
-        apagarCabecalho(cabecalho); // libera a memória do cabeçalho
-        apagarLista(lista); // libera a memória da lista de registros
     }
     else if (strcmp(operacao, "2") == 0)
     {
@@ -147,16 +139,29 @@ int main() {
     }
     else if(strcmp(operacao, "4") == 0)
     {
+        /*
         // adicionar nome do indice
         // Ler binario
         char arquivoBin[50];
         scanf("%s", arquivoBin);
+        char arquivoIndice[50];
+        scanf("%s", arquivoIndice);
 
         LISTA *lista = getRegistrosFromBin(arquivoBin); // armazena os registros do arquivo binário na lista
         CABECALHO *cabecalho = criarCabecalho();
         
         if (lista)
-            criarArquivoDeIndice(lista,cabecalho);
+        {
+            INDICE *indice = criarArquivoDeIndice(lista, cabecalho); // cria o arquivo de índice
+            escreveIndiceBinario(indice, arquivoIndice); // escreve o índice no arquivo binário
+        
+        }
+
+        binarioNaTela(arquivoIndice);
+
+        apagarCabecalho(cabecalho); // libera a memória do cabeçalho
+        apagarLista(lista); // libera a memória da lista de registros
+        */
     }
     else // se a operação for diferente de 1, 2 ou 3, imprime, imprime que a operação é inválida
     {
