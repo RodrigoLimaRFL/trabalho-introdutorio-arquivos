@@ -7,5 +7,6 @@
     void lerRegistroFromBin2(FILE *file, REGISTRO *registro);
     CABECALHO *getCabecalhoFromBin2(char *filePath);
     void imprimeRegistrosFromBin(char *filePath);
-    void imprimeRegistro(REGISTRO *registro);
+    int imprimeRegistro(REGISTRO *registro);
+    void imprimeRegistrosBuscados(char *arquivo);
 #endif

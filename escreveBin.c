@@ -1,5 +1,6 @@
 #include "escreveBin.h"
 #include "cabecalho.h"
+#include "funcoes_fornecidas.h"
 
 // Função que lê os valores do cabeçalho do arquivo binário e salva na struct cabeçalho
 void lerCabecalhoFromBin2(FILE *file, CABECALHO *cabecalho)
@@ -108,9 +109,10 @@ CABECALHO *getCabecalhoFromBin2(char *filePath)
     return cabecalho;
 }
 
-// Função que pega os registros do arquivo binário e salva na lista de registros
+// Função que pega os registros do arquivo binário e imprime eles na tela
 void imprimeRegistrosFromBin(char *filePath)
 {
+    int impressoes = 0;
     FILE *file = fopen(filePath, "rb"); // verifica se ocorreu um erro ao abrir o arquivo no modo leitura
     if (file == NULL)
     {
@@ -148,7 +150,11 @@ void imprimeRegistrosFromBin(char *filePath)
         REGISTRO *registro = criarRegistroNulo(); // cria um registro com os valores iniciais
         lerRegistroFromBin2(file, registro); // salva os valores do registro do arquivo binário no registro criado
         byteOffset += get_tamanhoRegistro(registro); // muda o byteOffset para a posição do próximo registro
-        imprimeRegistro(registro);
+        impressoes += imprimeRegistro(registro);
+    }
+
+    if(impressoes == 0) {
+      printf("Registro inexistente.\n\n");
     }
 
     apagarCabecalho(cabecalho); // libera a memória do cabeçalho
@@ -157,7 +163,7 @@ void imprimeRegistrosFromBin(char *filePath)
     return;
 }
 
-void imprimeRegistro(REGISTRO *registro) {
+int imprimeRegistro(REGISTRO *registro) {
   if(get_removido(registro) == '0') { // se o registro não foi removido, imprime seus dados na tela
 
     // recebe o valor dos atributos do registro
@@ -207,5 +213,118 @@ void imprimeRegistro(REGISTRO *registro) {
         printf("\n");
     }
     printf("\n");
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
+void imprimeRegistrosBuscados(char *arquivo) {
+  int numOperacoes;
+  scanf("%d", &numOperacoes); // lê o número de buscas a serem feitas
+
+  for (int i = 0; i < numOperacoes; i++) {
+    int impressoes = 0;
+    int m;
+    scanf("%i", &m); // lê o número de parâmetros da busca
+
+    FILE *file = fopen(arquivo, "rb"); // verifica se ocorreu um erro ao abrir o arquivo no modo leitura
+    if (file == NULL)
+    {
+      printf("Falha no processamento do arquivo.");
+      return;
+    }
+
+    // cria um cabeçalho e chama a função lerCabecalhoFromBin para atribuir os valores a ele
+    CABECALHO *cabecalho = criarCabecalho();
+    lerCabecalhoFromBin2(file, cabecalho);
+
+    if (getStatus(cabecalho) == '0')
+    {
+        printf("Falha no processamento do arquivo.");
+        fclose(file); // fecha o arquivo
+        return;
+    }
+
+    long long int byteOffset = getProxByteOffset(cabecalho);
+    int numRegistros = getNroRegArq(cabecalho) + getNroRem(cabecalho); // número total de registros
+    byteOffset = 25;
+
+    if(numRegistros == 0) // verifica se o arquivo não possui registros
+    {
+        printf("Registro inexistente.\n\n");
+        fclose(file); // fecha o arquivo
+        return;
+    }
+
+    char campos[5][50];
+    char parametros[5][50];
+    int id, idade;
+    char nome[50], nomeClube[50], nacionalidade[50];
+    for(int j=0; j<m; j++) {
+      scanf("%s", campos[j]); // lê um parâmetro da busca
+      if(strcmp(campos[j], "id") == 0) {
+        scanf("%i", &id); // lê o id da busca
+      } else if(strcmp(campos[j], "nome") == 0) {
+        scan_quote_string(nome);
+      } else if(strcmp(campos[j], "idade") == 0) {
+        scanf("%i", &idade);
+      } else if(strcmp(campos[j], "nomeClube") == 0) {
+        scan_quote_string(nomeClube);
+      } else if(strcmp(campos[j], "nacionalidade") == 0) {
+        scan_quote_string(nacionalidade);
+      } else {
+        printf("Campo invalido\n");
+      }
+    }
+
+    printf("Busca %d\n", i + 1);
+    printf("\n");
+    
+    for (int j = 0; j < numRegistros; j++) {
+      fseek(file, byteOffset, SEEK_SET); // muda a posição do ponteiro do arquivo para a posição do byteOffset do registro
+      REGISTRO *registro = criarRegistroNulo(); // cria um registro com os valores iniciais
+      lerRegistroFromBin2(file, registro); // salva os valores do registro do arquivo binário no registro criado
+      byteOffset += get_tamanhoRegistro(registro); // muda o byteOffset para a posição do próximo registro
+      
+      int imprimir = 1;
+      if(get_removido(registro) == '1') {
+        imprimir = 0;
+      } else {
+        for (int k = 0; k < m; k++) {
+          if(strcmp(campos[k], "id") == 0) { // verifica se o parâmetro da busca é o id
+            if(id != get_id(registro)) {
+              imprimir = 0;
+            }
+          } else if(strcmp(campos[k], "nome") == 0) {
+            if(strcmp(nome, get_nomeJogador(registro)) != 0) {
+              imprimir = 0;
+            }
+          } else if(strcmp(campos[k], "idade") == 0) {
+            if(idade != get_idade(registro)) {
+              imprimir = 0;
+            }
+          } else if(strcmp(campos[k], "nomeClube") == 0) {
+            if(strcmp(nomeClube, get_nomeClube(registro)) != 0) {
+              imprimir = 0;
+            }
+          } else if(strcmp(campos[k], "nacionalidade") == 0) {
+            if(strcmp(nacionalidade, get_nacionalidade(registro)) != 0) {
+              imprimir = 0;
+            }
+          }
+        }
+      }
+      if(imprimir == 1) {
+        imprimeRegistro(registro);
+        impressoes++;
+      }
+    }
+    fclose(file);
+    apagarCabecalho(cabecalho); // libera a memória do cabeçalho
+
+    if(impressoes == 0) {
+      printf("Registro inexistente.\n\n");
+    }
   }
 }
