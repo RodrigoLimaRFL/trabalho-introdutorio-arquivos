@@ -35,7 +35,6 @@ int main() {
     }
     else if (strcmp(operacao, "3") == 0)
     {
-        /*
         // Buscar
         char arquivoBin[50];
         scanf("%s", arquivoBin);
@@ -54,21 +53,6 @@ int main() {
         lerBinCriarIndice(arquivoBin, arquivoIndice);
 
         binarioNaTela(arquivoIndice);
-
-        /*LISTA *lista = getRegistrosFromBin(arquivoBin); // armazena os registros do arquivo binário na lista
-        CABECALHO *cabecalho = criarCabecalho();
-        
-        if (lista)
-        {
-            INDICE *indice = criarArquivoDeIndice(lista, cabecalho); // cria o arquivo de índice
-            escreveIndiceBinario(indice, arquivoIndice); // escreve o índice no arquivo binário
-        
-        }
-
-        binarioNaTela(arquivoIndice);
-
-        apagarCabecalho(cabecalho); // libera a memória do cabeçalho
-        apagarLista(lista); // libera a memória da lista de registros*/
     }
     else // se a operação for diferente de 1, 2 ou 3, imprime, imprime que a operação é inválida
     {
