@@ -1,7 +1,7 @@
 {
     "files.associations": {
         "stdlib.h": "c",
-        "interpreta-bin.h": "c",
+        "escreveBin.h": "c",
         "registro.h": "c",
         "cabecalho.h": "c",
         "registrodedados.h": "c",

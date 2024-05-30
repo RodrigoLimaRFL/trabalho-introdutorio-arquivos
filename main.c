@@ -2,6 +2,7 @@
 
 #include "gerencia-arquivo.h"
 #include "lista.h"
+#include "escreveBin.h"
 #include "interpreta-bin.h"
 #include "cabecalho.h"
 #include "funcoes_fornecidas.h"
@@ -30,12 +31,7 @@ int main() {
         char arquivoBin[50];
         scanf("%s", arquivoBin);
 
-        LISTA *lista = getRegistrosFromBin(arquivoBin); // armazena os registros do arquivo binário na lista
-        
-        if (lista)
-            imprimirLista(lista); // imprime todos os registros da lista
-
-        apagarLista(lista); // libera a memória da lista de registros
+        imprimeRegistrosFromBin(arquivoBin); // armazena os registros do arquivo binário na lista
     }
     else if (strcmp(operacao, "3") == 0)
     {
