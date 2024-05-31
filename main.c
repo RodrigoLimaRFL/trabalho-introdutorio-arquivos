@@ -50,9 +50,10 @@ int main() {
         char arquivoIndice[50];
         scanf("%s", arquivoIndice);
 
-        lerBinCriarIndice(arquivoBin, arquivoIndice);
-
-        binarioNaTela(arquivoIndice);
+        if(lerBinCriarIndice(arquivoBin, arquivoIndice))
+        {
+            binarioNaTela(arquivoIndice);
+        }
     }
     else // se a operação for diferente de 1, 2 ou 3, imprime, imprime que a operação é inválida
     {

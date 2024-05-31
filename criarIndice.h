@@ -3,6 +3,7 @@
 
     #include <stdio.h>
     #include <stdlib.h>
+    #include <stdbool.h>
 
     #include "indice.h"
     #include "lista.h"
@@ -10,5 +11,5 @@
     #include "registroIndice.h"
     #include "interpreta-bin.h"
 
-    void lerBinCriarIndice(char *arquivoBin, char *arquivoIndice);
+    bool lerBinCriarIndice(char *arquivoBin, char *arquivoIndice);
 #endif
