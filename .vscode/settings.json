@@ -11,6 +11,7 @@
         "funcoes_fornecidas.h": "c",
         "indice.h": "c",
         "interpreta-bin.h": "c",
-        "string.h": "c"
+        "string.h": "c",
+        "inserirdado.h": "c"
     }
 }

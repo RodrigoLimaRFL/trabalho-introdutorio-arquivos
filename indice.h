@@ -12,7 +12,7 @@
         REGISTRO_INDICE *getRegistroIndice(LISTA_INDICE *lista, int index);
         int getTamanhoIndice(LISTA_INDICE *lista);
         bool adicionarRegistroIndice(LISTA_INDICE *lista, REGISTRO_INDICE *registro);
-        bool adicionarRegistroOrdenadoIndice(LISTA_INDICE *lista, REGISTRO_INDICE *registro);
+        bool adicionarRegistroOrdenadoIndice(LISTA_INDICE *lista, REGISTRO_INDICE *registro, FILE *file);
         bool modificarRegistroIndice(LISTA_INDICE *lista, int index, REGISTRO_INDICE *novoRegistro);
         REGISTRO_INDICE *buscarRegistroIndice(LISTA_INDICE *lista, int id);
         void removerRegistroIndice(LISTA_INDICE *lista, int index);
