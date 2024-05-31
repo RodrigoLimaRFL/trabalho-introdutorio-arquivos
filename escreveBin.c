@@ -287,18 +287,6 @@ void imprimeRegistrosBuscados(char *arquivo) {
     printf("Busca %d\n", i + 1);
     printf("\n");
 
-    for (int j = 0; j < m; j ++) {
-      REGISTRO *registro = buscarRegistro(parametros[j], campos[j], cabecalho, file);
-
-      if (registro == NULL)
-      {
-        printf("Registro inexistente.\n\n");
-        continue;
-      }
-
-      imprimeRegistro(registro);
-    }
-    
     for (int j = 0; j < numRegistros; j++) {
       fseek(file, byteOffset, SEEK_SET); // muda a posição do ponteiro do arquivo para a posição do byteOffset do registro
       REGISTRO *registro = criarRegistroNulo(); // cria um registro com os valores iniciais

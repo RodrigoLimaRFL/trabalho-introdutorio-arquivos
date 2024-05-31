@@ -7,6 +7,7 @@
 #include "funcoes_fornecidas.h"
 #include "criarIndice.h"
 #include "percorreCsv.h"
+#include "inserirDado.h"
 
 int main() {
     char operacao[2];
@@ -59,6 +60,19 @@ int main() {
         scanf("%s", arquivoBin);
 
         removerRegistrosBuscados(arquivoBin);
+    }
+    else if(strcmp(operacao, "6") == 0)
+    {
+        char arquivoBin[50];
+        scanf("%s", arquivoBin);
+
+        char arquivoIndice[50];
+        scanf("%s", arquivoIndice);
+
+        inserirNovoDado(arquivoBin, arquivoIndice);
+
+        binarioNaTela(arquivoBin);
+        binarioNaTela(arquivoIndice);
     }
     else // se a operação for diferente de 1, 2 ou 3, imprime, imprime que a operação é inválida
     {
