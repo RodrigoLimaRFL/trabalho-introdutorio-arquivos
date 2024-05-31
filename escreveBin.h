@@ -9,4 +9,5 @@
     void imprimeRegistrosFromBin(char *filePath);
     int imprimeRegistro(REGISTRO *registro);
     void imprimeRegistrosBuscados(char *arquivo);
+    void removerRegistrosBuscados(char *arquivo);
 #endif
