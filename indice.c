@@ -1,4 +1,5 @@
 #include "indice.h"
+#include "registro.h"
 
 struct _lista
 {
@@ -39,6 +40,35 @@ bool adicionarRegistro(LISTA_INDICE *lista, REGISTRO_INDICE *registro)
     }
     lista->registros[lista->tamanho] = registro; // adiciona o registro no final da lista
     (lista->tamanho)++;                          // atualiza o tamanho da lista
+    return true;
+}
+
+bool adicionarRegistroOrdenado(LISTA_INDICE *lista, REGISTRO_INDICE *registro)
+{
+    if (lista->tamanho >= lista->max_tamanho) {
+        lista->max_tamanho += 1000;
+        lista->registros = (REGISTRO_INDICE **)realloc(lista->registros, sizeof(REGISTRO_INDICE *) * lista->max_tamanho);
+        if (!lista->registros) {
+            printf("Erro ao realocar memória.\n");
+            return false;
+        }
+    }
+
+    // Encontrar a posição correta para inserir o novo registro
+    int pos = 0;
+    while (pos < lista->tamanho && get_tamanhoRegistro(lista->registros[pos]) < get_tamanhoRegistro(registro)) {
+        pos++;
+    }
+
+    // Deslocar os elementos para a direita para abrir espaço para o novo registro
+    for (int i = lista->tamanho; i > pos; i--) {
+        lista->registros[i] = lista->registros[i - 1];
+    }
+
+    // Inserir o novo registro na posição correta
+    lista->registros[pos] = registro;
+    (lista->tamanho)++;
+
     return true;
 }
 
