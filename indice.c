@@ -8,7 +8,7 @@ struct _lista
     REGISTRO_INDICE **registros; // a lista possui um vetor de endereços de registros
 };
 
-LISTA_INDICE *criarLista()
+LISTA_INDICE *criarListaIndice()
 {
     LISTA_INDICE *lista = (LISTA_INDICE *)malloc(sizeof(LISTA_INDICE));
     lista->tamanho = 0;
@@ -18,17 +18,17 @@ LISTA_INDICE *criarLista()
     return lista;
 }
 
-REGISTRO_INDICE *getRegistro(LISTA_INDICE *lista, int index)
+REGISTRO_INDICE *getRegistroIndice(LISTA_INDICE *lista, int index)
 {
     return lista->registros[index]; // retorna o registro de determinado index da lista
 }
 
-int getTamanho(LISTA_INDICE *lista)
+int getTamanhoListaIndice(LISTA_INDICE *lista)
 {
     return lista->tamanho;
 }
 
-bool adicionarRegistro(LISTA_INDICE *lista, REGISTRO_INDICE *registro)
+bool adicionarRegistroIndice(LISTA_INDICE *lista, REGISTRO_INDICE *registro)
 {
     if(lista->tamanho >= lista->max_tamanho) {
         lista->max_tamanho += 1000;
@@ -42,15 +42,13 @@ bool adicionarRegistro(LISTA_INDICE *lista, REGISTRO_INDICE *registro)
     (lista->tamanho)++;                          // atualiza o tamanho da lista
     return true;
 }
-
 REGISTRO *buscarRegistroOffset(long long offset, FILE *file) {
     fseek(file, offset, SEEK_SET);
     REGISTRO *registro = criarRegistroNulo(); // cria um registro com os valores iniciais
     lerRegistroFromBin2(file, registro); // salva os valores do registro do arquivo binário no registro criado
     return registro;
 }
-
-bool adicionarRegistroOrdenado(LISTA_INDICE *lista, REGISTRO_INDICE *registro, FILE *file)
+bool adicionarRegistroOrdenadoIndice(LISTA_INDICE *lista, REGISTRO_INDICE *registro, FILE *file)
 {
     if (lista->tamanho >= lista->max_tamanho) {
         lista->max_tamanho += 1000;
@@ -79,14 +77,14 @@ bool adicionarRegistroOrdenado(LISTA_INDICE *lista, REGISTRO_INDICE *registro, F
     return true;
 }
 
-bool modificarRegistro(LISTA_INDICE *lista, int index, REGISTRO_INDICE *novoRegistro)
+bool modificarRegistroIndice(LISTA_INDICE *lista, int index, REGISTRO_INDICE *novoRegistro)
 {
     lista->registros[index] = novoRegistro; // o registro de determinado index recebe o valor do novo registro
     return true;
 }
 
 // busca binaria em relação ao id
-REGISTRO_INDICE *buscarRegistro(LISTA_INDICE *lista, int id)
+REGISTRO_INDICE *buscarRegistroIndice(LISTA_INDICE *lista, int id)
 {
     REGISTRO_INDICE *registro = NULL;
 
@@ -116,7 +114,7 @@ REGISTRO_INDICE *buscarRegistro(LISTA_INDICE *lista, int id)
 }
 
 // Função para remover um registro da lista
-void removerRegistro(LISTA_INDICE *lista, int index)
+void removerRegistroIndice(LISTA_INDICE *lista, int index)
 {
     // desloca todos os registros depois do registro a ser removido para a esquerda
     for (int i = index; i < lista->tamanho - 1; i++)
@@ -130,7 +128,7 @@ void removerRegistro(LISTA_INDICE *lista, int index)
 }
 
 // Função que libera a memória da lista e de seus registros
-bool apagarLista(LISTA_INDICE *lista)
+bool apagarListaIndice(LISTA_INDICE *lista)
 {
     if (lista == NULL)
         return false;
@@ -145,13 +143,11 @@ bool apagarLista(LISTA_INDICE *lista)
 }
 
 // Função que imprime os campos de todos os registros da lista
-void imprimirLista(LISTA_INDICE *lista)
+void imprimirListaIndice(LISTA_INDICE *lista)
 {
     int impressoes = 0;
     for (int i = 0; i < lista->tamanho; i++)
     {
-        if (get_removido(lista->registros[i]) == '0')
-        { // se o registro não foi removido, imprime seus dados na tela
             impressoes++;
 
             // recebe o valor dos atributos do registro
@@ -162,7 +158,6 @@ void imprimirLista(LISTA_INDICE *lista)
             printf("Byte Offset: %d\n", byteOffset);
             
             printf("\n");
-        }
     }
 
     if (impressoes == 0)
@@ -171,15 +166,8 @@ void imprimirLista(LISTA_INDICE *lista)
     }
 }
 
-bool carregarIndice(LISTA_INDICE *lista, char *file_name)
+bool carregarIndice(LISTA_INDICE *lista, FILE *file)
 {
-    FILE *file = fopen(file_name, "rb");
-    if (!file)
-    {
-        printf("Erro ao abrir o arquivo.\n");
-        return false;
-    }
-
     fseek(file, 1, SEEK_SET); // pula o status
 
     int index = -1;
@@ -191,7 +179,7 @@ bool carregarIndice(LISTA_INDICE *lista, char *file_name)
         REGISTRO_INDICE *registro = criarRegistroIndice();
         setIndexRegistroIndice(registro, index);
         setByteOffsetRegistroIndice(registro, byteOffset);
-        adicionarRegistro(lista, registro);
+        adicionarRegistroIndice(lista, registro);
     }
 
     fclose(file);
