@@ -24,7 +24,7 @@ REMOVIDOS *criarListaRemovidos(char *filePath) {
     REGISTRO *registro = criarRegistroNulo(); // cria um registro com os valores iniciais
     lerRegistroFromBin2(file, registro); // salva os valores do registro do arquivo binário no registro criado
     
-    adicionarRegistroOrdenado(removidos->lista, registro);
+    adicionarRegistroOrdenado(removidos->lista, registro, file);
     proxyByteOffset = get_prox(registro);
     fseek(file, proxyByteOffset, SEEK_SET);
   }

@@ -43,7 +43,14 @@ bool adicionarRegistro(LISTA_INDICE *lista, REGISTRO_INDICE *registro)
     return true;
 }
 
-bool adicionarRegistroOrdenado(LISTA_INDICE *lista, REGISTRO_INDICE *registro)
+REGISTRO *buscarRegistroOffset(long long offset, FILE *file) {
+    fseek(file, offset, SEEK_SET);
+    REGISTRO *registro = criarRegistroNulo(); // cria um registro com os valores iniciais
+    lerRegistroFromBin2(file, registro); // salva os valores do registro do arquivo binário no registro criado
+    return registro;
+}
+
+bool adicionarRegistroOrdenado(LISTA_INDICE *lista, REGISTRO_INDICE *registro, FILE *file)
 {
     if (lista->tamanho >= lista->max_tamanho) {
         lista->max_tamanho += 1000;
@@ -56,7 +63,7 @@ bool adicionarRegistroOrdenado(LISTA_INDICE *lista, REGISTRO_INDICE *registro)
 
     // Encontrar a posição correta para inserir o novo registro
     int pos = 0;
-    while (pos < lista->tamanho && get_tamanhoRegistro(lista->registros[pos]) < get_tamanhoRegistro(registro)) {
+    while (pos < lista->tamanho && get_tamanhoRegistro(buscarRegistroOffset(getByteOffsetRegistroIndice(lista->registros[pos]), file)) < get_tamanhoRegistro(buscarRegistroOffset(getByteOffsetRegistroIndice(registro), file))) {
         pos++;
     }
 

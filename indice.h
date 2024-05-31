@@ -4,6 +4,7 @@
         #include <stdlib.h>
         #include <stdbool.h>
         #include "registroIndice.h"
+        #include "escreveBin.h"
 
         typedef struct _lista LISTA_INDICE;
 
@@ -11,11 +12,12 @@
         REGISTRO_INDICE *getRegistro(LISTA_INDICE *lista, int index);
         int getTamanho(LISTA_INDICE *lista);
         bool adicionarRegistro(LISTA_INDICE *lista, REGISTRO_INDICE *registro);
-        bool adicionarRegistroOrdenado(LISTA_INDICE *lista, REGISTRO_INDICE *registro);
+        bool adicionarRegistroOrdenado(LISTA_INDICE *lista, REGISTRO_INDICE *registro, FILE *file);
         bool modificarRegistro(LISTA_INDICE *lista, int index, REGISTRO_INDICE *novoRegistro);
         REGISTRO_INDICE *buscarRegistro(LISTA_INDICE *lista, int id);
         void removerRegistro(LISTA_INDICE *lista, int index);
         bool apagarLista(LISTA_INDICE *lista);
         void imprimirLista(LISTA_INDICE *lista);
+        REGISTRO *buscarRegistroOffset(long long offset, FILE *file);
 #endif
 

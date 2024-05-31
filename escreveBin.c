@@ -352,7 +352,7 @@ void removerRegistrosBuscados(char *arquivo) {
   scanf("%d", &numOperacoes); // lê o número de buscas a serem feitas
 
   for (int i = 0; i < numOperacoes; i++) {
-    int impressoes = 0;
+    int removidos = 0;
     int m;
     scanf("%i", &m); // lê o número de parâmetros da busca
 
@@ -408,6 +408,7 @@ void removerRegistrosBuscados(char *arquivo) {
     }
 
     if(id != -1) {
+      removerRegistroId(file, id);
       fclose(file);
       apagarCabecalho(cabecalho);
       continue;
@@ -451,16 +452,15 @@ void removerRegistrosBuscados(char *arquivo) {
         }
       }
       if(remover == 1) {
-        fwrite('1', sizeof(long long int), 1, arquivoInd);
-        removeRegistro(registro);
-        impressoes++;
+        fwrite('1', 1, 1, file);
+        removidos++;
       }
     }
     fclose(file);
     apagarCabecalho(cabecalho); // libera a memória do cabeçalho
 
-    if(impressoes == 0) {
-      printf("Registro inexistente.\n\n");
+    if(removidos == 0) {
+      // printf("Registro inexistente.\n\n");
     }
   }
 }
