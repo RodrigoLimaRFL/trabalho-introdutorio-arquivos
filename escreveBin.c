@@ -338,7 +338,7 @@ void removerRegistrosBuscados(char *arquivo) {
     int m;
     scanf("%i", &m); // lê o número de parâmetros da busca
 
-    FILE *file = fopen(arquivo, "rb"); // verifica se ocorreu um erro ao abrir o arquivo no modo leitura
+    FILE *file = fopen(arquivo, "wb+"); // verifica se ocorreu um erro ao abrir o arquivo no modo leitura
     if (file == NULL)
     {
       printf("Falha no processamento do arquivo.");
@@ -433,8 +433,8 @@ void removerRegistrosBuscados(char *arquivo) {
         }
       }
       if(remover == 1) {
-        // fwrite()
-        // removeRegistro(registro);
+        fwrite('1', sizeof(long long int), 1, arquivoInd);
+        removeRegistro(registro);
         impressoes++;
       }
     }
