@@ -1,7 +1,7 @@
 #include "buscarRegistro.h"
 #define BYTEOFFSET 25 // primeiro byte apos cabecalho
 
-REGISTRO *buscarRegistro(char *chave, char *operacao, CABECALHO *cabecalho, FILE *file)
+REGISTRO **buscarRegistro(char *chave, char *operacao, CABECALHO *cabecalho, FILE *file)
 {
     int numRegistros = getNroRegArq(cabecalho) + getNroRem(cabecalho);
 
@@ -38,45 +38,65 @@ REGISTRO *buscarRegistro(char *chave, char *operacao, CABECALHO *cabecalho, FILE
     }
 }
 
-REGISTRO *buscarId(char *id, int numRegistros, FILE *file)
+REGISTRO **buscarId(char *id, int numRegistros, FILE *file)
 {
-    REGISTRO *registro = criarRegistroNulo();
+    REGISTRO **registros = malloc(sizeof(REGISTRO *));
+    registros[0] = NULL;
     int byteOffset = BYTEOFFSET;
     fseek(file, byteOffset, SEEK_SET);
 
     int idInt = atoi(id);
 
+    int qtdRegistrosEncontrados = 0;
+
     for(int i = 0; i < numRegistros; i++)
     {
-        registro = lerRegistroFromBin(byteOffset, file);
-        if(get_id(registro) == idInt)
+        registros[qtdRegistrosEncontrados] = lerRegistroFromBin(byteOffset, file);
+        byteOffset += get_tamanhoRegistro(registros[qtdRegistrosEncontrados]);
+        if(get_id(registros[qtdRegistrosEncontrados]) == idInt)
         {
-            return registro;
+            qtdRegistrosEncontrados++;
+            registros = realloc(registros, (qtdRegistrosEncontrados + 1) * sizeof(REGISTRO *));
         }
     }
 
-    return NULL;
+    if(qtdRegistrosEncontrados == 0)
+    {
+        registros[0] = NULL;
+    }
+
+    return registros;
 }
 
-REGISTRO *buscarNome(char *nome, int numRegistros, FILE *file)
+REGISTRO **buscarNome(char *nome, int numRegistros, FILE *file)
 {
-    REGISTRO *registro = criarRegistroNulo();
+    REGISTRO **registros = malloc(sizeof(REGISTRO *));
+    registros[0] = NULL;
     int byteOffset = BYTEOFFSET;
     fseek(file, byteOffset, SEEK_SET);
 
+    int qtdRegistrosEncontrados = 0;
+
     for(int i = 0; i < numRegistros; i++)
     {
-        registro = lerRegistroFromBin(byteOffset, file);
-        if(strcmp(get_nome(registro), nome) == 0)
+        registros[qtdRegistrosEncontrados] = lerRegistroFromBin(byteOffset, file);
+        byteOffset += get_tamanhoRegistro(registros[qtdRegistrosEncontrados]);
+        if(strcmp(get_nome(registros[qtdRegistrosEncontrados]), nome) == 0)
         {
-            return registro;
+            qtdRegistrosEncontrados++;
+            registros = realloc(registros, (qtdRegistrosEncontrados + 1) * sizeof(REGISTRO *));
         }
+    }
+
+    if(qtdRegistrosEncontrados == 0)
+    {
+        registros[0] = NULL;
     }
 
     return NULL;
 }
 
-REGISTRO *buscarIdade(char *idade, int numRegistros, FILE *file)
+REGISTRO **buscarIdade(char *idade, int numRegistros, FILE *file)
 {
     REGISTRO *registro = criarRegistroNulo();
     int byteOffset = BYTEOFFSET;
@@ -96,7 +116,7 @@ REGISTRO *buscarIdade(char *idade, int numRegistros, FILE *file)
     return NULL;
 }
 
-REGISTRO *buscarNomeClube(char *nomeClube, int numRegistros, FILE *file)
+REGISTRO **buscarNomeClube(char *nomeClube, int numRegistros, FILE *file)
 {
     REGISTRO *registro = criarRegistroNulo();
     int byteOffset = BYTEOFFSET;
@@ -114,7 +134,7 @@ REGISTRO *buscarNomeClube(char *nomeClube, int numRegistros, FILE *file)
     return NULL;
 }
 
-REGISTRO *buscarNacionalidade(char *nacionalidade, int numRegistros, FILE *file)
+REGISTRO **buscarNacionalidade(char *nacionalidade, int numRegistros, FILE *file)
 {
     REGISTRO *registro = criarRegistroNulo();
     int byteOffset = BYTEOFFSET;

@@ -265,14 +265,20 @@ void imprimeRegistrosBuscados(char *arquivo) {
       scanf("%s", campos[j]); // lê um parâmetro da busca
       if(strcmp(campos[j], "id") == 0) {
         scanf("%i", &id); // lê o id da busca
+        snprintf(parametros[j], 50, "%i", id);
+        printf("%s\n", parametros[j]);
       } else if(strcmp(campos[j], "nome") == 0) {
         scan_quote_string(nome);
+        strcpy(parametros[j], nome);
       } else if(strcmp(campos[j], "idade") == 0) {
         scanf("%i", &idade);
+        snprintf(parametros[j], 50, "%i", idade);
       } else if(strcmp(campos[j], "nomeClube") == 0) {
         scan_quote_string(nomeClube);
+        strcpy(parametros[j], nomeClube);
       } else if(strcmp(campos[j], "nacionalidade") == 0) {
         scan_quote_string(nacionalidade);
+        strcpy(parametros[j], nacionalidade);
       } else {
         printf("Campo invalido\n");
       }
@@ -280,6 +286,18 @@ void imprimeRegistrosBuscados(char *arquivo) {
 
     printf("Busca %d\n", i + 1);
     printf("\n");
+
+    for (int j = 0; j < m; j ++) {
+      REGISTRO *registro = buscarRegistro(parametros[j], campos[j], cabecalho, file);
+
+      if (registro == NULL)
+      {
+        printf("Registro inexistente.\n\n");
+        continue;
+      }
+
+      imprimeRegistro(registro);
+    }
     
     for (int j = 0; j < numRegistros; j++) {
       fseek(file, byteOffset, SEEK_SET); // muda a posição do ponteiro do arquivo para a posição do byteOffset do registro
@@ -323,9 +341,9 @@ void imprimeRegistrosBuscados(char *arquivo) {
     fclose(file);
     apagarCabecalho(cabecalho); // libera a memória do cabeçalho
 
-    if(impressoes == 0) {
+    /*if(impressoes == 0) {
       printf("Registro inexistente.\n\n");
-    }
+    }*/
   }
 }
 
