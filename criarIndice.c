@@ -113,19 +113,6 @@ void lerBinCriarIndice(char *arquivoBin, char *arquivoIndice)
     {
         REGISTRO *registro = lerRegistroFromBin(posicao, arquivoBinario);
 
-        if(get_id(registro) == 138782)
-        {
-            printf("oi\n");
-            continue;
-        }
-        /*if(get_removido(registro) == '1')
-        {
-            printf("%i\n", posicao);
-            posicao += get_tamanhoRegistro(registro);
-            liberarRegistro(registro);
-            continue;
-        }*/
-
         setIndexRegistroIndice(registroIndice, get_id(registro));
         setByteOffsetRegistroIndice(registroIndice, posicao);
 
@@ -142,7 +129,7 @@ void lerBinCriarIndice(char *arquivoBin, char *arquivoIndice)
     fseek(arquivoInd, 0, SEEK_SET);
     fwrite(&status, sizeof(char), 1, arquivoInd);
 
-    imprimirRegistrosIndice(arquivoInd);
+    //imprimirRegistrosIndice(arquivoInd);
     
     fclose(arquivoBinario);
     fclose(arquivoInd);
