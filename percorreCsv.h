@@ -6,9 +6,8 @@
     #include <string.h>
 
     #include "gerencia-arquivo.h"
-    #include "lista.h"
     #include "cabecalho.h"
 
-    LISTA *lerCsvEscreveBin(char *nomeArquivoCsv, char *nomeArquivoBin);
+    void *lerCsvEscreveBin(char *nomeArquivoCsv, char *nomeArquivoBin);
 
 #endif

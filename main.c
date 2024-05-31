@@ -1,7 +1,6 @@
 #include <stdio.h>
 
 #include "gerencia-arquivo.h"
-#include "lista.h"
 #include "escreveBin.h"
 #include "interpreta-bin.h"
 #include "cabecalho.h"

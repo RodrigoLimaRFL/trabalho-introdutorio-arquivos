@@ -147,7 +147,7 @@ void setCabecalho(CABECALHO *cabecalho, REGISTRO *registro, FILE *arquivoBin)
 }
 
 // Função que lê o arquivo csv e salva seus dados em uma lista de registros
-LISTA *lerCsvEscreveBin(char *nomeArquivoCsv, char *nomeArquivoBin) {
+void *lerCsvEscreveBin(char *nomeArquivoCsv, char *nomeArquivoBin) {
     FILE *arquivoCsv = fopen(nomeArquivoCsv, "r");
     FILE *arquivoBin = fopen(nomeArquivoBin, "wb");
 

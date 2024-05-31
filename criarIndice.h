@@ -6,7 +6,6 @@
     #include <stdbool.h>
 
     #include "indice.h"
-    #include "lista.h"
     #include "cabecalho.h"
     #include "registroIndice.h"
     #include "interpreta-bin.h"

@@ -9,6 +9,8 @@
         "percorrecsv.h": "c",
         "gerencia-arquivo.h": "c",
         "funcoes_fornecidas.h": "c",
-        "indice.h": "c"
+        "indice.h": "c",
+        "interpreta-bin.h": "c",
+        "string.h": "c"
     }
 }

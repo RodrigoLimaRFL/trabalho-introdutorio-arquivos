@@ -3,7 +3,6 @@
 #include <string.h>
 
 #include "gerencia-arquivo.h"
-#include "lista.h"
 #include "cabecalho.h"
 
 /*

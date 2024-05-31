@@ -2,7 +2,6 @@
     #define GERENCIA_ARQUIVO_H
     typedef struct dados DADOS;
 
-    #include "lista.h"
     #include "cabecalho.h"
 
     /*

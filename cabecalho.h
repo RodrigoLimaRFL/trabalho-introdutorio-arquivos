@@ -1,13 +1,13 @@
 #ifndef CABECALHO_H
     #define CABECALHO_H
 
-    #include "lista.h"
+    #include <stdlib.h>
+    #include <stdio.h>
+    #include "registro.h"
 
     typedef struct cabecalho_ CABECALHO;
 
     CABECALHO *criarCabecalho(void);
-
-    void setValoresCabecalho(CABECALHO *cabecalho, LISTA *lista);
 
     char getStatus(CABECALHO *cabecalho);
 

@@ -22,51 +22,6 @@ CABECALHO *criarCabecalho(void)
     return cabecalho;
 }
 
-// Função que atualiza os valores dos campos do cabeçalho
-void setValoresCabecalho(CABECALHO *cabecalho, LISTA *lista)
-{
-    for (int i = 0; i < getTamanho(lista); i++)
-    {
-        if (get_removido(getRegistro(lista, i)) == '0')
-        { // se o valor não foi removido, atualiza o valor do nroRegArq do cabeçalho
-            (cabecalho->nroRegArq)++;
-        }
-        else
-        { // se o valor foi removido, atualiza o valor do nroRegRem do cabeçalho
-            (cabecalho->nroRegRem)++;
-        }
-    }
-    int i = 0;
-    cabecalho->proxByteOffset = 25; // Inicia o valor do proxByteOffset com 25, que é a quantidade de bytes do cabeçalho
-    // enquanto não encontrou um registro não removido, incrementa o valor do proxyByteOffset com o valor do tamanho do registro atual
-    while (i < getTamanho(lista))
-    {
-        cabecalho->proxByteOffset += get_tamanhoRegistro(getRegistro(lista, i));
-        i++;
-    }
-
-    i = 0;
-    cabecalho->topo = 25; // Inicia o valor do proxByteOffset com 25, que é a quantidade de bytes do cabeçalho
-    if (cabecalho->nroRegRem == 0)
-    { // se não houver nenhum registro removido, atribui o valor -1 ao campo topo do cabeçalho
-        cabecalho->topo = -1;
-    }
-    else
-    {
-        // enquanto não encontrou um registro removido, incrementa o valor do proxyByteOffset com o valor do tamanho do registro atual
-        while (get_removido(getRegistro(lista, i)) == '0' && (i < getTamanho(lista) - 1))
-        {
-            cabecalho->topo += get_tamanhoRegistro(getRegistro(lista, i));
-            i++;
-        }
-    }
-
-    if (i >= getTamanho(lista))
-    { // se o valor do i não for menor que o tamanho da lista, atribui o valor -1 para o topo
-        cabecalho->topo = -1;
-    }
-}
-
 // retorna o valor do status do cabeçalho
 char getStatus(CABECALHO *cabecalho)
 {
