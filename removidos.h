@@ -8,4 +8,5 @@
         #include "escreveBin.h"
 
         typedef struct _removidos REMOVIDOS;
+        REMOVIDOS *criarListaRemovidos(char *filePath);
 #endif
