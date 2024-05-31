@@ -1,5 +1,5 @@
 all: lista.o cabecalho.o funcoes_fornecidas.o gerencia-arquivo.o registro.o escreveBin.o interpreta-bin.o indice.o criarIndice.o percorreCsv.o registroIndice.o main.o
-	gcc registro.o lista.o cabecalho.o gerencia-arquivo.o escreveBin.o interpreta-bin.o funcoes_fornecidas.o indice.o criarIndice.o percorreCsv.o registroIndice.o main.o -o gerencia-arquivo -std=c99 -Wall
+	gcc registro.o lista.o cabecalho.o gerencia-arquivo.o escreveBin.o interpreta-bin.o funcoes_fornecidas.o indice.o criarIndice.o percorreCsv.o registroIndice.o main.o -o gerencia-arquivo.exe -std=c99 -Wall
 funcoes_fornecidas.o:
 	gcc -c funcoes_fornecidas.c -o funcoes_fornecidas.o
 
@@ -40,7 +40,7 @@ clean:
 	rm *.o gerencia-arquivo
 
 run:
-	./gerencia-arquivo
+	./gerencia-arquivo.exe
 
 valgrind:
-	valgrind --leak-check=full ./gerencia-arquivo
+	valgrind --leak-check=full ./gerencia-arquivo.exe

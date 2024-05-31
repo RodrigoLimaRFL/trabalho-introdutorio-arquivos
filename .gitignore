@@ -3,6 +3,7 @@
 *.in
 *.out
 *.json
+*.exe
 
 # Prerequisites
 *.d

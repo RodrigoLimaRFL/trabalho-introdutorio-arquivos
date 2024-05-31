@@ -1,162 +1,162 @@
 #include "indice.h"
-#include <stdio.h>
-#include <stdlib.h>
 
-/*struct _registro_dados {
-    int index;
-    long long int byteOffset;
+struct _lista
+{
+    int tamanho;
+    int max_tamanho;
+    REGISTRO_INDICE **registros; // a lista possui um vetor de endereços de registros
 };
 
-struct _indice {
-    char status;
-    int quantidade; // nao insere no arquivo
-    REGISTRO_DADOS **dados;
-};
+LISTA_INDICE *criarLista()
+{
+    LISTA_INDICE *lista = (LISTA_INDICE *)malloc(sizeof(LISTA_INDICE));
+    lista->tamanho = 0;
+    lista->max_tamanho = 1000;
+    lista->registros = (REGISTRO_INDICE **)malloc(sizeof(REGISTRO_INDICE *) * lista->max_tamanho); // aloca espaço para 1000 endereços de registros
 
-#pragma region Criar e Apagar
-
-REGISTRO_DADOS *criarRegistroDados() {
-    REGISTRO_DADOS *registro = (REGISTRO_DADOS *) malloc(sizeof(REGISTRO_DADOS));
-    if(!registro)
-        return NULL;
-    registro->index = -1;
-    registro->byteOffset = -1;
-    return registro;
+    return lista;
 }
 
-INDICE *criarIndice() {
-    INDICE *indice = (INDICE *) malloc(sizeof(INDICE));
-    if(!indice)
-        return NULL;
-    indice->status = '1';
-    indice->quantidade = 0;
-    indice->dados = NULL;
-    return indice;
+REGISTRO_INDICE *getRegistro(LISTA_INDICE *lista, int index)
+{
+    return lista->registros[index]; // retorna o registro de determinado index da lista
 }
 
-void apagarRegistroDados(REGISTRO_DADOS *registro) {
-    free(registro);
+int getTamanho(LISTA_INDICE *lista)
+{
+    return lista->tamanho;
 }
 
-void apagarIndice(INDICE *indice) {
-    for(int i = 0; i < indice->quantidade; i++)
-        apagarRegistroDados(indice->dados[i]);
-    free(indice->dados);
-    free(indice);
-}
-
-#pragma endregion
-
-#pragma region Getters and Setters
-
-void setStatusIndice(INDICE *indice, char status) {
-    indice->status = status;
-}
-
-void setQuantidadeIndice(INDICE *indice, int quantidade) {
-    indice->quantidade = quantidade;
-}
-
-char getStatusIndice(INDICE *indice) {
-    return indice->status;
-}
-
-int getQuantidadeIndice(INDICE *indice) {
-    return indice->quantidade;
-}
-
-void setDadoIndice(INDICE *indice, REGISTRO_DADOS *dado, int pos) {
-    indice->dados[pos] = dado;
-}
-
-REGISTRO_DADOS *getDadoIndice(INDICE *indice, int pos) {
-    return indice->dados[pos];
-}
-
-REGISTRO_DADOS **getDadosIndice(INDICE *indice) {
-    return indice->dados;
-}
-
-void setIndexRegistroIndice(REGISTRO_DADOS *registro, int index) {
-    registro->index = index;
-}
-
-void setByteOffsetRegistroIndice(REGISTRO_DADOS *registro, long long int byteOffset) {
-    registro->byteOffset = byteOffset;
-}
-
-int getIndexRegistroIndice(REGISTRO_DADOS *registro) {
-    return registro->index;
-}
-
-long long int getByteOffsetRegistroIndice(REGISTRO_DADOS *registro) {
-    return registro->byteOffset;
-}
-
-#pragma endregion
-
-bool binarySearchIndice(INDICE *indice, int index, int *pos) {
-    int inicio = 0;
-    int fim = indice->quantidade - 1;
-    int meio;
-    while(inicio <= fim) {
-        meio = (inicio + fim) / 2;
-        if(getIndexRegistroIndice(indice->dados[meio]) == index) {
-            *pos = meio;
-            return true;
+bool adicionarRegistro(LISTA_INDICE *lista, REGISTRO_INDICE *registro)
+{
+    if(lista->tamanho >= lista->max_tamanho) {
+        lista->max_tamanho += 1000;
+        lista->registros = (REGISTRO_INDICE **)realloc(lista->registros, sizeof(REGISTRO_INDICE *) * lista->max_tamanho);
+        if(!lista->registros) {
+            printf("Erro ao realocar memória.\n");
+            return false;
         }
-        if((getIndexRegistroIndice(indice->dados[meio])) < index)
+    }
+    lista->registros[lista->tamanho] = registro; // adiciona o registro no final da lista
+    (lista->tamanho)++;                          // atualiza o tamanho da lista
+    return true;
+}
+
+bool modificarRegistro(LISTA_INDICE *lista, int index, REGISTRO_INDICE *novoRegistro)
+{
+    lista->registros[index] = novoRegistro; // o registro de determinado index recebe o valor do novo registro
+    return true;
+}
+
+// busca binaria em relação ao id
+REGISTRO_INDICE *buscarRegistro(LISTA_INDICE *lista, int id)
+{
+    REGISTRO_INDICE *registro = NULL;
+
+    int inicio = 0;
+    int fim = lista->tamanho - 1;
+
+    while (inicio <= fim)
+    {
+        int meio = (inicio + fim) / 2;
+
+        if (getIndexRegistroIndice(lista->registros[meio]) == id)
+        {
+            registro = lista->registros[meio];
+            break;
+        }
+        else if (getIndexRegistroIndice(lista->registros[meio]) < id)
+        {
             inicio = meio + 1;
+        }
         else
+        {
             fim = meio - 1;
+        }
     }
-    *pos = inicio; // Adjusting to ensure pos points to the correct insertion point
-    return false;
+
+    return registro; // se o registro não foi encontrado, retorna -1
 }
 
-void shiftRegistrosRight(INDICE *indice, int pos) {
-    // Allocate more memory to accommodate the new element
-    indice->dados = (REGISTRO_DADOS **) realloc(indice->dados, indice->quantidade * sizeof(REGISTRO_DADOS*));
-    if(!indice->dados)
-        return;
+// Função para remover um registro da lista
+void removerRegistro(LISTA_INDICE *lista, int index)
+{
+    // desloca todos os registros depois do registro a ser removido para a esquerda
+    for (int i = index; i < lista->tamanho - 1; i++)
+    {
+        lista->registros[i] = lista->registros[i + 1];
+    }
 
-    // Shift elements to the right from the end to the position
-    for(int i = indice->quantidade - 1; i > pos; i--) {
-        indice->dados[i] = indice->dados[i - 1];
+    // libera a memória do registro e altera o tamanho da lista
+    apagarRegistroIndice(lista->registros[lista->tamanho]);
+    lista->tamanho--;
+}
+
+// Função que libera a memória da lista e de seus registros
+bool apagarLista(LISTA_INDICE *lista)
+{
+    if (lista == NULL)
+        return false;
+
+    for (int i = 0; i < lista->tamanho; i++)
+    {
+        apagarRegistroIndice(lista->registros[i]);
+    }
+    free(lista->registros);
+
+    free(lista);
+}
+
+// Função que imprime os campos de todos os registros da lista
+void imprimirLista(LISTA_INDICE *lista)
+{
+    int impressoes = 0;
+    for (int i = 0; i < lista->tamanho; i++)
+    {
+        if (get_removido(lista->registros[i]) == '0')
+        { // se o registro não foi removido, imprime seus dados na tela
+            impressoes++;
+
+            // recebe o valor dos atributos do registro
+            int id = getIndexRegistroIndice(lista->registros[i]);
+            int byteOffset = getByteOffsetRegistroIndice(lista->registros[i]);
+
+            printf("Index: %d\n", id);
+            printf("Byte Offset: %d\n", byteOffset);
+            
+            printf("\n");
+        }
+    }
+
+    if (impressoes == 0)
+    {
+        // printf("Registro inexistente.\n\n");
     }
 }
 
-void insertRegistroIndice(INDICE *indice, REGISTRO_DADOS *registro) {
-    int posicao = 0;
-
-    if(indice->quantidade == 0) {
-        indice->dados = (REGISTRO_DADOS **) malloc(sizeof(REGISTRO_DADOS*));
-        if(!indice->dados)
-            return;
-
-        setDadoIndice(indice, registro, 0);
-        indice->quantidade++;
-        return;
+bool carregarIndice(LISTA_INDICE *lista, char *file_name)
+{
+    FILE *file = fopen(file_name, "rb");
+    if (!file)
+    {
+        printf("Erro ao abrir o arquivo.\n");
+        return false;
     }
 
-    if (binarySearchIndice(indice, registro->index, &posicao)) {
-        return; // Avoid inserting duplicate indices
+    fseek(file, 1, SEEK_SET); // pula o status
+
+    int index = -1;
+    long long int byteOffset = -1;
+
+    while (fread(&index, sizeof(int), 1, file) == 1)
+    {
+        fread(&byteOffset, sizeof(long long int), 1, file);
+        REGISTRO_INDICE *registro = criarRegistroIndice();
+        setIndexRegistroIndice(registro, index);
+        setByteOffsetRegistroIndice(registro, byteOffset);
+        adicionarRegistro(lista, registro);
     }
 
-    // Increase quantidade after ensuring memory allocation
-    indice->quantidade++;
-    shiftRegistrosRight(indice, posicao);
-
-    // Insert the new record at the correct position
-    setDadoIndice(indice, registro, posicao);
+    fclose(file);
+    return true;
 }
-
-void printRegistrosIndice(INDICE *indice) {
-    indice->dados = (REGISTRO_DADOS **) realloc(indice->dados, indice->quantidade * sizeof(REGISTRO_DADOS*));
-    if(!indice->dados)
-        return;
-    for(int i = 0; i < indice->quantidade; i++) {
-        REGISTRO_DADOS *dado = getDadoIndice(indice, i);
-        printf("index: %d, byteOffset: %lld\n", getIndexRegistroIndice(dado), getByteOffsetRegistroIndice(dado));
-    }
-}*/

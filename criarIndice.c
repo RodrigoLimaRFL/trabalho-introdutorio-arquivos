@@ -1,6 +1,7 @@
 #include "criarIndice.h"
 
 // Função que busca a posição de inserção de um registro no arquivo de índice
+// Nao necessita armazenamento na memoria principal, porem eh O(n)
 int buscaArquivoIndice(int id, FILE *arquivoInd)
 {
     int quantidade;
