@@ -381,7 +381,7 @@ void removerRegistrosBuscados(char *arquivo) {
       scanf("%s", campos[j]); // lê um parâmetro da busca
       if(strcmp(campos[j], "id") == 0) {
         scanf("%i", &id); // lê o id da busca
-        buscaId(id);
+        // buscaId(id);
       } else if(strcmp(campos[j], "nome") == 0) {
         scan_quote_string(nome);
       } else if(strcmp(campos[j], "idade") == 0) {
@@ -396,7 +396,7 @@ void removerRegistrosBuscados(char *arquivo) {
     }
 
     if(id != -1) {
-      removerRegistroId(file, id);
+      // removerRegistroId(file, id);
       fclose(file);
       apagarCabecalho(cabecalho);
       continue;
@@ -440,7 +440,7 @@ void removerRegistrosBuscados(char *arquivo) {
         }
       }
       if(remover == 1) {
-        fwrite('1', 1, 1, file);
+        // fwrite('1', 1, 1, file);
         removidos++;
       }
     }

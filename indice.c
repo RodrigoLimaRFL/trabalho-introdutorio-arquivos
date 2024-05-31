@@ -8,6 +8,14 @@ struct _lista
     REGISTRO_INDICE **registros; // a lista possui um vetor de endereços de registros
 };
 
+int getTamanhoLista(LISTA_INDICE *lista) {
+    return lista->tamanho;
+}
+
+int getTamanhoMaxLista(LISTA_INDICE *lista) {
+    return lista->max_tamanho;
+}
+
 LISTA_INDICE *criarListaIndice()
 {
     LISTA_INDICE *lista = (LISTA_INDICE *)malloc(sizeof(LISTA_INDICE));
@@ -42,6 +50,7 @@ bool adicionarRegistroIndice(LISTA_INDICE *lista, REGISTRO_INDICE *registro)
     (lista->tamanho)++;                          // atualiza o tamanho da lista
     return true;
 }
+
 REGISTRO *buscarRegistroOffset(long long offset, FILE *file) {
     fseek(file, offset, SEEK_SET);
     REGISTRO *registro = criarRegistroNulo(); // cria um registro com os valores iniciais
