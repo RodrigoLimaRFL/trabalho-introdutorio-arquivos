@@ -53,6 +53,12 @@ int main() {
         {
             binarioNaTela(arquivoIndice);
         }
+    } else if(strcmp(operacao, "5") == 0)
+    {
+        char arquivoBin[50];
+        scanf("%s", arquivoBin);
+
+        removerRegistrosBuscados(arquivoBin);
     }
     else // se a operação for diferente de 1, 2 ou 3, imprime, imprime que a operação é inválida
     {
