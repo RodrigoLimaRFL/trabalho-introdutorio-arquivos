@@ -2,7 +2,6 @@
 
 struct _removidos {
   LISTA_INDICE *lista;
-  int tamanhoRegistro[1000];
 };
 
 REMOVIDOS *criarListaRemovidos(char *filePath) {
@@ -21,16 +20,13 @@ REMOVIDOS *criarListaRemovidos(char *filePath) {
   int proxyByteOffset = getTopo(cabecalho);
   fseek(file, proxyByteOffset, SEEK_SET);
 
-  int i=0;
   while(proxyByteOffset != -1) {
     REGISTRO *registro = criarRegistroNulo(); // cria um registro com os valores iniciais
     lerRegistroFromBin2(file, registro); // salva os valores do registro do arquivo binário no registro criado
     
-    adicionarRegistro(removidos->lista, registro);
+    adicionarRegistroOrdenado(removidos->lista, registro);
     proxyByteOffset = get_prox(registro);
     fseek(file, proxyByteOffset, SEEK_SET);
-    removidos->tamanhoRegistro[i] = get_tamanhoRegistro(registro);
-    i++;
   }
 
   return removidos;
