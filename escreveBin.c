@@ -170,7 +170,7 @@ int imprimeRegistro(REGISTRO *registro) {
     char *nomeClube = get_nomeClube(registro);
     char *nacionalidade = get_nacionalidade(registro);
     char *nomeJogador = get_nomeJogador(registro);
-
+  
     printf("Nome do Jogador: ");
     if (strcmp(nomeJogador, "SEM DADO") == 0) // se o nome do jogador for "SEM DADO", imprime "SEM DADO"
     {

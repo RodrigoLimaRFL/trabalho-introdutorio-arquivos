@@ -72,24 +72,23 @@ void imprimirRegistrosIndice(FILE *arquivoIndice)
     while(fread(&index, sizeof(int), 1, arquivoIndice) == 1)
     {
         fread(&byteOffset, sizeof(long long int), 1, arquivoIndice);
-        printf("Registro: %d %lld\n", index, byteOffset);
     }
 }
 
-void lerBinCriarIndice(char *arquivoBin, char *arquivoIndice)
+bool lerBinCriarIndice(char *arquivoBin, char *arquivoIndice)
 {
     FILE *arquivoBinario = fopen(arquivoBin, "rb");
     if(arquivoBinario == NULL)
     {
         printf("Falha no processamento do arquivo.\n");
-        return;
+        return false;
     }
 
     FILE *arquivoInd = fopen(arquivoIndice, "wb+");
     if (arquivoInd == NULL)
     {
         printf("Falha no processamento do arquivo.\n");
-        return;
+        return false;
     }
     
     CABECALHO *cabecalho = getCabecalhoFromBin(arquivoBinario);
@@ -99,7 +98,7 @@ void lerBinCriarIndice(char *arquivoBin, char *arquivoIndice)
         printf("Falha no processamento do arquivo.\n");
         fclose(arquivoBinario); // fecha o arquivo
         fclose(arquivoInd);
-        return;
+        return false;
     }
 
     char status = '0';
@@ -109,22 +108,18 @@ void lerBinCriarIndice(char *arquivoBin, char *arquivoIndice)
 
     REGISTRO_INDICE *registroIndice = criarRegistroIndice();
 
-    for(int i = 0; i < getNroRegArq(cabecalho); i++)
+    int quantidade = getNroRegArq(cabecalho) + getNroRem(cabecalho);
+
+    for(int i = 0; i < quantidade; i++)
     {
         REGISTRO *registro = lerRegistroFromBin(posicao, arquivoBinario);
 
-        if(get_id(registro) == 138782)
+        if(get_removido(registro) == '1')
         {
-            printf("oi\n");
-            continue;
-        }
-        /*if(get_removido(registro) == '1')
-        {
-            printf("%i\n", posicao);
             posicao += get_tamanhoRegistro(registro);
             liberarRegistro(registro);
             continue;
-        }*/
+        }
 
         setIndexRegistroIndice(registroIndice, get_id(registro));
         setByteOffsetRegistroIndice(registroIndice, posicao);
@@ -142,10 +137,12 @@ void lerBinCriarIndice(char *arquivoBin, char *arquivoIndice)
     fseek(arquivoInd, 0, SEEK_SET);
     fwrite(&status, sizeof(char), 1, arquivoInd);
 
-    imprimirRegistrosIndice(arquivoInd);
+    //imprimirRegistrosIndice(arquivoInd);
     
     fclose(arquivoBinario);
     fclose(arquivoInd);
+
+    return true;
 }
 /*
 // Adicionar byteoffset e imprimir pra bin
