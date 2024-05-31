@@ -3,27 +3,18 @@
         #include <stdio.h>
         #include <stdlib.h>
         #include <stdbool.h>
+        #include "registroIndice.h"
 
-        typedef struct _registro_dados REGISTRO_DADOS;
-        typedef struct _indice INDICE;
+        typedef struct _lista LISTA_INDICE;
 
-        /*REGISTRO_DADOS *criarRegistroDados();
-        INDICE *criarIndice();
-        void apagarRegistroDados(REGISTRO_DADOS *registro);
-        void apagarIndice(INDICE *indice);
-        void setStatusIndice(INDICE *indice, char status);
-        void setQuantidadeIndice(INDICE *indice, int quantidade);
-        void setDadoIndice(INDICE *indice, REGISTRO_DADOS *dado, int pos);
-        char getStatusIndice(INDICE *indice);
-        int getQuantidadeIndice(INDICE *indice);
-        REGISTRO_DADOS **getDadosIndice(INDICE *indice);
-        void setIndexRegistroIndice(REGISTRO_DADOS *registro, int index);
-        void setByteOffsetRegistroIndice(REGISTRO_DADOS *registro, long long int byteOffset);
-        int getIndexRegistroIndice(REGISTRO_DADOS *registro);
-        long long int getByteOffsetRegistroIndice(REGISTRO_DADOS *registro);
-        bool binarySearchIndice(INDICE *indice, int index, int *pos);
-        void insertRegistroIndice(INDICE *indice, REGISTRO_DADOS *registro);
-        void shiftRegistrosRight(INDICE *indice, int pos);
-        void printRegistrosIndice(INDICE *indice);*/
+        LISTA_INDICE *criarLista();
+        REGISTRO_INDICE *getRegistro(LISTA_INDICE *lista, int index);
+        int getTamanho(LISTA_INDICE *lista);
+        bool adicionarRegistro(LISTA_INDICE *lista, REGISTRO_INDICE *registro);
+        bool modificarRegistro(LISTA_INDICE *lista, int index, REGISTRO_INDICE *novoRegistro);
+        REGISTRO_INDICE *buscarRegistro(LISTA_INDICE *lista, int id);
+        void removerRegistro(LISTA_INDICE *lista, int index);
+        bool apagarLista(LISTA_INDICE *lista);
+        void imprimirLista(LISTA_INDICE *lista);
 #endif
 
