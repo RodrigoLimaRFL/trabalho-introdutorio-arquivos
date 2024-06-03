@@ -56,14 +56,14 @@ int main() {
         }
     } else if(strcmp(operacao, "5") == 0)
     {
-        char arquivoBin[50];
+        /*char arquivoBin[50];
         scanf("%s", arquivoBin);
 
-        removerRegistrosBuscados(arquivoBin);
+        removerRegistrosBuscados(arquivoBin);*/
     }
     else if(strcmp(operacao, "6") == 0)
     {
-        char arquivoBin[50];
+        /*char arquivoBin[50];
         scanf("%s", arquivoBin);
 
         char arquivoIndice[50];
@@ -72,7 +72,7 @@ int main() {
         inserirNovoDado(arquivoBin, arquivoIndice);
 
         binarioNaTela(arquivoBin);
-        binarioNaTela(arquivoIndice);
+        binarioNaTela(arquivoIndice);*/
     }
     else // se a operação for diferente de 1, 2 ou 3, imprime, imprime que a operação é inválida
     {

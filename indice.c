@@ -52,11 +52,10 @@ bool adicionarRegistroIndice(LISTA_INDICE *lista, REGISTRO_INDICE *registro)
 }
 
 REGISTRO *buscarRegistroOffset(long long offset, FILE *file) {
-    fseek(file, offset, SEEK_SET);
-    REGISTRO *registro = criarRegistroNulo(); // cria um registro com os valores iniciais
-    lerRegistroFromBin2(file, registro); // salva os valores do registro do arquivo binário no registro criado
+    REGISTRO *registro = lerRegistroFromBin(offset, file); // lê o registro do arquivo binário
     return registro;
 }
+
 bool adicionarRegistroOrdenadoIndice(LISTA_INDICE *lista, REGISTRO_INDICE *registro, FILE *file)
 {
     if (lista->tamanho >= lista->max_tamanho) {
@@ -120,6 +119,37 @@ REGISTRO_INDICE *buscarRegistroIndice(LISTA_INDICE *lista, int id)
     }
 
     return registro; // se o registro não foi encontrado, retorna -1
+}
+
+int buscarPosicaoRegistroIndice(LISTA_INDICE *lista, int id)
+{
+    int inicio = 0;
+    int fim = lista->tamanho - 1;
+
+    while (inicio <= fim)
+    {
+        int meio = (inicio + fim) / 2;
+
+        if (getIndexRegistroIndice(lista->registros[meio]) == id)
+        {
+            return meio;
+        }
+        else if (getIndexRegistroIndice(lista->registros[meio]) < id)
+        {
+            inicio = meio + 1;
+        }
+        else
+        {
+            fim = meio - 1;
+        }
+    }
+
+    return -1; // se o registro não foi encontrado, retorna -1
+}
+
+void setRegistroListaIndice(LISTA_INDICE *lista, int index, REGISTRO_INDICE *registro)
+{
+    lista->registros[index] = registro;
 }
 
 // Função para remover um registro da lista

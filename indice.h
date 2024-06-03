@@ -13,11 +13,13 @@
         REGISTRO *buscarRegistroOffset(long long offset, FILE *file);
         LISTA_INDICE *criarListaIndice();
         REGISTRO_INDICE *getRegistroIndice(LISTA_INDICE *lista, int index);
-        int getTamanhoIndice(LISTA_INDICE *lista);
+        int getTamanhoListaIndice(LISTA_INDICE *lista);
         bool adicionarRegistroIndice(LISTA_INDICE *lista, REGISTRO_INDICE *registro);
         bool adicionarRegistroOrdenadoIndice(LISTA_INDICE *lista, REGISTRO_INDICE *registro, FILE *file);
         bool modificarRegistroIndice(LISTA_INDICE *lista, int index, REGISTRO_INDICE *novoRegistro);
         REGISTRO_INDICE *buscarRegistroIndice(LISTA_INDICE *lista, int id);
+        int buscarPosicaoRegistroIndice(LISTA_INDICE *lista, int id);
+        void setRegistroListaIndice(LISTA_INDICE *lista, int index, REGISTRO_INDICE *registro);
         void removerRegistroIndice(LISTA_INDICE *lista, int index);
         bool apagarListaIndice(LISTA_INDICE *lista);
         void imprimirListaIndice(LISTA_INDICE *lista);

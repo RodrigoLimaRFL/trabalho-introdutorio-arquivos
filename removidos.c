@@ -5,37 +5,89 @@ struct _removidos {
   int tamanhos[1000];
 };
 
-REMOVIDOS *criarListaRemovidos(char *filePath) {
-  CABECALHO *cabecalho = getCabecalhoFromBin2(filePath);
+
+void shiftElementosListaRemovidosRight(REMOVIDOS *removidos, int pos) {
+  for(int i = getTamanhoListaIndice(removidos->lista); i > pos; i--) {
+    REGISTRO_INDICE *registro = getRegistroIndice(removidos->lista, i - 1);
+    setRegistroListaIndice(removidos->lista, i, registro);
+    removidos->tamanhos[i] = removidos->tamanhos[i - 1];
+  }
+}
+
+// adiciona um novo registro na lista em ordem de tamanho
+void adicionarRegistroRemovido(REMOVIDOS *removidos, REGISTRO_INDICE *registroIndice, int tamanho) {
+  int right = getTamanhoListaIndice(removidos->lista);
+  int left = 0;
+  
+  int middle = (left + right) / 2;
+
+  while(left < right) {
+    if(removidos->tamanhos[middle] < tamanho) {
+      right = middle;
+    } else {
+      left = middle + 1;
+    }
+
+    middle = (left + right) / 2;
+  }
+
+  shiftElementosListaRemovidosRight(removidos, middle);
+
+  setRegistroListaIndice(removidos->lista, middle, registroIndice);
+  removidos->tamanhos[middle] = tamanho;
+}
+
+// cria uma lista de registros removidos a partir de um arquivo binario
+REMOVIDOS *criarListaRemovidos(FILE *file) {
+  CABECALHO *cabecalho = getCabecalhoFromBin(file);
 
   REMOVIDOS *removidos;
   removidos->lista = criarLista();
-  FILE *file = fopen(filePath, "rb");
 
-  if (file == NULL) // verifica se ocorreu um erro ao abrir o arquivo no modo leitura
-  {
-    printf("Falha no processamento do arquivo.");
-    return NULL;
-  }
+  int proxByteOffset = getTopo(cabecalho);
 
-  int proxyByteOffset = getTopo(cabecalho);
-  fseek(file, proxyByteOffset, SEEK_SET);
+  while(proxByteOffset != -1) {
+    REGISTRO *registro = lerRegistroFromBin(proxByteOffset, file);
 
-  int quantidade = 0;
-  while(proxyByteOffset != -1) {
-    REGISTRO *registro = criarRegistroNulo(); // cria um registro com os valores iniciais
-    lerRegistroFromBin2(file, registro); // salva os valores do registro do arquivo binário no registro criado
-    
-    adicionarRegistroOrdenado(removidos->lista, registro, file);
-    proxyByteOffset = get_prox(registro);
-    fseek(file, proxyByteOffset, SEEK_SET);
-    quantidade++;
-  }
+    if(getRemovido(registro) == '1') {
+      REGISTRO_INDICE *registroIndice = criarRegistroIndice();
+      setIndexRegistroIndice(registroIndice, getId(registro));
+      setByteOffsetRegistroIndice(registroIndice, proxByteOffset);
 
-  for(int i=0; i<quantidade; i++) {
-    long long byteOffsetIndice = getByteOffsetRegistroIndice(getRegistroIndice(removidos, i));
-    removidos->tamanhos[i] = get_tamanhoRegistro(buscarRegistroOffset(byteOffsetIndice, file));
+      adicionarRegistroRemovido(removidos, registroIndice, get_tamanhoRegistro(registro));
+    }
+
+    proxByteOffset = get_prox(registro);
   }
 
   return removidos;
+}
+
+int getTamanhoListaRemovidos(REMOVIDOS *removidos) {
+  return getTamanhoListaIndice(removidos->lista);
+}
+
+void removerRegistroRemovido(REMOVIDOS *removidos, int id) {
+  int posicao = buscarPosicaoRegistroIndice(removidos->lista, id);
+
+  if(posicao == -1) {
+    return;
+  }
+
+  REGISTRO_INDICE *registro = getRegistroIndice(removidos->lista, posicao);
+  removerRegistroIndice(removidos->lista, posicao);
+
+  for(int i = posicao; i < getTamanhoListaIndice(removidos->lista); i++) {
+    removidos->tamanhos[i] = removidos->tamanhos[i + 1];
+  }
+}
+
+int getTamanhoById(REMOVIDOS *removidos, int id) {
+  int posicao = buscarPosicaoRegistroIndice(removidos->lista, id);
+
+  if(posicao == -1) {
+    return -1;
+  }
+
+  return removidos->tamanhos[posicao];
 }
