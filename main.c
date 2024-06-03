@@ -8,6 +8,7 @@
 #include "criarIndice.h"
 #include "percorreCsv.h"
 #include "inserirDado.h"
+#include "removidos.h"
 
 int main() {
     char operacao[2];
@@ -56,10 +57,11 @@ int main() {
         }
     } else if(strcmp(operacao, "5") == 0)
     {
-        /*char arquivoBin[50];
+        char arquivoBin[50];
         scanf("%s", arquivoBin);
+        REMOVIDOS *removidos = criarListaRemovidos(arquivoBin);
 
-        removerRegistrosBuscados(arquivoBin);*/
+        removerRegistrosBuscados(arquivoBin, removidos);
     }
     else if(strcmp(operacao, "6") == 0)
     {

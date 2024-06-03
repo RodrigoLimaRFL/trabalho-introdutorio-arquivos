@@ -38,20 +38,28 @@ void adicionarRegistroRemovido(REMOVIDOS *removidos, REGISTRO_INDICE *registroIn
 }
 
 // cria uma lista de registros removidos a partir de um arquivo binario
-REMOVIDOS *criarListaRemovidos(FILE *file) {
+REMOVIDOS *criarListaRemovidos(char *arquivo) {
+
+  FILE *file = fopen(arquivo, "wb+"); // verifica se ocorreu um erro ao abrir o arquivo no modo leitura e escrita
+  if (file == NULL)
+  {
+      printf("Falha no processamento do arquivo.");
+      return NULL;
+  }
+
   CABECALHO *cabecalho = getCabecalhoFromBin(file);
 
   REMOVIDOS *removidos;
-  removidos->lista = criarLista();
+  removidos->lista = criarListaIndice();
 
   int proxByteOffset = getTopo(cabecalho);
 
   while(proxByteOffset != -1) {
     REGISTRO *registro = lerRegistroFromBin(proxByteOffset, file);
 
-    if(getRemovido(registro) == '1') {
+    if(get_removido(registro) == '1') {
       REGISTRO_INDICE *registroIndice = criarRegistroIndice();
-      setIndexRegistroIndice(registroIndice, getId(registro));
+      setIndexRegistroIndice(registroIndice, get_id(registro));
       setByteOffsetRegistroIndice(registroIndice, proxByteOffset);
 
       adicionarRegistroRemovido(removidos, registroIndice, get_tamanhoRegistro(registro));

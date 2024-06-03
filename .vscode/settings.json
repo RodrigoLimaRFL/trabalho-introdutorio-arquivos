@@ -12,6 +12,7 @@
         "indice.h": "c",
         "interpreta-bin.h": "c",
         "string.h": "c",
-        "inserirdado.h": "c"
+        "inserirdado.h": "c",
+        "removidos.h": "c"
     }
 }

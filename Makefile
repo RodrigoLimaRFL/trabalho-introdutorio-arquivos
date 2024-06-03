@@ -1,5 +1,8 @@
-all: cabecalho.o funcoes_fornecidas.o gerencia-arquivo.o registro.o escreveBin.o interpreta-bin.o indice.o criarIndice.o percorreCsv.o registroIndice.o main.o
-	gcc registro.o cabecalho.o gerencia-arquivo.o escreveBin.o interpreta-bin.o funcoes_fornecidas.o indice.o criarIndice.o percorreCsv.o registroIndice.o main.o -o gerencia-arquivo.exe -std=c99 -Wall
+all: cabecalho.o removidos.o funcoes_fornecidas.o gerencia-arquivo.o registro.o escreveBin.o interpreta-bin.o indice.o criarIndice.o percorreCsv.o registroIndice.o main.o
+	gcc registro.o cabecalho.o removidos.o gerencia-arquivo.o escreveBin.o interpreta-bin.o funcoes_fornecidas.o indice.o criarIndice.o percorreCsv.o registroIndice.o main.o -o gerencia-arquivo.exe -std=c99 -Wall
+
+removidos.o:
+	gcc -c removidos.c -o removidos.o
 
 funcoes_fornecidas.o:
 	gcc -c funcoes_fornecidas.c -o funcoes_fornecidas.o
