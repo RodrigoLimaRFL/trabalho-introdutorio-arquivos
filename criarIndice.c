@@ -76,14 +76,8 @@ void imprimirRegistrosIndice(FILE *arquivoIndice)
     }
 }
 
-bool lerBinCriarIndice(char *arquivoBin, char *arquivoIndice)
+bool lerBinCriarIndice(FILE *arquivoBinario, char *arquivoIndice)
 {
-    FILE *arquivoBinario = fopen(arquivoBin, "rb");
-    if(arquivoBinario == NULL)
-    {
-        printf("Falha no processamento do arquivo.\n");
-        return false;
-    }
 
     FILE *arquivoInd = fopen(arquivoIndice, "wb+");
     if (arquivoInd == NULL)

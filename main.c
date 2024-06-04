@@ -13,6 +13,8 @@
 int main() {
     char operacao[2];
     scanf("%s", operacao); // lê qual operação que vai realizar
+
+    FILE *file;
     
     if(strcmp(operacao, "1") == 0)
     {
@@ -51,7 +53,14 @@ int main() {
         char arquivoIndice[50];
         scanf("%s", arquivoIndice);
 
-        if(lerBinCriarIndice(arquivoBin, arquivoIndice))
+        file = fopen(arquivoBin, "wb+"); // verifica se ocorreu um erro ao abrir o arquivo no modo leitura e escrita
+        if (file == NULL)
+        {
+            printf("Falha no processamento do arquivo.");
+            return 0;
+        }
+
+        if(lerBinCriarIndice(file, arquivoIndice))
         {
             binarioNaTela(arquivoIndice);
         }
@@ -59,13 +68,6 @@ int main() {
     {
         char arquivoBin[50];
         scanf("%s", arquivoBin);
-
-        FILE *file = fopen(arquivoBin, "wb+"); // verifica se ocorreu um erro ao abrir o arquivo no modo leitura e escrita
-        if (file == NULL)
-        {
-            printf("Falha no processamento do arquivo.");
-            return 0;
-        }
 
         REMOVIDOS *removidos = criarListaRemovidos(file);
 
