@@ -16,6 +16,7 @@
     int get_id(REGISTRO *registro);
     int get_idade(REGISTRO *registro);
     int get_tamNomeJogador(REGISTRO *registro);
+    REGISTRO *buscarRegistroOffset(long long offset, FILE *file);
     char* get_nomeJogador(REGISTRO *registro);
     int get_tamNacionalidade(REGISTRO *registro);
     char* get_nacionalidade(REGISTRO *registro);

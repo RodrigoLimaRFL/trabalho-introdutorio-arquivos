@@ -59,9 +59,20 @@ int main() {
     {
         char arquivoBin[50];
         scanf("%s", arquivoBin);
-        REMOVIDOS *removidos = criarListaRemovidos(arquivoBin);
 
-        removerRegistrosBuscados(arquivoBin, removidos);
+        FILE *file = fopen(arquivoBin, "wb+"); // verifica se ocorreu um erro ao abrir o arquivo no modo leitura e escrita
+        if (file == NULL)
+        {
+            printf("Falha no processamento do arquivo.");
+            return 0;
+        }
+
+        REMOVIDOS *removidos = criarListaRemovidos(file);
+
+        LISTA_INDICE *listaIndices = criarListaIndice();
+        carregarIndice(listaIndices, file);
+
+        removerRegistrosBuscados(file, removidos, listaIndices);
     }
     else if(strcmp(operacao, "6") == 0)
     {

@@ -38,14 +38,7 @@ void adicionarRegistroRemovido(REMOVIDOS *removidos, REGISTRO_INDICE *registroIn
 }
 
 // cria uma lista de registros removidos a partir de um arquivo binario
-REMOVIDOS *criarListaRemovidos(char *arquivo) {
-
-  FILE *file = fopen(arquivo, "wb+"); // verifica se ocorreu um erro ao abrir o arquivo no modo leitura e escrita
-  if (file == NULL)
-  {
-      printf("Falha no processamento do arquivo.");
-      return NULL;
-  }
+REMOVIDOS *criarListaRemovidos(FILE *file) {
 
   CABECALHO *cabecalho = getCabecalhoFromBin(file);
 
