@@ -1,5 +1,4 @@
 #include "indice.h"
-#include "registro.h"
 
 struct _lista
 {
@@ -49,11 +48,6 @@ bool adicionarRegistroIndice(LISTA_INDICE *lista, REGISTRO_INDICE *registro)
     lista->registros[lista->tamanho] = registro; // adiciona o registro no final da lista
     (lista->tamanho)++;                          // atualiza o tamanho da lista
     return true;
-}
-
-REGISTRO *buscarRegistroOffset(long long offset, FILE *file) {
-    REGISTRO *registro = lerRegistroFromBin(offset, file); // lê o registro do arquivo binário
-    return registro;
 }
 
 bool adicionarRegistroOrdenadoIndice(LISTA_INDICE *lista, REGISTRO_INDICE *registro, FILE *file)

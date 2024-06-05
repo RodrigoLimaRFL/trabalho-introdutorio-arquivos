@@ -10,5 +10,5 @@
     #include "registroIndice.h"
     #include "interpreta-bin.h"
 
-    bool lerBinCriarIndice(char *arquivoBin, char *arquivoIndice);
+    bool lerBinCriarIndice(FILE *arquivoBinario, char *arquivoIndice)
 #endif

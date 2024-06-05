@@ -4,13 +4,12 @@
         #include <stdlib.h>
         #include <stdbool.h>
         #include "registroIndice.h"
-        #include "escreveBin.h"
+        #include "registro.h"
 
         typedef struct _lista LISTA_INDICE;
 
         int getTamanhoLista(LISTA_INDICE *lista);
         int getTamanhoMaxLista(LISTA_INDICE *lista);
-        REGISTRO *buscarRegistroOffset(long long offset, FILE *file);
         LISTA_INDICE *criarListaIndice();
         REGISTRO_INDICE *getRegistroIndice(LISTA_INDICE *lista, int index);
         int getTamanhoListaIndice(LISTA_INDICE *lista);

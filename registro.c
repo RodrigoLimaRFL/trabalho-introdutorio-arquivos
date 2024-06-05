@@ -153,6 +153,11 @@ char get_removido(REGISTRO *registro)
     return registro->removido;
 }
 
+REGISTRO *buscarRegistroOffset(long long offset, FILE *file) {
+    REGISTRO *registro = lerRegistroFromBin(offset, file); // lê o registro do arquivo binário
+    return registro;
+}
+
 int get_tamanhoRegistro(REGISTRO *registro)
 {
     return registro->tamanhoRegistro;
