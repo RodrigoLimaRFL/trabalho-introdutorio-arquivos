@@ -91,3 +91,24 @@ int getTamanhoById(REMOVIDOS *removidos, int id) {
 
   return removidos->tamanhos[posicao];
 }
+
+int getBestFitByteOffset(REMOVIDOS *removidos, int tamanho) {
+  int left = 0;
+  int right = getTamanhoListaIndice(removidos->lista) - 1;
+
+  int middle = (left + right) / 2;
+
+  while(left < right) {
+    if(removidos->tamanhos[middle] < tamanho) {
+      right = middle;
+    } else {
+      left = middle + 1;
+    }
+
+    middle = (left + right) / 2;
+  }
+
+  long long int byteOffset = getByteOffsetRegistroIndice(getRegistroIndice(removidos->lista, middle));
+
+  return byteOffset;
+}
