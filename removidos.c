@@ -46,14 +46,14 @@ REMOVIDOS *criarListaRemovidosVazia() {
 
 // cria uma lista de registros removidos a partir de um arquivo binario
 REMOVIDOS *criarListaRemovidos(FILE *file) {
+  printf("removidos 1\n");
 
   CABECALHO *cabecalho = getCabecalhoFromBin(file);
 
-  printf("1\n");
 
   REMOVIDOS *removidos = criarListaRemovidosVazia();
 
-  printf("2\n");
+  printf("removidos 2\n");
 
   fseek(file, 0, SEEK_END);
   int finalArquivo = ftell(file);

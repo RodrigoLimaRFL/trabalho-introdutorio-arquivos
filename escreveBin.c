@@ -263,8 +263,10 @@ void imprimeRegistrosBuscados(char *arquivo)
 
 void removerRegistrosBuscados(FILE *file, REMOVIDOS *listaRemovidos, LISTA_INDICE *listaIndices)
 {
+    printf("Teste\n");
     int numOperacoes;
     scanf("%d", &numOperacoes); // lê o número de buscas a serem feitas
+    printf("Nro: %d\n", numOperacoes);
 
     for (int i = 0; i < numOperacoes; i++)
     {
@@ -303,7 +305,7 @@ void removerRegistrosBuscados(FILE *file, REMOVIDOS *listaRemovidos, LISTA_INDIC
             if (strcmp(campos[j], "id") == 0)
             {
                 scanf("%i", &id); // lê o id da busca
-                removeById(id, listaIndices, file, listaRemovidos);
+                removeById(id, listaIndices, file, listaRemovidos, cabecalho);
             }
             else if (strcmp(campos[j], "nome") == 0)
             {
@@ -398,6 +400,10 @@ void removerRegistrosBuscados(FILE *file, REMOVIDOS *listaRemovidos, LISTA_INDIC
 
                 adicionarRegistroRemovido(listaRemovidos, registroIndice, get_tamanhoRegistro(registro));
                 removidos++;
+                setNroRegArq(cabecalho, getNroRegArq(cabecalho) - 1);
+                setNroRem(cabecalho, getNroRem(cabecalho) + 1);
+                writeNroRegArqCabecalho(cabecalho, file);
+                writeNroRegRemCabecalho(cabecalho, file);
             }
         }
         fclose(file);
@@ -405,12 +411,12 @@ void removerRegistrosBuscados(FILE *file, REMOVIDOS *listaRemovidos, LISTA_INDIC
 
         if (removidos == 0)
         {
-            // printf("Registro inexistente.\n\n");
+            printf("Registro inexistente.\n\n");
         }
     }
 }
 
-void removeById(int id, LISTA_INDICE *listaIndices, FILE *file, REMOVIDOS *listaRemovidos) {
+void removeById(int id, LISTA_INDICE *listaIndices, FILE *file, REMOVIDOS *listaRemovidos, CABECALHO *cabecalho) {
     REGISTRO_INDICE *registroIndice = buscarRegistroIndice(listaIndices, id);
     long long byteOffset = getByteOffsetRegistroIndice(registroIndice);
     fseek(file, byteOffset, SEEK_SET);
@@ -419,6 +425,10 @@ void removeById(int id, LISTA_INDICE *listaIndices, FILE *file, REMOVIDOS *lista
     
     REGISTRO *registro = buscarRegistroOffset(byteOffset, file);
     adicionarRegistroRemovido(listaRemovidos, registroIndice, get_tamanhoRegistro(registro));
+    setNroRegArq(cabecalho, getNroRegArq(cabecalho) - 1);
+    setNroRem(cabecalho, getNroRem(cabecalho) + 1);
+    writeNroRegArqCabecalho(cabecalho, file);
+    writeNroRegRemCabecalho(cabecalho, file);
 }
 
 bool escreverRegistro(REGISTRO *registro, int byteOffset, int tamRegistroAtual, FILE *arquivoBin)

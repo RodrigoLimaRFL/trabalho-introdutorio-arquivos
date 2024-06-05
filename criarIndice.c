@@ -89,8 +89,9 @@ void imprimirRegistrosIndice(FILE *arquivoIndice)
     }
 }
 
-bool lerBinCriarIndice(FILE *arquivoBinario, char *arquivoIndice)
+FILE *lerBinCriarIndice(FILE *arquivoBinario, char *arquivoIndice)
 {
+    printf("teste\n");
 
     FILE *arquivoInd = fopen(arquivoIndice, "wb+");
     if (arquivoInd == NULL)
@@ -118,6 +119,8 @@ bool lerBinCriarIndice(FILE *arquivoBinario, char *arquivoIndice)
 
     int quantidade = getNroRegArq(cabecalho) + getNroRem(cabecalho);
 
+    printf("teste2\n");
+
     for(int i = 0; i < quantidade; i++)
     {
         REGISTRO *registro = lerRegistroFromBin(posicao, arquivoBinario);
@@ -139,6 +142,8 @@ bool lerBinCriarIndice(FILE *arquivoBinario, char *arquivoIndice)
         liberarRegistro(registro);
     }
 
+    printf("teste3\n");
+
     apagarRegistroIndice(registroIndice);
 
     status = '1';
@@ -148,7 +153,6 @@ bool lerBinCriarIndice(FILE *arquivoBinario, char *arquivoIndice)
     //imprimirRegistrosIndice(arquivoInd);
     
     fclose(arquivoBinario);
-    fclose(arquivoInd);
 
-    return true;
+    return arquivoInd;
 }
