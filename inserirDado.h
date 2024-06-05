@@ -9,6 +9,9 @@
     #include "funcoes_fornecidas.h"
     #include "indice.h"
     #include "registro.h"
+    #include "removidos.h"
+    #include "escreveBin.h"
+    #include "criarIndice.h"
 
-    bool inserirNovoDado(char *arquivoBinario, char *arquivoIndice);
+    void inserirNovoDado(char *arquivoBinario, char *arquivoIndice);
 #endif

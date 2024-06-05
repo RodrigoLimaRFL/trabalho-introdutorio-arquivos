@@ -78,16 +78,25 @@ int main() {
     }
     else if(strcmp(operacao, "6") == 0)
     {
-        /*char arquivoBin[50];
+        char arquivoBin[50];
         scanf("%s", arquivoBin);
 
         char arquivoIndice[50];
         scanf("%s", arquivoIndice);
 
-        inserirNovoDado(arquivoBin, arquivoIndice);
+        int numOperacoes;
+
+        scanf("%d", &numOperacoes);
+
+        for(int i = 0; i < numOperacoes; i++)
+        {
+            printf("a\n ");
+            inserirNovoDado(arquivoBin, arquivoIndice);
+            printf("b\n");
+        }
 
         binarioNaTela(arquivoBin);
-        binarioNaTela(arquivoIndice);*/
+        binarioNaTela(arquivoIndice);
     }
     else // se a operação for diferente de 1, 2 ou 3, imprime, imprime que a operação é inválida
     {

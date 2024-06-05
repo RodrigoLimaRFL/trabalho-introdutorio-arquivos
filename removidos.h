@@ -9,4 +9,9 @@
         typedef struct _removidos REMOVIDOS;
         REMOVIDOS *criarListaRemovidos(FILE *file);
         void adicionarRegistroRemovido(REMOVIDOS *removidos, REGISTRO_INDICE *registroIndice, int tamanho);
+        void removerRegistroRemovido(REMOVIDOS *removidos, int id);
+        void removerRegistroRemovidoEAtualizarArquivo(REMOVIDOS *removidos, int id, FILE *file);
+        int getTamanhoById(REMOVIDOS *removidos, int id);
+        long long int getBestFitByteOffset(REMOVIDOS *removidos, int tamanho);
+        long long int getBestFitAndFreeSpace(REMOVIDOS *removidos, int tamanho);
 #endif

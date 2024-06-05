@@ -1,5 +1,7 @@
-all: cabecalho.o removidos.o funcoes_fornecidas.o gerencia-arquivo.o registro.o escreveBin.o interpreta-bin.o indice.o criarIndice.o percorreCsv.o registroIndice.o main.o
-	gcc registro.o cabecalho.o removidos.o gerencia-arquivo.o escreveBin.o interpreta-bin.o funcoes_fornecidas.o indice.o criarIndice.o percorreCsv.o registroIndice.o main.o -o gerencia-arquivo.exe -std=c99 -Wall
+all: gerencia-arquivo.exe
+
+gerencia-arquivo.exe: cabecalho.o removidos.o funcoes_fornecidas.o gerencia-arquivo.o registro.o escreveBin.o interpreta-bin.o indice.o criarIndice.o percorreCsv.o registroIndice.o inserirDado.o main.o
+	gcc registro.o cabecalho.o removidos.o gerencia-arquivo.o escreveBin.o interpreta-bin.o funcoes_fornecidas.o indice.o criarIndice.o percorreCsv.o registroIndice.o inserirDado.o main.o -o gerencia-arquivo.exe -std=c99 -Wall
 
 removidos.o:
 	gcc -c removidos.c -o removidos.o
@@ -33,12 +35,18 @@ percorreCsv.o:
 
 registroIndice.o:
 	gcc -c registroIndice.c -o registroIndice.o
+
+inserirDado.o:
+	gcc -c inserirDado.c -o inserirDado.o
 	  
 main.o:
 	gcc -c main.c -o main.o
-	 
+
+debug: CFLAGS += -g
+debug: clean gerencia-arquivo.exe
+
 clean:
-	rm *.o gerencia-arquivo
+	rm *.o gerencia-arquivo.exe
 
 run:
 	./gerencia-arquivo.exe

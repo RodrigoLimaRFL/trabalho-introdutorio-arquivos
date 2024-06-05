@@ -31,14 +31,23 @@ int buscaArquivoIndice(int id, FILE *arquivoInd)
 }
 
 // Função que insere um registro no arquivo de índice na posição posicao
-int insertInPosicaoBin (REGISTRO_INDICE *registro, FILE *arquivoInd, long long int posicao)
+int insertInPosicaoBinIndice (REGISTRO_INDICE *registro, FILE *arquivoInd, long long int posicao)
 {
+    fseek(arquivoInd, 0, SEEK_SET);
+
+    char status = '0';
+
+    fwrite(&status, sizeof(char), 1, arquivoInd); // seta o status para 0
+
     fseek(arquivoInd, 0, SEEK_END);
     long long int bytesToMove = ftell(arquivoInd) - posicao;
 
     char *buffer = (char *) malloc(bytesToMove);
     if (buffer == NULL)
     {
+        fseek(arquivoInd, 0, SEEK_SET);
+        status = '1';
+        fwrite(&status, sizeof(char), 1, arquivoInd); // seta o status para 1
         printf("Erro ao alocar memoria\n");
         return 0;
     }
@@ -59,6 +68,10 @@ int insertInPosicaoBin (REGISTRO_INDICE *registro, FILE *arquivoInd, long long i
     fwrite(&byteOffset, sizeof(long long int), 1, arquivoInd);
 
     free(buffer);
+
+    fseek(arquivoInd, 0, SEEK_SET);
+    status = '1';
+    fwrite(&status, sizeof(char), 1, arquivoInd); // seta o status para 1
 
     return 1;
 }
@@ -120,7 +133,7 @@ bool lerBinCriarIndice(FILE *arquivoBinario, char *arquivoIndice)
         setByteOffsetRegistroIndice(registroIndice, posicao);
 
         int posicaoInsercao = buscaArquivoIndice(get_id(registro), arquivoInd);
-        insertInPosicaoBin(registroIndice, arquivoInd, posicaoInsercao);
+        insertInPosicaoBinIndice(registroIndice, arquivoInd, posicaoInsercao);
 
         posicao += get_tamanhoRegistro(registro);
         liberarRegistro(registro);
@@ -139,55 +152,3 @@ bool lerBinCriarIndice(FILE *arquivoBinario, char *arquivoIndice)
 
     return true;
 }
-/*
-// Adicionar byteoffset e imprimir pra bin
-INDICE *criarArquivoDeIndice(LISTA *listaRegistros, CABECALHO *cabecalho)
-{
-    int byteOffset = 34; //cabecalho tem 33 bytes -> primeiro byte eh 34
-    INDICE *indice = criarIndice();
-    setStatusIndice(indice, '1');
-    for(int i = 0; i < getTamanho(listaRegistros); i++)
-    {
-        REGISTRO *registro = getRegistro(listaRegistros, i);
-        if(get_removido(registro) == '0')
-        {
-            REGISTRO_DADOS *registroDados = criarRegistroDados();
-            setIndexRegistroIndice(registroDados, get_id(registro));
-            setByteOffsetRegistroIndice(registroDados, byteOffset);
-            insertRegistroIndice(indice, registroDados);
-            byteOffset += get_tamanhoRegistro(registro);
-        }
-    }
-    setStatusIndice(indice, '0');
-
-    return indice;
-}
-
-void escreveIndiceBinario(INDICE *indice, char *nomeArquivo)
-{
-    FILE *arquivo = fopen(nomeArquivo, "wb");
-    if(arquivo == NULL)
-    {
-        printf("Falha no processamento do arquivo.\n");
-        return;
-    }
-
-    char status = getStatusIndice(indice);
-    fwrite(&status, sizeof(char), 1, arquivo);
-
-    int quantidade = getQuantidadeIndice(indice);
-    fwrite(&quantidade, sizeof(int), 1, arquivo);
-
-    REGISTRO_DADOS **dados = getDadosIndice(indice);
-
-    printf("%d \n", getIndexRegistroIndice(dados[0]));
-
-    for(int i = 0; i < quantidade; i++)
-    {
-        //fwrite(getIndexRegistroIndice(dados), sizeof(int), 1, arquivo);
-        //fwrite(getByteOffsetRegistroIndice(dados[i]), sizeof(long long int), 1, arquivo);
-    }
-
-    //apagarIndice(indice);
-    fclose(arquivo);
-}*/

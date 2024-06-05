@@ -141,6 +141,26 @@ int buscarPosicaoRegistroIndice(LISTA_INDICE *lista, int id)
     return -1; // se o registro não foi encontrado, retorna -1
 }
 
+long long int buscarPosicaoArquivoIndice(int id, FILE *file)
+{
+    fseek(file, 1, SEEK_SET); // pula o status
+
+    int index = -1;
+    long long int byteOffset = -1;
+
+    while (fread(&index, sizeof(int), 1, file) == 1)
+    {
+        fread(&byteOffset, sizeof(long long int), 1, file);
+
+        if (index >= id)
+        {
+            return ftell(file) - sizeof(long long int) - sizeof(int);
+        }
+    }
+
+    return ftell(file);
+}
+
 void setRegistroListaIndice(LISTA_INDICE *lista, int index, REGISTRO_INDICE *registro)
 {
     lista->registros[index] = registro;
@@ -215,6 +235,5 @@ bool carregarIndice(LISTA_INDICE *lista, FILE *file)
         adicionarRegistroIndice(lista, registro);
     }
 
-    fclose(file);
     return true;
 }

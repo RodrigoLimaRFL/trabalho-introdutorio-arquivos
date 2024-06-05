@@ -11,4 +11,5 @@
     #include "interpreta-bin.h"
 
     bool lerBinCriarIndice(FILE *arquivoBinario, char *arquivoIndice);
+    int insertInPosicaoBinIndice (REGISTRO_INDICE *registro, FILE *arquivoInd, long long int posicao);
 #endif

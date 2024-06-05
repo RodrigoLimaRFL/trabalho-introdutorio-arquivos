@@ -420,3 +420,44 @@ void removeById(int id, LISTA_INDICE *listaIndices, FILE *file, REMOVIDOS *lista
     REGISTRO *registro = buscarRegistroOffset(byteOffset, file);
     adicionarRegistroRemovido(listaRemovidos, registroIndice, get_tamanhoRegistro(registro));
 }
+
+bool escreverRegistro(REGISTRO *registro, int byteOffset, int tamRegistroAtual, FILE *arquivoBin)
+{
+    if(registro == NULL || byteOffset < 25 || arquivoBin == NULL)
+    {
+        return false;
+    }
+
+    char removido = get_removido(registro);
+    int tamanhoRegistro = get_tamanhoRegistro(registro);
+    long long int prox = get_prox(registro);
+    int id = get_id(registro);
+    int idade = get_idade(registro);
+    int tamNomeJogador = get_tamNomeJogador(registro);
+    char *nomeJogador = get_nomeJogador(registro);
+    int tamNacionalidade = get_tamNacionalidade(registro);
+    char *nacionalidade = get_nacionalidade(registro);
+    int tamNomeClube = get_tamNomeClube(registro);
+    char *nomeClube = get_nomeClube(registro);
+
+    fseek(arquivoBin, byteOffset, SEEK_SET); // muda o ponteiro do arquivo para a posição do registro
+
+    fwrite(&removido, sizeof(char), 1, arquivoBin); // escreve o campo removido no arquivo
+    fwrite(&tamanhoRegistro, sizeof(int), 1, arquivoBin); // escreve o campo tamanhoRegistro no arquivo
+    fwrite(&prox, sizeof(long long int), 1, arquivoBin); // escreve o campo prox no arquivo
+    fwrite(&id, sizeof(int), 1, arquivoBin); // escreve o campo id no arquivo
+    fwrite(&idade, sizeof(int), 1, arquivoBin); // escreve o campo idade no arquivo
+    fwrite(&tamNomeJogador, sizeof(int), 1, arquivoBin); // escreve o campo tamNomeJogador no arquivo
+    fwrite(nomeJogador, sizeof(char), tamNomeJogador, arquivoBin); // escreve o campo nomeJogador no arquivo
+    fwrite(&tamNacionalidade, sizeof(int), 1, arquivoBin); // escreve o campo tamNacionalidade no arquivo
+    fwrite(nacionalidade, sizeof(char), tamNacionalidade, arquivoBin); // escreve o campo nacionalidade no arquivo
+    fwrite(&tamNomeClube, sizeof(int), 1, arquivoBin); // escreve o campo tamNomeClube no arquivo
+    fwrite(nomeClube, sizeof(char), tamNomeClube, arquivoBin); // escreve o campo nomeClube no arquivo
+
+    for (int i = 0; i < tamRegistroAtual - tamanhoRegistro; i++)
+    {
+        fwrite("$", sizeof(char), 1, arquivoBin); // preenche o registro com '$'
+    }
+
+    return true;
+}
