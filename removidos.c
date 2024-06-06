@@ -53,7 +53,6 @@ REMOVIDOS *criarListaRemovidosVazia() {
 
 // cria uma lista de registros removidos a partir de um arquivo binario
 REMOVIDOS *criarListaRemovidos(FILE *file) {
-
   CABECALHO *cabecalho = getCabecalhoFromBin(file);
   REMOVIDOS *removidos = criarListaRemovidosVazia();
 

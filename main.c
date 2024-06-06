@@ -56,7 +56,7 @@ int main() {
         file = fopen(arquivoBin, "rb"); // verifica se ocorreu um erro ao abrir o arquivo no modo leitura e escrita
         if (file == NULL)
         {
-            printf("Falha no processamento do arquivo.");
+            printf("Falha no processamento do arquivo.\n");
             return 0;
         }
 
@@ -69,12 +69,30 @@ int main() {
         char arquivoBin[50];
         scanf("%s", arquivoBin);
 
+        char arquivoIndice[50];
+        scanf("%s", arquivoIndice);
+
+        file = fopen(arquivoBin, "rb+");
+        if (file == NULL) // verifica se ocorreu um erro ao abrir o arquivo no modo leitura e escrita
+        {
+            printf("Falha no processamento do arquivo.\n");
+            return 0;
+        }
+
+        FILE *fileIndice = lerBinCriarIndice(file, arquivoIndice);
+        
+        printf("chegou\n");
         REMOVIDOS *removidos = criarListaRemovidos(file);
+        printf("chegouuuuuuu\n");
 
         LISTA_INDICE *listaIndices = criarListaIndice();
-        carregarIndice(listaIndices, file);
+        carregarIndice(listaIndices, fileIndice);
+
 
         removerRegistrosBuscados(file, removidos, listaIndices);
+
+        binarioNaTela(arquivoBin);
+        binarioNaTela(arquivoIndice);
     }
     else if(strcmp(operacao, "6") == 0)
     {

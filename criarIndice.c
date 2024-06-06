@@ -89,7 +89,7 @@ void imprimirRegistrosIndice(FILE *arquivoIndice)
     }
 }
 
-bool lerBinCriarIndice(FILE *arquivoBinario, char *arquivoIndice)
+FILE *lerBinCriarIndice(FILE *arquivoBinario, char *arquivoIndice)
 {
 
     FILE *arquivoInd = fopen(arquivoIndice, "wb+");
@@ -119,6 +119,7 @@ bool lerBinCriarIndice(FILE *arquivoBinario, char *arquivoIndice)
 
     int quantidade = getNroRegArq(cabecalho) + getNroRem(cabecalho);
 
+
     for(int i = 0; i < quantidade; i++)
     {
         REGISTRO *registro = lerRegistroFromBin(posicao, arquivoBinario);
@@ -127,17 +128,17 @@ bool lerBinCriarIndice(FILE *arquivoBinario, char *arquivoIndice)
         {
             posicao += get_tamanhoRegistro(registro);
             liberarRegistro(registro);
-            continue;
+        } else {
+            setIndexRegistroIndice(registroIndice, get_id(registro));
+            setByteOffsetRegistroIndice(registroIndice, posicao);
+
+            int posicaoInsercao = buscaArquivoIndice(get_id(registro), arquivoInd);
+            insertInPosicaoBinIndice(registroIndice, arquivoInd, posicaoInsercao);
+
+            posicao += get_tamanhoRegistro(registro);
+            liberarRegistro(registro);
         }
 
-        setIndexRegistroIndice(registroIndice, get_id(registro));
-        setByteOffsetRegistroIndice(registroIndice, posicao);
-
-        int posicaoInsercao = buscaArquivoIndice(get_id(registro), arquivoInd);
-        insertInPosicaoBinIndice(registroIndice, arquivoInd, posicaoInsercao);
-
-        posicao += get_tamanhoRegistro(registro);
-        liberarRegistro(registro);
     }
 
     apagarRegistroIndice(registroIndice);
@@ -149,7 +150,6 @@ bool lerBinCriarIndice(FILE *arquivoBinario, char *arquivoIndice)
     //imprimirRegistrosIndice(arquivoInd);
     
     fclose(arquivoBinario);
-    fclose(arquivoInd);
 
-    return true;
+    return arquivoInd;
 }
