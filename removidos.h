@@ -7,6 +7,7 @@
         #include "interpreta-bin.h"
 
         typedef struct _removidos REMOVIDOS;
+        void apagarListaRemovidos(REMOVIDOS *removidos);
         REMOVIDOS *criarListaRemovidos(FILE *file);
         void adicionarRegistroRemovido(REMOVIDOS *removidos, REGISTRO_INDICE *registroIndice, int tamanho);
         void removerRegistroRemovido(REMOVIDOS *removidos, int id);

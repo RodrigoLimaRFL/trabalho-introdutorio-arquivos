@@ -5,6 +5,12 @@ struct _removidos {
   int *tamanhos;
 };
 
+void apagarListaRemovidos(REMOVIDOS *removidos) {
+  apagarListaIndice(removidos->lista);
+  free(removidos->tamanhos);
+  free(removidos);
+}
+
 void shiftElementosListaRemovidosRight(REMOVIDOS *removidos, int pos) {
   for(int i = getTamanhoListaIndice(removidos->lista); i > pos; i--) {
     REGISTRO_INDICE *registro = getRegistroIndice(removidos->lista, i - 1);
@@ -59,9 +65,11 @@ REMOVIDOS *criarListaRemovidos(FILE *file) {
   
   int count = 0;
 
+  // mudou aq
   while(proxByteOffset != -1 && proxByteOffset < finalArquivo) {
-    count++;
     REGISTRO *registro = lerRegistroFromBin(proxByteOffset, file);
+
+    count++;
 
     if(get_removido(registro) == '1') {
       REGISTRO_INDICE *registroIndice = criarRegistroIndice();
@@ -72,6 +80,22 @@ REMOVIDOS *criarListaRemovidos(FILE *file) {
     }
 
     proxByteOffset = get_prox(registro);
+
+    REGISTRO *proxRegistro;
+
+    if(proxByteOffset != -1 && proxByteOffset < finalArquivo)
+      proxRegistro = lerRegistroFromBin(proxByteOffset, file);
+
+    if(get_prox(proxRegistro) == -1 && get_removido(proxRegistro) == '1') {
+      REGISTRO_INDICE *registroIndice = criarRegistroIndice();
+      setIndexRegistroIndice(registroIndice, get_id(proxRegistro));
+      setByteOffsetRegistroIndice(registroIndice, proxByteOffset);
+
+      adicionarRegistroRemovido(removidos, registroIndice, get_tamanhoRegistro(proxRegistro));
+      break;
+    }
+
+    free(proxRegistro);
   }
 
   return removidos;
@@ -144,16 +168,16 @@ void removerRegistroRemovidoEAtualizarArquivo(REMOVIDOS *removidos, int posicao,
   writeNroRegRemCabecalho(cabecalho, file);
   
   if(tamanhoLista == 1) { // lista so tem um elemento removido
-    //setTopo(cabecalho, -1);
-    //writeTopoCabecalho(cabecalho, file);
+    setTopo(cabecalho, -1);
+    writeTopoCabecalho(cabecalho, file);
   }
   else if(posicao == 0) // removendo o primeiro elemento
   {
     REGISTRO_INDICE *registroIndice = getRegistroIndice(removidos->lista, 1);
     long long int byteOffset = getByteOffsetRegistroIndice(registroIndice);
 
-    //setTopo(cabecalho, byteOffset);
-    //writeTopoCabecalho(cabecalho, file);
+    setTopo(cabecalho, byteOffset);
+    writeTopoCabecalho(cabecalho, file);
   }
   else if(posicao == tamanhoLista - 1) // removendo o ultimo elemento
   {
@@ -221,12 +245,33 @@ long long int getBestFitByteOffset(REMOVIDOS *removidos, int tamanho) {
 long long int *getBestFitArrayRegistros(REMOVIDOS *removidos, REGISTRO **registros, int quantidade, FILE *file)
 {
   int *tamanhos = malloc(sizeof(int) * quantidade);
+  long long int *byteOffsets = malloc(sizeof(long long int) * quantidade);
 
-  for(int i = 0; i < quantidade; i++) {
-    tamanhos[i] = get_tamanhoRegistro(registros[i]);
+  if(getTamanhoListaRemovidos(removidos) == 0)
+  {
+    CABECALHO *cabecalho = getCabecalhoFromBin(file);
+
+    setNroRegArq(cabecalho, getNroRegArq(cabecalho) + quantidade);
+    writeNroRegArqCabecalho(cabecalho, file);
+
+    for(int i = 0; i < quantidade; i++)
+    {
+      byteOffsets[i] = -1;
+    }
+
+    free(tamanhos);
+
+    return byteOffsets;
   }
 
-  long long int *byteOffsets = malloc(sizeof(long long int) * quantidade);
+  for(int i = 0; i < quantidade; i++) {
+    if(get_tamanhoRegistro(registros[i]) == 0) {
+      tamanhos[i] = -1;
+      byteOffsets[i] = 0;
+      continue;
+    }
+    tamanhos[i] = get_tamanhoRegistro(registros[i]);
+  }
 
   // pegue o bestFit na ordem do maior para o menor
   for(int i = 0; i < quantidade; i++) {
@@ -240,6 +285,10 @@ long long int *getBestFitArrayRegistros(REMOVIDOS *removidos, REGISTRO **registr
       }
     }
 
+    if(posicao == -1)
+    {
+      continue;
+    }
     byteOffsets[posicao] = getBestFitAndFreeSpace(removidos, tamanhos[posicao], registros[posicao], file);
     tamanhos[posicao] = -1;
   }
@@ -278,10 +327,7 @@ long long int getBestFitAndFreeSpace(REMOVIDOS *removidos, int tamanho, REGISTRO
     }
 
     long long int byteOffsetAnterior = getByteOffsetRegistroIndice(getRegistroIndice(removidos->lista, middle - 1));
-
-    if(byteOffsetAnterior < byteOffset) {
-      byteOffset = byteOffsetAnterior;
-    }
+    byteOffset = byteOffsetAnterior;
 
     middle--;
   }

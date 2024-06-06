@@ -8,6 +8,8 @@ void inserirNovoDado(char *arquivoBinario, char *arquivoIndice, int numOperacoes
 
     if (arquivoBin == NULL || arquivoInd == NULL)
     {
+        fclose(arquivoBin);
+        fclose(arquivoInd);
         return;
     }
     CABECALHO *cabecalho = getCabecalhoFromBin(arquivoBin);
@@ -33,13 +35,13 @@ void inserirNovoDado(char *arquivoBinario, char *arquivoIndice, int numOperacoes
 
     for(int i = 0; i < numOperacoes; i++)
     {
-        for(int j = 0; j < numOperacoes; j++)
-        {
-            nomeJogador[j] = malloc(sizeof(char) * 50);
-            nacionalidade[j] = malloc(sizeof(char) * 50);
-            nomeClube[j] = malloc(sizeof(char) * 50);
-        }
+        nomeJogador[i] = malloc(sizeof(char) * 50);
+        nacionalidade[i] = malloc(sizeof(char) * 50);
+        nomeClube[i] = malloc(sizeof(char) * 50);
+    }
 
+    for(int i = 0; i < numOperacoes; i++)
+    {
         // le o input do usuario
         scanf("%i", &id);
         scan_quote_string(idadeStr);
@@ -50,7 +52,17 @@ void inserirNovoDado(char *arquivoBinario, char *arquivoIndice, int numOperacoes
 
         if(registroIndice != NULL)
         {
-            printf("Registro já existe\n");
+            registros[i] = criarRegistro('1',
+                                         0,
+                                         0,
+                                         0,
+                                         0,
+                                         0,
+                                         "",
+                                         0,
+                                         "",
+                                         0,
+                                         "");
             //apagarCabecalho(cabecalho);
             // apagarListaIndice(lista); dando double free pq a lista removidos usa o mesmo registro
             // criar funcao pra apagar lista removidos
@@ -96,6 +108,7 @@ void inserirNovoDado(char *arquivoBinario, char *arquivoIndice, int numOperacoes
                                      nomeClube[i]);
     }
 
+    apagarCabecalho(cabecalho);
 
     cabecalho = getCabecalhoFromBin(arquivoBin);
 
@@ -104,12 +117,17 @@ void inserirNovoDado(char *arquivoBinario, char *arquivoIndice, int numOperacoes
 
     for(int i = 0; i < numOperacoes; i++)
     {
-        // erro aqui
-        if(byteOffsets[i] == -1)
+        if(byteOffsets[i] == 0) // registro ja existe
+        {
+            continue;
+        }
+        if(byteOffsets[i] == -1) // registro insere no fim
         {
             tamanhoRegistroAtual = 0;
             fseek(arquivoBin, 0, SEEK_END);
             byteOffsets[i] = ftell(arquivoBin);
+            setProxByteOffset(cabecalho, byteOffsets[i] + get_tamanhoRegistro(registros[i]));
+            writeProxByteOffsetCabecalho(cabecalho, arquivoBin);
         }
         else
         {
@@ -125,11 +143,6 @@ void inserirNovoDado(char *arquivoBinario, char *arquivoIndice, int numOperacoes
         // escreve os dados do registro no arquivoBin
         escreverRegistro(registros[i], byteOffsets[i], tamanhoRegistroAtual, arquivoBin);
 
-        if(tamanhoRegistroAtual != 0)
-        {
-            set_tamanhoRegistro(registros[i], tamanhoRegistroAtual);
-        }
-
         // terminou de escrever o arquivo
         setStatus(cabecalho, '1');
         writeStatusCabecalho(cabecalho, arquivoBin);
@@ -142,15 +155,24 @@ void inserirNovoDado(char *arquivoBinario, char *arquivoIndice, int numOperacoes
         long long int byteOffsetArquivoIndice = buscarPosicaoArquivoIndice(get_id(registros[i]), arquivoInd);
 
         insertInPosicaoBinIndice(registroIndice, arquivoInd, byteOffsetArquivoIndice);
+
+        apagarRegistroIndice(registroIndice);
     }
+
+    for(int i = 0; i < numOperacoes; i++)
+    {
+        free(registros[i]);
+    }
+
+    free(byteOffsets);
 
     free(nomeJogador);
     free(nacionalidade);
     free(nomeClube);
 
     apagarCabecalho(cabecalho);
-    // apagarListaIndice(lista); dando double free pq a lista removidos usa o mesmo registro
-    // criar funcao pra apagar lista removidos
+    apagarListaRemovidos(removidos);
+    apagarListaIndice(lista); 
 
     fclose(arquivoBin);
     fclose(arquivoInd);
