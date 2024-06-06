@@ -46,30 +46,21 @@ REMOVIDOS *criarListaRemovidosVazia() {
 
 // cria uma lista de registros removidos a partir de um arquivo binario
 REMOVIDOS *criarListaRemovidos(FILE *file) {
-  printf("removidos 1\n");
-
   CABECALHO *cabecalho = getCabecalhoFromBin(file);
-
-  printf("removidos 10338\n");
-
   REMOVIDOS *removidos = criarListaRemovidosVazia();
 
-  printf("removidos 2\n");
 
-  if(fseek(file, 0, SEEK_END) != 0) {
-    printf("erro ao mover ponteiro 2\n");
-  }
-  long finalArquivo = ftell(file);
-  printf("finalArquivo: %ld\n", finalArquivo);
+  fseek(file, 0, SEEK_END);
+  int finalArquivo = ftell(file);
 
-  printf("3\n");
-
-  long long proxByteOffset = getTopo(cabecalho);
+  int proxByteOffset = getTopo(cabecalho);
+  //proxByteOffset += 25; // pula o cabecalho
+  
+  int count = 0;
 
   while(proxByteOffset != -1 && proxByteOffset < finalArquivo) {
-    printf("proxByteOffset: %lld\n", proxByteOffset);
+    count++;
     REGISTRO *registro = lerRegistroFromBin(proxByteOffset, file);
-    printf("tamanho: %d\n", get_tamanhoRegistro(registro));
 
     if(get_removido(registro) == '1') {
       REGISTRO_INDICE *registroIndice = criarRegistroIndice();
@@ -80,7 +71,6 @@ REMOVIDOS *criarListaRemovidos(FILE *file) {
     }
 
     proxByteOffset = get_prox(registro);
-    printf("proxByteOffset: %lld\n\n", proxByteOffset);
   }
 
   return removidos;

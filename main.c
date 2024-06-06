@@ -79,21 +79,17 @@ int main() {
             return 0;
         }
 
-        printf("0\n");
         FILE *fileIndice = lerBinCriarIndice(file, arquivoIndice);
 
-        printf("1\n");
-
         REMOVIDOS *removidos = criarListaRemovidos(file);
-
-        printf("2\n");
 
         LISTA_INDICE *listaIndices = criarListaIndice();
         carregarIndice(listaIndices, fileIndice);
 
-        printf("3\n");
-
         removerRegistrosBuscados(file, removidos, listaIndices);
+
+        binarioNaTela(arquivoBin);
+        binarioNaTela(arquivoIndice);
     }
     else if(strcmp(operacao, "6") == 0)
     {

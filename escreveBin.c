@@ -263,7 +263,6 @@ void imprimeRegistrosBuscados(char *arquivo)
 
 void removerRegistrosBuscados(FILE *file, REMOVIDOS *listaRemovidos, LISTA_INDICE *listaIndices)
 {
-    printf("Teste\n");
     int numOperacoes;
     scanf("%d", &numOperacoes); // lê o número de buscas a serem feitas
     printf("Nro: %d\n", numOperacoes);

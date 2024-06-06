@@ -37,7 +37,6 @@ CABECALHO *getCabecalhoFromBin(FILE *file)
     fseek(file, 0, SEEK_SET);
     CABECALHO *cabecalho = criarCabecalho();
     lerCabecalhoFromBin(file, cabecalho);
-    printf("cabecalho 1\n");
 
     return cabecalho;
 }
