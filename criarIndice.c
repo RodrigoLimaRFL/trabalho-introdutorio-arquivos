@@ -101,6 +101,8 @@ bool lerBinCriarIndice(FILE *arquivoBinario, char *arquivoIndice)
     
     CABECALHO *cabecalho = getCabecalhoFromBin(arquivoBinario);
 
+    imprimirCabecalho(cabecalho);
+
     if (getStatus(cabecalho) == '0')
     {
         printf("Falha no processamento do arquivo.\n");
@@ -110,6 +112,7 @@ bool lerBinCriarIndice(FILE *arquivoBinario, char *arquivoIndice)
     }
 
     char status = '0';
+    fseek(arquivoInd, 0, SEEK_SET);
     fwrite(&status, sizeof(char), 1, arquivoInd);
 
     long long int posicao = 25;

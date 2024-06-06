@@ -53,7 +53,7 @@ int main() {
         char arquivoIndice[50];
         scanf("%s", arquivoIndice);
 
-        file = fopen(arquivoBin, "wb+"); // verifica se ocorreu um erro ao abrir o arquivo no modo leitura e escrita
+        file = fopen(arquivoBin, "rb"); // verifica se ocorreu um erro ao abrir o arquivo no modo leitura e escrita
         if (file == NULL)
         {
             printf("Falha no processamento do arquivo.");
@@ -84,16 +84,20 @@ int main() {
         char arquivoIndice[50];
         scanf("%s", arquivoIndice);
 
+        file = fopen(arquivoBin, "rb");
+        if (file == NULL)
+        {
+            printf("Falha no processamento do arquivo.");
+            return 0;
+        }
+        lerBinCriarIndice(file, arquivoIndice);
+        printf("arquivoIndice: %s\n", arquivoIndice);
+
         int numOperacoes;
 
         scanf("%d", &numOperacoes);
 
-        for(int i = 0; i < numOperacoes; i++)
-        {
-            printf("a\n ");
-            inserirNovoDado(arquivoBin, arquivoIndice);
-            printf("b\n");
-        }
+        inserirNovoDado(arquivoBin, arquivoIndice, numOperacoes);
 
         binarioNaTela(arquivoBin);
         binarioNaTela(arquivoIndice);

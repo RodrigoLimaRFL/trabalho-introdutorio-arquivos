@@ -24,5 +24,6 @@
         void imprimirListaIndice(LISTA_INDICE *lista);
         bool carregarIndice(LISTA_INDICE *lista, FILE *file);
         long long int buscarPosicaoArquivoIndice(int id, FILE *file);
+        void setTamanho(LISTA_INDICE *lista, int tamanho);
 #endif
 

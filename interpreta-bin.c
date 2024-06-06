@@ -35,6 +35,7 @@ CABECALHO *getCabecalhoFromBin(FILE *file)
 {
     // cria um cabeçalho e chama a função lerCabecalhoFromBin para atribuir os valores a ele
     CABECALHO *cabecalho = criarCabecalho();
+    fseek(file, 0, SEEK_SET);
     lerCabecalhoFromBin(file, cabecalho);
 
     return cabecalho;

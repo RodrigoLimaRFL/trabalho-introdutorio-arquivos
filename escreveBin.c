@@ -454,8 +454,11 @@ bool escreverRegistro(REGISTRO *registro, int byteOffset, int tamRegistroAtual, 
     fwrite(&tamNomeClube, sizeof(int), 1, arquivoBin); // escreve o campo tamNomeClube no arquivo
     fwrite(nomeClube, sizeof(char), tamNomeClube, arquivoBin); // escreve o campo nomeClube no arquivo
 
+
+    printf("tamRegistroAual - tamanhoRegistro: %d\n", tamRegistroAtual - tamanhoRegistro);
     for (int i = 0; i < tamRegistroAtual - tamanhoRegistro; i++)
     {
+        printf("entrou\n");
         fwrite("$", sizeof(char), 1, arquivoBin); // preenche o registro com '$'
     }
 

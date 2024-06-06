@@ -161,6 +161,11 @@ long long int buscarPosicaoArquivoIndice(int id, FILE *file)
     return ftell(file);
 }
 
+void setTamanho(LISTA_INDICE *lista, int tamanho)
+{
+    lista->tamanho = tamanho;
+}
+
 void setRegistroListaIndice(LISTA_INDICE *lista, int index, REGISTRO_INDICE *registro)
 {
     lista->registros[index] = registro;
@@ -169,14 +174,14 @@ void setRegistroListaIndice(LISTA_INDICE *lista, int index, REGISTRO_INDICE *reg
 // Função para remover um registro da lista
 void removerRegistroIndice(LISTA_INDICE *lista, int index)
 {
+    apagarRegistroIndice(lista->registros[index]); // apaga o registro
+
     // desloca todos os registros depois do registro a ser removido para a esquerda
     for (int i = index; i < lista->tamanho - 1; i++)
     {
         lista->registros[i] = lista->registros[i + 1];
     }
 
-    // libera a memória do registro e altera o tamanho da lista
-    apagarRegistroIndice(lista->registros[lista->tamanho]);
     lista->tamanho--;
 }
 
@@ -201,16 +206,16 @@ void imprimirListaIndice(LISTA_INDICE *lista)
     int impressoes = 0;
     for (int i = 0; i < lista->tamanho; i++)
     {
-            impressoes++;
+        impressoes++;
 
-            // recebe o valor dos atributos do registro
-            int id = getIndexRegistroIndice(lista->registros[i]);
-            int byteOffset = getByteOffsetRegistroIndice(lista->registros[i]);
+        // recebe o valor dos atributos do registro
+        int id = getIndexRegistroIndice(lista->registros[i]);
+        int byteOffset = getByteOffsetRegistroIndice(lista->registros[i]);
 
-            printf("Index: %d\n", id);
-            printf("Byte Offset: %d\n", byteOffset);
-            
-            printf("\n");
+        printf("Index: %d\n", id);
+        printf("Byte Offset: %d\n", byteOffset);
+        
+        printf("\n");
     }
 
     if (impressoes == 0)

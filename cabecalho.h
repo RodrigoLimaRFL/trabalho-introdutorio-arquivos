@@ -41,4 +41,6 @@
 
     void writeNroRegRemCabecalho(CABECALHO *cabecalho, FILE *arquivoBin);
 
+    void imprimirCabecalho(CABECALHO *cabecalho);
+
 #endif

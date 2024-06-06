@@ -13,5 +13,5 @@
     #include "escreveBin.h"
     #include "criarIndice.h"
 
-    void inserirNovoDado(char *arquivoBinario, char *arquivoIndice);
+    void inserirNovoDado(char *arquivoBinario, char *arquivoIndice, int numOperacoes);
 #endif

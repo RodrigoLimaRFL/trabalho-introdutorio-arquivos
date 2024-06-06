@@ -128,3 +128,12 @@ void writeNroRegRemCabecalho(CABECALHO *cabecalho, FILE *arquivoBin)
     int nroRem = getNroRem(cabecalho);
     fwrite(&nroRem, sizeof(int), 1, arquivoBin);
 }
+
+void imprimirCabecalho(CABECALHO *cabecalho)
+{
+    printf("Status: %c\n", getStatus(cabecalho));
+    printf("Topo: %lld\n", getTopo(cabecalho));
+    printf("ProxByteOffset: %lld\n", getProxByteOffset(cabecalho));
+    printf("NroRegArq: %d\n", getNroRegArq(cabecalho));
+    printf("NroRegRem: %d\n\n", getNroRem(cabecalho));
+}
