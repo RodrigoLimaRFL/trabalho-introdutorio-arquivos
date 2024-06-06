@@ -80,11 +80,14 @@ int main() {
         }
 
         FILE *fileIndice = lerBinCriarIndice(file, arquivoIndice);
-
+        
+        printf("chegou\n");
         REMOVIDOS *removidos = criarListaRemovidos(file);
+        printf("chegouuuuuuu\n");
 
         LISTA_INDICE *listaIndices = criarListaIndice();
         carregarIndice(listaIndices, fileIndice);
+
 
         removerRegistrosBuscados(file, removidos, listaIndices);
 
