@@ -129,17 +129,17 @@ FILE *lerBinCriarIndice(FILE *arquivoBinario, char *arquivoIndice)
         {
             posicao += get_tamanhoRegistro(registro);
             liberarRegistro(registro);
-            continue;
+        } else {
+            setIndexRegistroIndice(registroIndice, get_id(registro));
+            setByteOffsetRegistroIndice(registroIndice, posicao);
+
+            int posicaoInsercao = buscaArquivoIndice(get_id(registro), arquivoInd);
+            insertInPosicaoBinIndice(registroIndice, arquivoInd, posicaoInsercao);
+
+            posicao += get_tamanhoRegistro(registro);
+            liberarRegistro(registro);
         }
 
-        setIndexRegistroIndice(registroIndice, get_id(registro));
-        setByteOffsetRegistroIndice(registroIndice, posicao);
-
-        int posicaoInsercao = buscaArquivoIndice(get_id(registro), arquivoInd);
-        insertInPosicaoBinIndice(registroIndice, arquivoInd, posicaoInsercao);
-
-        posicao += get_tamanhoRegistro(registro);
-        liberarRegistro(registro);
     }
 
     printf("teste3\n");

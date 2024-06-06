@@ -50,22 +50,24 @@ REMOVIDOS *criarListaRemovidos(FILE *file) {
 
   CABECALHO *cabecalho = getCabecalhoFromBin(file);
 
+  printf("removidos 10338\n");
 
   REMOVIDOS *removidos = criarListaRemovidosVazia();
 
   printf("removidos 2\n");
 
-  fseek(file, 0, SEEK_END);
-  int finalArquivo = ftell(file);
-  printf("finalArquivo: %d\n", finalArquivo);
+  if(fseek(file, 0, SEEK_END) != 0) {
+    printf("erro ao mover ponteiro 2\n");
+  }
+  long finalArquivo = ftell(file);
+  printf("finalArquivo: %ld\n", finalArquivo);
 
   printf("3\n");
 
-  int proxByteOffset = getTopo(cabecalho);
-  proxByteOffset += 25; // pula o cabecalhos
+  long long proxByteOffset = getTopo(cabecalho);
 
   while(proxByteOffset != -1 && proxByteOffset < finalArquivo) {
-    printf("proxByteOffset: %d\n", proxByteOffset);
+    printf("proxByteOffset: %lld\n", proxByteOffset);
     REGISTRO *registro = lerRegistroFromBin(proxByteOffset, file);
     printf("tamanho: %d\n", get_tamanhoRegistro(registro));
 
@@ -78,7 +80,7 @@ REMOVIDOS *criarListaRemovidos(FILE *file) {
     }
 
     proxByteOffset = get_prox(registro);
-    printf("proxByteOffset: %d\n\n", proxByteOffset);
+    printf("proxByteOffset: %lld\n\n", proxByteOffset);
   }
 
   return removidos;

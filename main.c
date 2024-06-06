@@ -72,7 +72,7 @@ int main() {
         char arquivoIndice[50];
         scanf("%s", arquivoIndice);
 
-        file = fopen(arquivoBin, "ab+");
+        file = fopen(arquivoBin, "rb+");
         if (file == NULL) // verifica se ocorreu um erro ao abrir o arquivo no modo leitura e escrita
         {
             printf("Falha no processamento do arquivo.\n");
