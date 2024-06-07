@@ -7,7 +7,7 @@
     void imprimeRegistrosFromBin(char *filePath);
     int imprimeRegistro(REGISTRO *registro);
     void imprimeRegistrosBuscados(char *arquivo);
-    void removerRegistrosBuscados(FILE *file, REMOVIDOS *listaRemovidos, LISTA_INDICE *listaIndices);
+    void removerRegistrosBuscados(char *arquivoBin, char *arquivoIndice);
     void removeById(int id, LISTA_INDICE *listaIndices, FILE *file, REMOVIDOS *listaRemovidos, CABECALHO *cabecalho);
     bool escreverRegistro(REGISTRO *registro, int byteOffset, int tamRegistroAtual, FILE *arquivoBin);
 #endif

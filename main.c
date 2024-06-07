@@ -72,24 +72,19 @@ int main() {
         char arquivoIndice[50];
         scanf("%s", arquivoIndice);
 
-        file = fopen(arquivoBin, "rb+");
+        file = fopen(arquivoBin, "rb");
         if (file == NULL) // verifica se ocorreu um erro ao abrir o arquivo no modo leitura e escrita
         {
             printf("Falha no processamento do arquivo.\n");
             return 0;
         }
 
-        FILE *fileIndice = lerBinCriarIndice(file, arquivoIndice);
-        
-        printf("chegou\n");
-        REMOVIDOS *removidos = criarListaRemovidos(file);
-        printf("chegouuuuuuu\n");
+        lerBinCriarIndice(file, arquivoIndice);
 
-        LISTA_INDICE *listaIndices = criarListaIndice();
-        carregarIndice(listaIndices, fileIndice);
+        binarioNaTela(arquivoBin);
+        binarioNaTela(arquivoIndice);
 
-
-        removerRegistrosBuscados(file, removidos, listaIndices);
+        removerRegistrosBuscados(arquivoBin, arquivoIndice);
 
         binarioNaTela(arquivoBin);
         binarioNaTela(arquivoIndice);

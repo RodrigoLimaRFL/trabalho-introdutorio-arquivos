@@ -76,6 +76,54 @@ int insertInPosicaoBinIndice (REGISTRO_INDICE *registro, FILE *arquivoInd, long 
     return 1;
 }
 
+#include <stdio.h>
+#include <stdlib.h>
+#include "registroIndice.h"
+
+int removeFromPosicaoBinIndice(FILE *arquivoInd, long long int posicao) {
+    fseek(arquivoInd, 0, SEEK_SET);
+
+    char status = '0';
+    fwrite(&status, sizeof(char), 1, arquivoInd); // seta o status para 0
+
+    fseek(arquivoInd, posicao, SEEK_SET);
+
+    // Calcula o tamanho do arquivo
+    fseek(arquivoInd, 0, SEEK_END);
+    long long int fileSize = ftell(arquivoInd);
+    long long int registroSize = sizeof(int) + sizeof(long long int);
+    long long int bytesToMove = fileSize - (posicao + registroSize);
+
+    if (bytesToMove > 0) {
+        char *buffer = (char *) malloc(bytesToMove);
+        if (buffer == NULL) {
+            fseek(arquivoInd, 0, SEEK_SET);
+            status = '1';
+            fwrite(&status, sizeof(char), 1, arquivoInd); // seta o status para 1
+            printf("Erro ao alocar memoria\n");
+            return 0;
+        }
+
+        fread(buffer, bytesToMove, 1, arquivoInd); // lê todos os bytes após o registro a ser removido
+
+        fseek(arquivoInd, posicao, SEEK_SET);
+        fwrite(buffer, bytesToMove, 1, arquivoInd); // escreve os bytes de volta para preencher o espaço vazio
+
+        free(buffer);
+    }
+
+    // Reduz o tamanho do arquivo
+    if (fileSize > registroSize) {
+        _chsize(_fileno(arquivoInd), fileSize - registroSize);
+    }
+
+    fseek(arquivoInd, 0, SEEK_SET);
+    status = '1';
+    fwrite(&status, sizeof(char), 1, arquivoInd); // seta o status para 1
+
+    return 1;
+}
+
 void imprimirRegistrosIndice(FILE *arquivoIndice)
 {
     fseek(arquivoIndice, 1, SEEK_SET);
