@@ -81,9 +81,6 @@ int main() {
 
         lerBinCriarIndice(file, arquivoIndice);
 
-        binarioNaTela(arquivoBin);
-        binarioNaTela(arquivoIndice);
-
         removerRegistrosBuscados(arquivoBin, arquivoIndice);
 
         binarioNaTela(arquivoBin);

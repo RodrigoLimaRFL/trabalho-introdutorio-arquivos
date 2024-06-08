@@ -76,45 +76,56 @@ int insertInPosicaoBinIndice (REGISTRO_INDICE *registro, FILE *arquivoInd, long 
     return 1;
 }
 
-#include <stdio.h>
-#include <stdlib.h>
-#include "registroIndice.h"
-
-int removeFromPosicaoBinIndice(FILE *arquivoInd, long long int posicao) {
+int removeFromPosicaoBinIndice(FILE *arquivoInd, long long int posicao, char *arquivoIndName)
+{
     fseek(arquivoInd, 0, SEEK_SET);
 
     char status = '0';
     fwrite(&status, sizeof(char), 1, arquivoInd); // seta o status para 0
 
-    fseek(arquivoInd, posicao, SEEK_SET);
-
-    // Calcula o tamanho do arquivo
-    fseek(arquivoInd, 0, SEEK_END);
-    long long int fileSize = ftell(arquivoInd);
-    long long int registroSize = sizeof(int) + sizeof(long long int);
-    long long int bytesToMove = fileSize - (posicao + registroSize);
-
-    if (bytesToMove > 0) {
-        char *buffer = (char *) malloc(bytesToMove);
-        if (buffer == NULL) {
-            fseek(arquivoInd, 0, SEEK_SET);
-            status = '1';
-            fwrite(&status, sizeof(char), 1, arquivoInd); // seta o status para 1
-            printf("Erro ao alocar memoria\n");
-            return 0;
-        }
-
-        fread(buffer, bytesToMove, 1, arquivoInd); // lê todos os bytes após o registro a ser removido
-
-        fseek(arquivoInd, posicao, SEEK_SET);
-        fwrite(buffer, bytesToMove, 1, arquivoInd); // escreve os bytes de volta para preencher o espaço vazio
-
-        free(buffer);
+    // Abrir arquivo temporário
+    FILE *arquivoTemp = fopen("temp.bin", "wb");
+    if (arquivoTemp == NULL)
+    {
+        fseek(arquivoInd, 0, SEEK_SET);
+        status = '1';
+        fwrite(&status, sizeof(char), 1, arquivoInd); // seta o status para 1
+        printf("Erro ao criar arquivo temporário\n");
+        return 0;
     }
 
-    // Reduz o tamanho do arquivo
-    if (fileSize > registroSize) {
-        _chsize(_fileno(arquivoInd), fileSize - registroSize);
+    // Copiar os dados até a posição de remoção para o arquivo temporário
+    fseek(arquivoInd, 1, SEEK_SET); // ignora o status
+    char buffer;
+    for (long long int i = 1; i < posicao; i++)
+    {
+        fread(&buffer, sizeof(char), 1, arquivoInd);
+        fwrite(&buffer, sizeof(char), 1, arquivoTemp);
+    }
+
+    // Pular o tamanho do registro de índice a ser removido
+    fseek(arquivoInd, sizeof(int) + sizeof(long long int), SEEK_CUR);
+
+    // Copiar o restante dos dados para o arquivo temporário
+    while (fread(&buffer, sizeof(char), 1, arquivoInd) == 1)
+    {
+        fwrite(&buffer, sizeof(char), 1, arquivoTemp);
+    }
+
+    // Fechar os arquivos
+    fclose(arquivoTemp);
+    fclose(arquivoInd);
+
+    // Substituir o arquivo original pelo temporário
+    remove(arquivoIndName);
+    rename("temp.bin", arquivoIndName);
+
+    // Reabrir o arquivo original
+    arquivoInd = fopen(arquivoIndName, "rb+");
+    if (arquivoInd == NULL)
+    {
+        printf("Erro ao reabrir o arquivo original\n");
+        return 0;
     }
 
     fseek(arquivoInd, 0, SEEK_SET);

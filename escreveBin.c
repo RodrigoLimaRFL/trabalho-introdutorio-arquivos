@@ -264,15 +264,15 @@ void imprimeRegistrosBuscados(char *arquivo)
 void removerRegistrosBuscados(char *arquivoBin, char *arquivoIndice)
 {
     FILE *file = fopen(arquivoBin, "rb+");
-    FILE *fileIndice = fopen(arquivoIndice, "rb+");
-    if (file == NULL || fileIndice == NULL) // verifica se ocorreu um erro ao abrir o arquivo no modo leitura e escrita
+    FILE *fileIndices = fopen(arquivoIndice, "rb+");
+    if (file == NULL || fileIndices == NULL) // verifica se ocorreu um erro ao abrir o arquivo no modo leitura e escrita
     {
         printf("Falha no processamento do arquivo.\n");
         return;
     }
 
     LISTA_INDICE *listaIndices = criarListaIndice();
-    carregarIndice(listaIndices, fileIndice);
+    carregarIndice(listaIndices, fileIndices);
 
     REMOVIDOS *listaRemovidos = criarListaRemovidos(file);
 
@@ -314,12 +314,12 @@ void removerRegistrosBuscados(char *arquivoBin, char *arquivoIndice)
             scanf("%s", campos[j]); // lê um parâmetro da busca
             if (strcmp(campos[j], "id") == 0)
             {
-                printf("removendo por id\n");
                 scanf("%d", &id); // lê o id da busca
-                removeById(id, listaIndices, file, listaRemovidos, cabecalho);
+                printf("removendo por id\n");
+                removeById(id, listaIndices, file, fileIndices, listaRemovidos, cabecalho, arquivoIndice);
                 removidos++;
             }
-            else if (strcmp(campos[j], "nome") == 0)
+            else if (strcmp(campos[j], "nomeJogador") == 0)
             {
                 scan_quote_string(nome);
             }
@@ -335,15 +335,9 @@ void removerRegistrosBuscados(char *arquivoBin, char *arquivoIndice)
             {
                 scan_quote_string(nacionalidade);
             }
-            else
-            {
-                printf("Campo invalido\n");
-            }
         }
 
         if (id == -1) {
-            printf("Busca %d\n\n", i + 1);
-
             for (int j = 0; j < numRegistros; j++)
             {
                 REGISTRO *registro = lerRegistroFromBin(byteOffset, file); // lê um registro do arquivo binário
@@ -351,13 +345,13 @@ void removerRegistrosBuscados(char *arquivoBin, char *arquivoIndice)
                 int remover = 1;
                 if (get_removido(registro) == '1')
                 {
-                    remover = 0; // indica se o registro deve ser removido
+                    remover = 0; // indica se o registro não deve ser removido
                 }
                 else
                 {
                     for (int k = 0; k < m; k++)
                     {
-                        if (strcmp(campos[k], "nome") == 0)
+                        if (strcmp(campos[k], "nomeJogador") == 0)
                         {
                             if (strcmp(nome, get_nomeJogador(registro)) != 0)
                             {
@@ -382,8 +376,6 @@ void removerRegistrosBuscados(char *arquivoBin, char *arquivoIndice)
                         {
                             if (strcmp(nacionalidade, get_nacionalidade(registro)) != 0)
                             {
-                                // printf("nacionalidade: %s\n", nacionalidade);
-                                // printf("nacionalidade2: %s\n", get_nacionalidade(registro));
                                 remover = 0;
                             }
                         }
@@ -391,6 +383,7 @@ void removerRegistrosBuscados(char *arquivoBin, char *arquivoIndice)
                 }
                 if (remover == 1)
                 {
+                    printf("removendo\n");
                     char removed = '1';
 
                     fseek(file, byteOffset, SEEK_SET);
@@ -405,6 +398,20 @@ void removerRegistrosBuscados(char *arquivoBin, char *arquivoIndice)
                     setNroRem(cabecalho, getNroRem(cabecalho) + 1);
                     writeNroRegArqCabecalho(cabecalho, file);
                     writeNroRegRemCabecalho(cabecalho, file);
+                    removerRegistroIndice(listaIndices, buscarPosicaoRegistroIndice(listaIndices, get_id(registro)));
+
+                    long long int byteOffsetIndice = buscarPosicaoArquivoIndice(get_id(registro), fileIndices);
+                    removeFromPosicaoBinIndice(fileIndices, byteOffsetIndice, arquivoIndice);
+
+                    long long int byteOffsetAnteriorRemovidos = getMaiorByteOffsetMenorQue(listaRemovidos, get_id(registro));
+                    if(byteOffsetAnteriorRemovidos == -1) {
+                        fseek(file, 1, SEEK_SET);
+                        fwrite(&byteOffset, sizeof(long long int), 1, file);
+                    } else {
+                        fseek(file, byteOffsetAnteriorRemovidos+5, SEEK_SET);
+                        fwrite(&byteOffset, sizeof(long long int), 1, file);
+                    }
+
                 }
                 byteOffset += get_tamanhoRegistro(registro); // muda o byteOffset para a posição do próximo registro
             }
@@ -414,26 +421,44 @@ void removerRegistrosBuscados(char *arquivoBin, char *arquivoIndice)
 
         if (removidos == 0)
         {
-            printf("Registro inexistente. hehehehe\n\n");
+            printf("Registro inexistente.\n\n");
         }
     }
     fclose(file);
 }
 
-void removeById(int id, LISTA_INDICE *listaIndices, FILE *file, REMOVIDOS *listaRemovidos, CABECALHO *cabecalho) {
+void removeById(int id, LISTA_INDICE *listaIndices, FILE *file, FILE *fileIndices, REMOVIDOS *listaRemovidos, CABECALHO *cabecalho, char* arquivoIndice) {
     REGISTRO_INDICE *registroIndice = buscarRegistroIndice(listaIndices, id);
-    long long byteOffset = getByteOffsetRegistroIndice(registroIndice);
-    fseek(file, byteOffset, SEEK_SET);
-    printf("byteoffset id: %lld\n", byteOffset);
-    char removed = '1';
-    fwrite(&removed, 1, 1, file);
-    
-    REGISTRO *registro = buscarRegistroOffset(byteOffset, file);
-    adicionarRegistroRemovido(listaRemovidos, registroIndice, get_tamanhoRegistro(registro));
-    setNroRegArq(cabecalho, getNroRegArq(cabecalho) - 1);
-    setNroRem(cabecalho, getNroRem(cabecalho) + 1);
-    writeNroRegArqCabecalho(cabecalho, file);
-    writeNroRegRemCabecalho(cabecalho, file);
+    if(registroIndice != NULL) {
+        long long byteOffset = getByteOffsetRegistroIndice(registroIndice);
+        fseek(file, byteOffset, SEEK_SET);
+        char removed = '1';
+        fwrite(&removed, 1, 1, file);
+        
+        REGISTRO *registro = buscarRegistroOffset(byteOffset, file);
+        adicionarRegistroRemovido(listaRemovidos, registroIndice, get_tamanhoRegistro(registro));
+        imprimirRemovidos(listaRemovidos);
+        setNroRegArq(cabecalho, getNroRegArq(cabecalho) - 1);
+        setNroRem(cabecalho, getNroRem(cabecalho) + 1);
+        writeNroRegArqCabecalho(cabecalho, file);
+        writeNroRegRemCabecalho(cabecalho, file);
+
+        removerRegistroIndice(listaIndices, buscarPosicaoRegistroIndice(listaIndices, id));
+        long long int byteOffsetIndice = buscarPosicaoArquivoIndice(id, fileIndices);
+        removeFromPosicaoBinIndice(fileIndices, byteOffsetIndice, arquivoIndice);
+
+        printf("get_id: %d\n", get_id(registro));
+        long long int byteOffsetAnteriorRemovidos = getMaiorByteOffsetMenorQue(listaRemovidos, get_id(registro));
+        if(byteOffsetAnteriorRemovidos == -1) {
+            fseek(file, 1, SEEK_SET);
+            fwrite(&byteOffset, sizeof(long long int), 1, file);
+        } else {
+            fseek(file, byteOffsetAnteriorRemovidos+5, SEEK_SET);
+            fwrite(&byteOffset, sizeof(long long int), 1, file);
+        }
+    } else {
+        printf("Registro inexistente.\n\n");
+    }
 }
 
 bool escreverRegistro(REGISTRO *registro, int byteOffset, int tamRegistroAtual, FILE *arquivoBin)

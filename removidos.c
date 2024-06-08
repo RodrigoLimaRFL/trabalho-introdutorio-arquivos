@@ -19,28 +19,49 @@ void shiftElementosListaRemovidosRight(REMOVIDOS *removidos, int pos) {
   }
 }
 
-// adiciona um novo registro na lista em ordem de tamanho
-void adicionarRegistroRemovido(REMOVIDOS *removidos, REGISTRO_INDICE *registroIndice, int tamanho) {
-  int right = getTamanhoListaIndice(removidos->lista);
-  int left = 0;
+long long int getMaiorByteOffsetMenorQue(REMOVIDOS *removidos, int id) {
+  int posicao = buscarPosicaoRegistroIndice(removidos->lista, id);
   
-  int middle = (left + right) / 2;
-
-  while(left < right) {
-    if(removidos->tamanhos[middle] > tamanho) {
-      right = middle;
-    } else {
-      left = middle + 1;
-    }
-
-    middle = (left + right) / 2;
+  if (posicao == -1) {
+    return -2; // id não encontrado
   }
 
-  shiftElementosListaRemovidosRight(removidos, middle);
+  long long int byteOffsetAtual = getByteOffsetRegistroIndice(getRegistroIndice(removidos->lista, posicao));
+  long long int maiorByteOffset = -1;
 
-  setRegistroListaIndice(removidos->lista, middle, registroIndice);
-  setTamanho(removidos->lista, getTamanhoListaIndice(removidos->lista) + 1);
-  removidos->tamanhos[middle] = tamanho;
+  for (int i = 0; i < posicao; i++) {
+    long long int byteOffset = getByteOffsetRegistroIndice(getRegistroIndice(removidos->lista, i));
+    if (byteOffset < byteOffsetAtual && byteOffset > maiorByteOffset) {
+      maiorByteOffset = byteOffset;
+    }
+  }
+
+  return maiorByteOffset;
+}
+
+// adiciona um novo registro na lista em ordem de tamanho
+void adicionarRegistroRemovido(REMOVIDOS *removidos, REGISTRO_INDICE *registroIndice, int tamanho) {
+    int right = getTamanhoListaIndice(removidos->lista);
+    int left = 0;
+    
+    while (left < right) {
+        int middle = (left + right) / 2;
+        if (removidos->tamanhos[middle] > tamanho) {
+            right = middle;
+        } else {
+            left = middle + 1;
+        }
+    }
+
+    // Move elementos à direita para abrir espaço para o novo registro
+    shiftElementosListaRemovidosRight(removidos, left);
+
+    // Adiciona o novo registro na posição encontrada
+    setRegistroListaIndice(removidos->lista, left, registroIndice);
+    removidos->tamanhos[left] = tamanho;
+
+    // Atualiza o tamanho da lista
+    setTamanho(removidos->lista, getTamanhoListaIndice(removidos->lista) + 1);
 }
 
 REMOVIDOS *criarListaRemovidosVazia() {

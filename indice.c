@@ -115,30 +115,34 @@ REGISTRO_INDICE *buscarRegistroIndice(LISTA_INDICE *lista, int id)
     return registro; // se o registro não foi encontrado, retorna -1
 }
 
-int buscarPosicaoRegistroIndice(LISTA_INDICE *lista, int id)
-{
+int buscarPosicaoRegistroIndice(LISTA_INDICE *lista, int id) {
+    // Verifica se a lista está vazia
+    if (lista->tamanho == 0) {
+        return -1;
+    }
+
+
     int inicio = 0;
     int fim = lista->tamanho - 1;
+    printf("lista tamanho: %d\n", lista->tamanho);
 
-    while (inicio <= fim)
-    {
+    while (inicio <= fim) {
         int meio = (inicio + fim) / 2;
-
-        if (getIndexRegistroIndice(lista->registros[meio]) == id)
-        {
-            return meio;
-        }
-        else if (getIndexRegistroIndice(lista->registros[meio]) < id)
-        {
-            inicio = meio + 1;
-        }
-        else
-        {
-            fim = meio - 1;
+        
+        int idMeio = getIndexRegistroIndice(getRegistroIndice(lista, meio));
+        
+        printf("%d - %d\n", id, idMeio);
+        // Compara o id do meio com o id procurado
+        if (idMeio == id) {
+            return meio; // id encontrado
+        } else if (idMeio < id) {
+            inicio = meio + 1; // Busca na metade superior
+        } else {
+            fim = meio - 1; // Busca na metade inferior
         }
     }
 
-    return -1; // se o registro não foi encontrado, retorna -1
+    return -1; // Se o registro não foi encontrado, retorna -1
 }
 
 long long int buscarPosicaoArquivoIndice(int id, FILE *file)
