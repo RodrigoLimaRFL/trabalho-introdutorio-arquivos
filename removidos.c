@@ -20,24 +20,30 @@ void shiftElementosListaRemovidosRight(REMOVIDOS *removidos, int pos) {
 }
 
 long long int getMaiorByteOffsetMenorQue(REMOVIDOS *removidos, int id) {
-  int posicao = buscarPosicaoRegistroIndice(removidos->lista, id);
-  
-  if (posicao == -1) {
-    return -2; // id não encontrado
-  }
-
-  long long int byteOffsetAtual = getByteOffsetRegistroIndice(getRegistroIndice(removidos->lista, posicao));
-  long long int maiorByteOffset = -1;
-
-  for (int i = 0; i < posicao; i++) {
-    long long int byteOffset = getByteOffsetRegistroIndice(getRegistroIndice(removidos->lista, i));
-    if (byteOffset < byteOffsetAtual && byteOffset > maiorByteOffset) {
-      maiorByteOffset = byteOffset;
+    // Busca a posição do registro com o id fornecido
+    int posicao = buscarPosicaoRegistroIndiceLinear(removidos->lista, id);
+    
+    if (posicao == -1) {
+        printf("nao encontrou\n");
+        return -2; // id não encontrado
     }
-  }
 
-  return maiorByteOffset;
+    // Obtem o tamanho do registro com o id fornecido
+    int tamanhoAtual = removidos->tamanhos[posicao];
+    long long int maiorByteOffset = -1;
+    int maiorTamanhoEncontrado = -1;
+
+    // Percorre a lista para encontrar o maior byteOffset cujo tamanho seja menor que tamanhoAtual
+    for (int i = 0; i < getTamanhoLista(removidos->lista); i++) {
+        if (removidos->tamanhos[i] < tamanhoAtual && removidos->tamanhos[i] > maiorTamanhoEncontrado) {
+            maiorTamanhoEncontrado = removidos->tamanhos[i];
+            maiorByteOffset = getByteOffsetRegistroIndice(getRegistroIndice(removidos->lista, i));
+        }
+    }
+
+    return maiorByteOffset;
 }
+
 
 // adiciona um novo registro na lista em ordem de tamanho
 void adicionarRegistroRemovido(REMOVIDOS *removidos, REGISTRO_INDICE *registroIndice, int tamanho) {

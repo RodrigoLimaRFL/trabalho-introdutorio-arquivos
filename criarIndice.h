@@ -13,4 +13,6 @@
     FILE *lerBinCriarIndice(FILE *arquivoBinario, char *arquivoIndice);
     int insertInPosicaoBinIndice(REGISTRO_INDICE *registro, FILE *arquivoInd, long long int posicao);
     int removeFromPosicaoBinIndice(FILE *arquivoInd, long long int posicao, char *arquivoIndName);
+    void escreverRegistrosIndices(FILE *arquivoIndices, char *arquivoIndicesNome, LISTA_INDICE *listaIndices);
+    void imprimirRegistrosIndice(FILE *arquivoIndice);
 #endif

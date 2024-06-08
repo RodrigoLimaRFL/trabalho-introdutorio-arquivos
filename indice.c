@@ -124,14 +124,12 @@ int buscarPosicaoRegistroIndice(LISTA_INDICE *lista, int id) {
 
     int inicio = 0;
     int fim = lista->tamanho - 1;
-    printf("lista tamanho: %d\n", lista->tamanho);
 
     while (inicio <= fim) {
         int meio = (inicio + fim) / 2;
         
         int idMeio = getIndexRegistroIndice(getRegistroIndice(lista, meio));
         
-        printf("%d - %d\n", id, idMeio);
         // Compara o id do meio com o id procurado
         if (idMeio == id) {
             return meio; // id encontrado
@@ -139,6 +137,23 @@ int buscarPosicaoRegistroIndice(LISTA_INDICE *lista, int id) {
             inicio = meio + 1; // Busca na metade superior
         } else {
             fim = meio - 1; // Busca na metade inferior
+        }
+    }
+
+    return -1; // Se o registro não foi encontrado, retorna -1
+}
+
+int buscarPosicaoRegistroIndiceLinear(LISTA_INDICE *lista, int id) {
+    // Verifica se a lista está vazia
+    if (lista->tamanho == 0) {
+        return -1;
+    }
+
+    // Percorre a lista de forma linear para encontrar o id
+    for (int i = 0; i < lista->tamanho; i++) {
+        int idAtual = getIndexRegistroIndice(getRegistroIndice(lista, i));
+        if (idAtual == id) {
+            return i; // id encontrado
         }
     }
 

@@ -76,6 +76,49 @@ int insertInPosicaoBinIndice (REGISTRO_INDICE *registro, FILE *arquivoInd, long 
     return 1;
 }
 
+void escreverRegistrosIndices(FILE *arquivoIndices, char *arquivoIndicesNome, LISTA_INDICE *listaIndices) {
+    fclose(arquivoIndices);
+    
+    // Abre o arquivo para escrita binária
+    arquivoIndices = fopen(arquivoIndicesNome, "wb");
+    if (arquivoIndices == NULL) {
+        printf("Falha no processamento do arquivo.\n");
+        return;
+    }
+
+    char status = '0';
+    fwrite(&status, sizeof(char), 1, arquivoIndices);
+
+    // Escreve os registros no arquivo
+    for(int i = 0; i < getTamanhoLista(listaIndices); i++) {
+        int index = getIndexRegistroIndice(getRegistroIndice(listaIndices, i));
+        long long int byteOffset = getByteOffsetRegistroIndice(getRegistroIndice(listaIndices, i));
+        fwrite(&index, sizeof(int), 1, arquivoIndices);
+        fwrite(&byteOffset, sizeof(long long int), 1, arquivoIndices);
+    }
+
+    // Garante que todos os dados sejam escritos no disco
+    fflush(arquivoIndices);
+    fclose(arquivoIndices);
+
+    // Reabre o arquivo para leitura/escrita binária
+    arquivoIndices = fopen(arquivoIndicesNome, "rb+");
+    if (arquivoIndices == NULL) {
+        printf("EFalha no processamento do arquivo.\n");
+        return;
+    }
+
+    // Posiciona o ponteiro no início do arquivo
+    fseek(arquivoIndices, 0, SEEK_SET);
+
+    char status2 = '1';
+    fwrite(&status2, sizeof(char), 1, arquivoIndices);
+
+    fseek(arquivoIndices, 0, SEEK_SET);
+    char verificaStatus;
+    fread(&verificaStatus, sizeof(char), 1, arquivoIndices);
+}
+
 int removeFromPosicaoBinIndice(FILE *arquivoInd, long long int posicao, char *arquivoIndName)
 {
     fseek(arquivoInd, 0, SEEK_SET);

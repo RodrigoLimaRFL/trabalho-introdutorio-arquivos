@@ -17,6 +17,7 @@
         bool adicionarRegistroOrdenadoIndice(LISTA_INDICE *lista, REGISTRO_INDICE *registro, FILE *file);
         bool modificarRegistroIndice(LISTA_INDICE *lista, int index, REGISTRO_INDICE *novoRegistro);
         REGISTRO_INDICE *buscarRegistroIndice(LISTA_INDICE *lista, int id);
+        int buscarPosicaoRegistroIndiceLinear(LISTA_INDICE *lista, int id);
         int buscarPosicaoRegistroIndice(LISTA_INDICE *lista, int id);
         void setRegistroListaIndice(LISTA_INDICE *lista, int index, REGISTRO_INDICE *registro);
         void removerRegistroIndice(LISTA_INDICE *lista, int index);
