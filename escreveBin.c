@@ -41,6 +41,7 @@ void imprimeRegistrosFromBin(char *filePath)
         REGISTRO *registro = lerRegistroFromBin(byteOffset, file); // lê um registro do arquivo binário
         byteOffset += get_tamanhoRegistro(registro); // muda o byteOffset para a posição do próximo registro
         impressoes += imprimeRegistro(registro);
+        liberarRegistro(registro); // libera a memória do registro
     }
 
     if (impressoes == 0)
