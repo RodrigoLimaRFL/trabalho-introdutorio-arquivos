@@ -100,6 +100,8 @@ REMOVIDOS *criarListaRemovidos(FILE *file) {
 
     proxByteOffset = get_prox(registro);
 
+    liberarRegistro(registro);
+
     REGISTRO *proxRegistro;
 
     if(proxByteOffset != -1 && proxByteOffset < finalArquivo)
@@ -112,11 +114,14 @@ REMOVIDOS *criarListaRemovidos(FILE *file) {
       setByteOffsetRegistroIndice(registroIndice, proxByteOffset);
 
       adicionarRegistroRemovido(removidos, registroIndice, get_tamanhoRegistro(proxRegistro));
+      liberarRegistro(proxRegistro);
       break;
     }
 
-    free(proxRegistro);
+    liberarRegistro(proxRegistro);
   }
+
+  apagarCabecalho(cabecalho);
 
   return removidos;
 }
@@ -206,8 +211,6 @@ void removerRegistroRemovidoEAtualizarArquivo(REMOVIDOS *removidos, int posicao,
     REGISTRO_INDICE *registroIndice = getRegistroIndice(removidos->lista, posicao - 1);
     long long int byteOffset = getByteOffsetRegistroIndice(registroIndice);
 
-    REGISTRO *registro = lerRegistroFromBin(byteOffset, file);
-    set_prox(registro, -1);
     int prox = -1;
     
     byteOffset += byteProx;
@@ -222,13 +225,12 @@ void removerRegistroRemovidoEAtualizarArquivo(REMOVIDOS *removidos, int posicao,
     long long int byteOffsetAnterior = getByteOffsetRegistroIndice(registroIndiceAnterior);
     long long int byteOffsetProximo = getByteOffsetRegistroIndice(registroIndiceProximo);
 
-    REGISTRO *registro = lerRegistroFromBin(byteOffsetAnterior, file);
-    set_prox(registro, byteOffsetProximo);
-
     byteOffsetAnterior += byteProx;
     fseek(file, byteOffsetAnterior, SEEK_SET);
     fwrite(&byteOffsetProximo, sizeof(int), 1, file);
   }
+
+  apagarCabecalho(cabecalho);
 
   removerRegistroRemovidoPosicao(removidos, posicao);
 }
@@ -262,6 +264,8 @@ long long int *getBestFitArrayRegistros(REMOVIDOS *removidos, REGISTRO **registr
     {
       byteOffsets[i] = -1;
     }
+
+    apagarCabecalho(cabecalho);
 
     free(tamanhos);
 

@@ -191,13 +191,15 @@ void imprimirRegistrosIndice(FILE *arquivoIndice)
     }
 }
 
+// funcao que le um arquivo de dados e cria um arquivo de indice
 FILE *lerBinCriarIndice(FILE *arquivoBinario, char *arquivoIndice)
 {
-
     FILE *arquivoInd = fopen(arquivoIndice, "wb+");
     if (arquivoInd == NULL)
     {
         printf("Falha no processamento do arquivo.\n");
+        fclose(arquivoInd);
+        fclose(arquivoBinario);
         return false;
     }
     
@@ -206,27 +208,32 @@ FILE *lerBinCriarIndice(FILE *arquivoBinario, char *arquivoIndice)
     if (getStatus(cabecalho) == '0')
     {
         printf("Falha no processamento do arquivo.\n");
+        apagarCabecalho(cabecalho);
         fclose(arquivoBinario); // fecha o arquivo
         fclose(arquivoInd);
         return false;
     }
 
+    // seta o status do arquivo de indice como insonsistente
     char status = '0';
     fseek(arquivoInd, 0, SEEK_SET);
     fwrite(&status, sizeof(char), 1, arquivoInd);
 
+    // pula o cabecalho
     long long int posicao = 25;
 
     REGISTRO_INDICE *registroIndice = criarRegistroIndice();
 
+    // quantidade de registros no arquivo
     int quantidade = getNroRegArq(cabecalho) + getNroRem(cabecalho);
 
+    apagarCabecalho(cabecalho);
 
     for(int i = 0; i < quantidade; i++)
     {
         REGISTRO *registro = lerRegistroFromBin(posicao, arquivoBinario);
 
-        if(get_removido(registro) == '1')
+        if(get_removido(registro) == '1') //pula o registro removido
         {
             posicao += get_tamanhoRegistro(registro);
             liberarRegistro(registro);
@@ -245,6 +252,7 @@ FILE *lerBinCriarIndice(FILE *arquivoBinario, char *arquivoIndice)
 
     apagarRegistroIndice(registroIndice);
 
+    // seta o status do arquivo de indice como consistente
     status = '1';
     fseek(arquivoInd, 0, SEEK_SET);
     fwrite(&status, sizeof(char), 1, arquivoInd);
@@ -252,6 +260,7 @@ FILE *lerBinCriarIndice(FILE *arquivoBinario, char *arquivoIndice)
     //imprimirRegistrosIndice(arquivoInd);
     
     fclose(arquivoBinario);
+    fclose(arquivoInd);
 
     return arquivoInd;
 }

@@ -51,8 +51,7 @@ int main() {
     }
     else if(strcmp(operacao, "4") == 0)
     {
-        // adicionar nome do indice
-        // Ler binario
+        // criar indice
         char arquivoBin[50];
         scanf("%s", arquivoBin);
         char arquivoIndice[50];
@@ -62,6 +61,7 @@ int main() {
         if (file == NULL)
         {
             printf("Falha no processamento do arquivo.\n");
+            fclose(file);
             return 0;
         }
 
@@ -93,6 +93,7 @@ int main() {
     }
     else if(strcmp(operacao, "6") == 0)
     {
+        // inserir registro
         char arquivoBin[50];
         scanf("%s", arquivoBin);
 

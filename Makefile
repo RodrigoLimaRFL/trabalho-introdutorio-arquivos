@@ -52,4 +52,4 @@ run:
 	./gerencia-arquivo.exe
 
 valgrind:
-	valgrind --leak-check=full ./gerencia-arquivo.exe
+	valgrind --leak-check=full --show-leak-kinds=all ./gerencia-arquivo.exe
