@@ -17,11 +17,12 @@ void inserirNovoDado(char *arquivoBinario, char *arquivoIndice, int numOperacoes
     if(getStatus(cabecalho) == '0')
     {
         printf("Falha no processamento do arquivo.\n");
+        apagarCabecalho(cabecalho);
         return;
     }
 
     LISTA_INDICE *lista = criarListaIndice();
-    carregarIndice(lista, arquivoInd);
+    carregarIndice(lista, arquivoInd); // carrega o arquivo de indice
 
     REMOVIDOS *removidos = criarListaRemovidos(arquivoBin);
 
@@ -50,7 +51,7 @@ void inserirNovoDado(char *arquivoBinario, char *arquivoIndice, int numOperacoes
         scan_quote_string(nomeClube[i]);
         REGISTRO_INDICE *registroIndice = buscarRegistroIndice(lista, id);
 
-        if(registroIndice != NULL)
+        if(registroIndice != NULL) // registro ja existe
         {
             registros[i] = criarRegistro('1',
                                          0,
@@ -63,11 +64,12 @@ void inserirNovoDado(char *arquivoBinario, char *arquivoIndice, int numOperacoes
                                          "",
                                          0,
                                          "");
-            //apagarCabecalho(cabecalho);
-            // apagarListaIndice(lista); dando double free pq a lista removidos usa o mesmo registro
-            // criar funcao pra apagar lista removidos
+            
+            apagarRegistroIndice(registroIndice);
             continue;
         }
+
+        apagarRegistroIndice(registroIndice);
 
         int idade = -1;
 
@@ -108,10 +110,7 @@ void inserirNovoDado(char *arquivoBinario, char *arquivoIndice, int numOperacoes
                                      nomeClube[i]);
     }
 
-    apagarCabecalho(cabecalho);
-
-    cabecalho = getCabecalhoFromBin(arquivoBin);
-
+    // pega o byteOffset do best fit de cada registro
     long long int *byteOffsets = getBestFitArrayRegistros(removidos, registros, numOperacoes, arquivoBin);
     int tamanhoRegistroAtual = 0;
 
@@ -161,9 +160,10 @@ void inserirNovoDado(char *arquivoBinario, char *arquivoIndice, int numOperacoes
 
     for(int i = 0; i < numOperacoes; i++)
     {
-        free(registros[i]);
+        liberarRegistro(registros[i]);
     }
 
+    free(registros);
     free(byteOffsets);
 
     free(nomeJogador);

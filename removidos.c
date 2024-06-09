@@ -1,16 +1,19 @@
 #include "removidos.h"
 
+// lista que armazena os registros removidos
 struct _removidos {
   LISTA_INDICE *lista;
   int *tamanhos;
 };
 
+// apaga a lista de removidos da memoria
 void apagarListaRemovidos(REMOVIDOS *removidos) {
   apagarListaIndice(removidos->lista);
   free(removidos->tamanhos);
   free(removidos);
 }
 
+// shifta os elementos da lista para a direita (util para adicionar um novo registro no meio)
 void shiftElementosListaRemovidosRight(REMOVIDOS *removidos, int pos) {
   for(int i = getTamanhoListaIndice(removidos->lista); i > pos; i--) {
     REGISTRO_INDICE *registro = getRegistroIndice(removidos->lista, i - 1);
@@ -19,6 +22,7 @@ void shiftElementosListaRemovidosRight(REMOVIDOS *removidos, int pos) {
   }
 }
 
+// oq isso faz
 long long int getMaiorByteOffsetMenorQue(REMOVIDOS *removidos, int id) {
     // Busca a posição do registro com o id fornecido
     int posicao = buscarPosicaoRegistroIndiceLinear(removidos->lista, id);
@@ -59,6 +63,7 @@ void adicionarRegistroRemovido(REMOVIDOS *removidos, REGISTRO_INDICE *registroIn
     setTamanho(removidos->lista, getTamanhoListaIndice(removidos->lista) + 1);
 }
 
+// inicializa uma lista removidos vazia
 REMOVIDOS *criarListaRemovidosVazia() {
   REMOVIDOS *removidos = malloc(sizeof(REMOVIDOS));
   removidos->lista = criarListaIndice();
@@ -79,7 +84,7 @@ REMOVIDOS *criarListaRemovidos(FILE *file) {
   
   int count = 0;
 
-  // mudou aq
+  // percorre todos os registros removidos
   while(proxByteOffset != -1 && proxByteOffset < finalArquivo) {
     REGISTRO *registro = lerRegistroFromBin(proxByteOffset, file);
 
@@ -95,26 +100,33 @@ REMOVIDOS *criarListaRemovidos(FILE *file) {
 
     proxByteOffset = get_prox(registro);
 
+    liberarRegistro(registro);
+
     REGISTRO *proxRegistro;
 
     if(proxByteOffset != -1 && proxByteOffset < finalArquivo)
       proxRegistro = lerRegistroFromBin(proxByteOffset, file);
 
+    // anotar ultimo reg removido
     if(get_prox(proxRegistro) == -1 && get_removido(proxRegistro) == '1') {
       REGISTRO_INDICE *registroIndice = criarRegistroIndice();
       setIndexRegistroIndice(registroIndice, get_id(proxRegistro));
       setByteOffsetRegistroIndice(registroIndice, proxByteOffset);
 
       adicionarRegistroRemovido(removidos, registroIndice, get_tamanhoRegistro(proxRegistro));
+      liberarRegistro(proxRegistro);
       break;
     }
 
-    free(proxRegistro);
+    liberarRegistro(proxRegistro);
   }
+
+  apagarCabecalho(cabecalho);
 
   return removidos;
 }
 
+// atualiza o campo prox de cada item da lista de registros removidos
 void atualizarProxRegistrosRemovidos(int byteOffsetRegistroInserido, int proxRegistroAntigo, REMOVIDOS *removidos, FILE *file) {
   CABECALHO *cabecalho = getCabecalhoFromBin(file);
 
@@ -143,6 +155,7 @@ int getTamanhoListaRemovidos(REMOVIDOS *removidos) {
   return getTamanhoListaIndice(removidos->lista);
 }
 
+// remove um item da lista a partir da posicao
 void removerRegistroRemovidoPosicao(REMOVIDOS *removidos, int posicao) {
   removerRegistroIndice(removidos->lista, posicao);
 
@@ -151,6 +164,7 @@ void removerRegistroRemovidoPosicao(REMOVIDOS *removidos, int posicao) {
   }
 }
 
+// remove um item da lista a partir do id
 void removerRegistroRemovido(REMOVIDOS *removidos, int id) {
   int posicao = buscarPosicaoRegistroIndice(removidos->lista, id);
 
@@ -161,8 +175,7 @@ void removerRegistroRemovido(REMOVIDOS *removidos, int id) {
   removerRegistroRemovidoPosicao(removidos, posicao);
 }
 
-
-
+// remove um item da lista a partir do byteOffset e atualiza o arquivo para ficar consistente
 void removerRegistroRemovidoEAtualizarArquivo(REMOVIDOS *removidos, int posicao, FILE *file) {
   REGISTRO *registro = buscarRegistroOffset(getByteOffsetRegistroIndice(getRegistroIndice(removidos->lista, posicao)) ,file);
 
@@ -198,8 +211,6 @@ void removerRegistroRemovidoEAtualizarArquivo(REMOVIDOS *removidos, int posicao,
     REGISTRO_INDICE *registroIndice = getRegistroIndice(removidos->lista, posicao - 1);
     long long int byteOffset = getByteOffsetRegistroIndice(registroIndice);
 
-    REGISTRO *registro = lerRegistroFromBin(byteOffset, file);
-    set_prox(registro, -1);
     int prox = -1;
     
     byteOffset += byteProx;
@@ -214,17 +225,17 @@ void removerRegistroRemovidoEAtualizarArquivo(REMOVIDOS *removidos, int posicao,
     long long int byteOffsetAnterior = getByteOffsetRegistroIndice(registroIndiceAnterior);
     long long int byteOffsetProximo = getByteOffsetRegistroIndice(registroIndiceProximo);
 
-    REGISTRO *registro = lerRegistroFromBin(byteOffsetAnterior, file);
-    set_prox(registro, byteOffsetProximo);
-
     byteOffsetAnterior += byteProx;
     fseek(file, byteOffsetAnterior, SEEK_SET);
     fwrite(&byteOffsetProximo, sizeof(int), 1, file);
   }
 
+  apagarCabecalho(cabecalho);
+
   removerRegistroRemovidoPosicao(removidos, posicao);
 }
 
+// retorna o tamanho do registro a partir do id
 int getTamanhoById(REMOVIDOS *removidos, int id) {
   int posicao = buscarPosicaoRegistroIndice(removidos->lista, id);
 
@@ -235,32 +246,13 @@ int getTamanhoById(REMOVIDOS *removidos, int id) {
   return removidos->tamanhos[posicao];
 }
 
-long long int getBestFitByteOffset(REMOVIDOS *removidos, int tamanho) {
-  int left = 0;
-  int right = getTamanhoListaIndice(removidos->lista) - 1;
-
-  int middle = (left + right) / 2;
-
-  while(left < right) {
-    if(removidos->tamanhos[middle] > tamanho) {
-      right = middle;
-    } else {
-      left = middle + 1;
-    }
-
-    middle = (left + right) / 2;
-  }
-
-  long long int byteOffset = getByteOffsetRegistroIndice(getRegistroIndice(removidos->lista, middle));
-
-  return byteOffset;
-}
-
+// retorna o byteOffset do best fit de cada registro de um vetor
 long long int *getBestFitArrayRegistros(REMOVIDOS *removidos, REGISTRO **registros, int quantidade, FILE *file)
 {
   int *tamanhos = malloc(sizeof(int) * quantidade);
   long long int *byteOffsets = malloc(sizeof(long long int) * quantidade);
 
+  // se nao tem nenhum registro removido
   if(getTamanhoListaRemovidos(removidos) == 0)
   {
     CABECALHO *cabecalho = getCabecalhoFromBin(file);
@@ -272,6 +264,8 @@ long long int *getBestFitArrayRegistros(REMOVIDOS *removidos, REGISTRO **registr
     {
       byteOffsets[i] = -1;
     }
+
+    apagarCabecalho(cabecalho);
 
     free(tamanhos);
 
@@ -312,12 +306,14 @@ long long int *getBestFitArrayRegistros(REMOVIDOS *removidos, REGISTRO **registr
   return byteOffsets;
 }
 
+// retorna o byteOffset do best fit de um registro e libera o espaco na lista de removidos
 long long int getBestFitAndFreeSpace(REMOVIDOS *removidos, int tamanho, REGISTRO *registro, FILE *file) {
   int left = 0;
   int right = getTamanhoListaIndice(removidos->lista) - 1;
 
   int middle = (left + right) / 2;
 
+  // busca binaria do tamanho
   while(left < right) {
     if(removidos->tamanhos[middle] == tamanho)
     {
@@ -334,7 +330,7 @@ long long int getBestFitAndFreeSpace(REMOVIDOS *removidos, int tamanho, REGISTRO
 
   long long int byteOffset = getByteOffsetRegistroIndice(getRegistroIndice(removidos->lista, middle));
 
-  // check the byteOffset of all the elements with the same size and get the one with the smallest byteOffset
+  // retorna o primeiro elemento da lista com o tamanho desejado
   while(middle - 1 >= 0 && removidos->tamanhos[middle - 1] == tamanho) {
     if(removidos->tamanhos[middle] != removidos->tamanhos[middle - 1]) {
       break;
@@ -346,11 +342,11 @@ long long int getBestFitAndFreeSpace(REMOVIDOS *removidos, int tamanho, REGISTRO
     middle--;
   }
 
-  if(middle + 1 < getTamanhoListaIndice(removidos->lista)) {
+  if(middle + 1 < getTamanhoListaIndice(removidos->lista)) { // tem um registro removido depois
     long long int proxByteOffset = getByteOffsetRegistroIndice(getRegistroIndice(removidos->lista, middle + 1));
     set_prox(registro, proxByteOffset);
   }
-  else {
+  else { // nao tem registro removido depois
     set_prox(registro, -1);
   }
 
@@ -359,6 +355,7 @@ long long int getBestFitAndFreeSpace(REMOVIDOS *removidos, int tamanho, REGISTRO
   return byteOffset;
 }
 
+// imprime a lista de removidos (funcao para debugging)
 void imprimirRemovidos(REMOVIDOS *removidos, FILE *file) {
   for(int i = 0; i < getTamanhoListaIndice(removidos->lista); i++) {
     REGISTRO_INDICE *registroIndice = getRegistroIndice(removidos->lista, i);

@@ -1,10 +1,12 @@
 #include "registroIndice.h"
 
+// registro do arquivo de indices
 struct _registro_indice {
     int index;
     long long int byteOffset;
 };
 
+// cria um registro de indice vazio
 REGISTRO_INDICE *criarRegistroIndice() {
     REGISTRO_INDICE *registro = (REGISTRO_INDICE *) malloc(sizeof(REGISTRO_INDICE));
     if(!registro)
@@ -14,6 +16,7 @@ REGISTRO_INDICE *criarRegistroIndice() {
     return registro;
 }
 
+// apaga um registro de indice
 void apagarRegistroIndice(REGISTRO_INDICE *registro) {
     free(registro);
 }

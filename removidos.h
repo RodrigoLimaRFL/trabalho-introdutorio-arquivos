@@ -15,7 +15,6 @@
         void removerRegistroRemovidoEAtualizarArquivo(REMOVIDOS *removidos, int id, FILE *file);
         int getTamanhoById(REMOVIDOS *removidos, int id);
         long long int getMaiorByteOffsetMenorQue(REMOVIDOS *removidos, int id);
-        long long int getBestFitByteOffset(REMOVIDOS *removidos, int tamanho);
         long long int *getBestFitArrayRegistros(REMOVIDOS *removidos, REGISTRO **registros, int quantidade, FILE *file);
         long long int getBestFitAndFreeSpace(REMOVIDOS *removidos, int tamanho, REGISTRO *registro, FILE *file);
         void imprimirRemovidos(REMOVIDOS *removidos, FILE *file);
