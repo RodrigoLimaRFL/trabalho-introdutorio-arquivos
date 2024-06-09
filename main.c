@@ -79,9 +79,9 @@ int main() {
             return 0;
         }
 
-        lerBinCriarIndice(file, arquivoIndice);
+        lerBinCriarIndice(file, arquivoIndice); // cria o arquivo de indices
 
-        removerRegistrosBuscados(arquivoBin, arquivoIndice);
+        removerRegistrosBuscados(arquivoBin, arquivoIndice); // remove os indices que atendem os critérios da remoção
 
         binarioNaTela(arquivoBin);
         binarioNaTela(arquivoIndice);
