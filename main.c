@@ -83,7 +83,7 @@ int main() {
             printf("Falha no processamento do arquivo.\n");
             return 0;
         }
-
+        
         lerBinCriarIndice(file, arquivoIndice);
 
         removerRegistrosBuscados(arquivoBin, arquivoIndice);

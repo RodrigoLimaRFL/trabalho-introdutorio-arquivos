@@ -268,7 +268,9 @@ void removerRegistrosBuscados(char *arquivoBin, char *arquivoIndice)
     FILE *fileIndices = fopen(arquivoIndice, "rb+"); // abre o arquivo de índices no modo leitura e escrita
     if (file == NULL || fileIndices == NULL) // verifica se ocorreu um erro ao abrir os arquivos
     {
-        printf("Falha no processamento do arquivo.\n");
+        // printf("Falha no processamento do arquivo.\n"); // já tem no lerBinCriarIndice
+        if(file != NULL) fclose(file);
+        if(fileIndices != NULL) fclose(fileIndices);
         return;
     }
 
@@ -282,8 +284,11 @@ void removerRegistrosBuscados(char *arquivoBin, char *arquivoIndice)
 
     if (getStatus(cabecalho) == '0') // verifica o status do cabeçalho
     {
-        printf("Falha no processamento do arquivo.\n");
+        // printf("Falha no processamento do arquivo.\n"); // já tem no lerBinCriarIndice
         fclose(file); // fecha o arquivo
+        fclose(fileIndices);
+        apagarCabecalho(cabecalho);
+        apagarListaIndice(listaIndices);
         return;
     }
 
@@ -443,6 +448,7 @@ void removerRegistrosBuscados(char *arquivoBin, char *arquivoIndice)
 
                 }
                 byteOffset += get_tamanhoRegistro(registro); // muda o byteOffset para a posição do próximo registro
+                free(registro);
             }
         }
 
@@ -457,6 +463,8 @@ void removerRegistrosBuscados(char *arquivoBin, char *arquivoIndice)
 
     fseek(fileIndices, 0, SEEK_SET);
     fwrite(&status, sizeof(char), 1, fileIndices);
+
+    apagarListaIndice(listaIndices);
 
     fclose(file); // fecha o arquivo de dados
     fclose(fileIndices); // fecha o arquivo de indices
