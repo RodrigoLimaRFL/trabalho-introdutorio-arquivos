@@ -9,6 +9,6 @@
     int imprimeRegistro(REGISTRO *registro);
     void imprimeRegistrosBuscados(char *arquivo);
     void removerRegistrosBuscados(char *arquivoBin, char *arquivoIndice);
-    void removeById(int id, long long int byteOffset, LISTA_INDICE *listaIndices, FILE *file, FILE *fileIndices, REMOVIDOS *listaRemovidos, CABECALHO *cabecalho, char* arquivoIndice);
+    void removeById(int id, LISTA_INDICE *listaIndices, FILE *file, FILE *fileIndices, REMOVIDOS *listaRemovidos, CABECALHO *cabecalho, char* arquivoIndice);
     bool escreverRegistro(REGISTRO *registro, int byteOffset, int tamRegistroAtual, FILE *arquivoBin);
 #endif

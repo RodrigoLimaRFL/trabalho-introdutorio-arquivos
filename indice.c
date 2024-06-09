@@ -15,6 +15,23 @@ int getTamanhoMaxLista(LISTA_INDICE *lista) {
     return lista->max_tamanho;
 }
 
+long long int obterMaiorByteOffset(LISTA_INDICE *lista) {
+    if (lista == NULL || lista->tamanho == 0) {
+        return -1; // Retorna um valor inválido para indicar que não foi possível obter o maior byte offset
+    }
+
+    long long int maiorByteOffset = getByteOffsetRegistroIndice(lista->registros[0]);
+
+    for (int i = 1; i < lista->tamanho; i++) {
+        long long int byteOffsetAtual = getByteOffsetRegistroIndice(lista->registros[i]);
+        if (byteOffsetAtual > maiorByteOffset) {
+            maiorByteOffset = byteOffsetAtual;
+        }
+    }
+
+    return maiorByteOffset;
+}
+
 LISTA_INDICE *criarListaIndice()
 {
     LISTA_INDICE *lista = (LISTA_INDICE *)malloc(sizeof(LISTA_INDICE));

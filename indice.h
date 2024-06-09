@@ -13,6 +13,7 @@
         LISTA_INDICE *criarListaIndice();
         REGISTRO_INDICE *getRegistroIndice(LISTA_INDICE *lista, int index);
         int getTamanhoListaIndice(LISTA_INDICE *lista);
+        long long int obterMaiorByteOffset(LISTA_INDICE *lista);
         bool adicionarRegistroIndice(LISTA_INDICE *lista, REGISTRO_INDICE *registro);
         bool adicionarRegistroOrdenadoIndice(LISTA_INDICE *lista, REGISTRO_INDICE *registro, FILE *file);
         bool modificarRegistroIndice(LISTA_INDICE *lista, int index, REGISTRO_INDICE *novoRegistro);

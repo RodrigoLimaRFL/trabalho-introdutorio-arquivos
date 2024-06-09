@@ -5,6 +5,7 @@
         #include <stdbool.h>
         #include "indice.h"
         #include "interpreta-bin.h"
+        #include "registro.h"
 
         typedef struct _removidos REMOVIDOS;
         void apagarListaRemovidos(REMOVIDOS *removidos);
@@ -17,5 +18,5 @@
         long long int getBestFitByteOffset(REMOVIDOS *removidos, int tamanho);
         long long int *getBestFitArrayRegistros(REMOVIDOS *removidos, REGISTRO **registros, int quantidade, FILE *file);
         long long int getBestFitAndFreeSpace(REMOVIDOS *removidos, int tamanho, REGISTRO *registro, FILE *file);
-        void imprimirRemovidos(REMOVIDOS *removidos);
+        void imprimirRemovidos(REMOVIDOS *removidos, FILE *file);
 #endif
