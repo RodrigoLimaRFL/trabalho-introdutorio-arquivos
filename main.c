@@ -1,3 +1,8 @@
+/*
+* Pedro Henrique Ferreira Silva - NUSP: 14677526
+* Rodrigo de Freitas Lima - NUSP: 12547510
+*/
+
 #include <stdio.h>
 
 #include "gerencia-arquivo.h"
