@@ -16,8 +16,10 @@ void inserirNovoDado(char *arquivoBinario, char *arquivoIndice, int numOperacoes
 
     if(getStatus(cabecalho) == '0')
     {
-        printf("Falha no processamento do arquivo.\n");
+        //printf("Falha no processamento do arquivo.\n"); // erro ja eh printado uma vez
         apagarCabecalho(cabecalho);
+        fclose(arquivoBin);
+        fclose(arquivoInd);
         return;
     }
 
@@ -53,23 +55,22 @@ void inserirNovoDado(char *arquivoBinario, char *arquivoIndice, int numOperacoes
 
         if(registroIndice != NULL) // registro ja existe
         {
+            nomeJogador[i] = '\0';
+            nacionalidade[i] = '\0';
+            nomeClube[i] = '\0';
             registros[i] = criarRegistro('1',
                                          0,
                                          0,
                                          0,
                                          0,
                                          0,
-                                         "",
+                                         nomeJogador[i],
                                          0,
-                                         "",
+                                         nomeClube[i],
                                          0,
-                                         "");
-            
-            apagarRegistroIndice(registroIndice);
+                                         nacionalidade[i]);
             continue;
         }
-
-        apagarRegistroIndice(registroIndice);
 
         int idade = -1;
 
@@ -130,7 +131,9 @@ void inserirNovoDado(char *arquivoBinario, char *arquivoIndice, int numOperacoes
         }
         else
         {
-            tamanhoRegistroAtual = get_tamanhoRegistro(lerRegistroFromBin(byteOffsets[i], arquivoBin));
+            REGISTRO *registro = lerRegistroFromBin(byteOffsets[i], arquivoBin);
+            tamanhoRegistroAtual = get_tamanhoRegistro(registro);
+            liberarRegistro(registro);
         }
 
         set_prox(registros[i], -1);

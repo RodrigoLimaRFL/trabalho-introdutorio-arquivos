@@ -230,6 +230,7 @@ void removerRegistroRemovidoEAtualizarArquivo(REMOVIDOS *removidos, int posicao,
     fwrite(&byteOffsetProximo, sizeof(int), 1, file);
   }
 
+  liberarRegistro(registro);
   apagarCabecalho(cabecalho);
 
   removerRegistroRemovidoPosicao(removidos, posicao);
