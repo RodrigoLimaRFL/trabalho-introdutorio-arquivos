@@ -12,4 +12,5 @@
     void removeById(int id, LISTA_INDICE *listaIndices, FILE *file, FILE *fileIndices, REMOVIDOS *listaRemovidos, CABECALHO *cabecalho, char* arquivoIndice);
     bool escreverRegistro(REGISTRO *registro, int byteOffset, int tamRegistroAtual, FILE *arquivoBin);
     void criarArquivoArvoreB(char *arquivoBin, char *arquivoArvB);
+    void imprimirArvoreB(FILE *arquivo);
 #endif

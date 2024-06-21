@@ -608,7 +608,7 @@ void criarArquivoArvoreB(char *arquivoBin, char *arquivoArvB)
 
     apagarCabecalho(cabecalho);
 
-    for(int i = 0; i < quantidade && i < 10; i++)
+    for(int i = 0; i < quantidade; i++)
     {
         REGISTRO *registro = lerRegistroFromBin(posicao, arquivoBinario); // lê um registro do arquivo binário
 
@@ -626,4 +626,11 @@ void criarArquivoArvoreB(char *arquivoBin, char *arquivoArvB)
         posicao += get_tamanhoRegistro(registro); // muda o byteOffset para a posição do próximo registro
         liberarRegistro(registro); // libera a memória do registro
     }
+
+    imprimirArvoreB(arquivoArvoreB); // imprime a árvore B
+
+    apagarCabecalhoArvoreB(cabecalhoArvoreB); // libera a memória do cabeçalho da árvore B
+    cabecalhoArvoreB = lerCabecalhoArvoreB(arquivoArvoreB); // lê o cabeçalho da árvore B
+    setStatusCabecalhoArvoreB(cabecalhoArvoreB, '1'); // define o status do cabeçalho como consistente
+    escreverCabecalhoArvoreB(arquivoArvoreB, cabecalhoArvoreB); // escreve o cabeçalho no arquivo
 }
