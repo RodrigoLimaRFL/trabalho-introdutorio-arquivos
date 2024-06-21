@@ -7,6 +7,7 @@ struct _cabecalhoArvoreB {
     int nroChaves;
 };
 
+// cria um cabecalho da arvore B com os valores padrao
 CABECALHO_ARVORE_B *criarCabecalhoArvoreBVazio()
 {
     CABECALHO_ARVORE_B *cabecalho = malloc(sizeof(CABECALHO_ARVORE_B));
@@ -106,6 +107,7 @@ bool setNroChavesCabecalhoArvoreB(CABECALHO_ARVORE_B *cabecalho, int nroChaves)
     return true;
 }
 
+// cria um cabecalho da arbore B a partir de um arquivo
 CABECALHO_ARVORE_B *lerCabecalhoArvoreB(FILE *file)
 {
     if (file == NULL)
@@ -125,6 +127,7 @@ CABECALHO_ARVORE_B *lerCabecalhoArvoreB(FILE *file)
     return cabecalho;
 }
 
+// escreve em um arquivo o cabecalho da Arvore B
 bool escreverCabecalhoArvoreB(FILE *file, CABECALHO_ARVORE_B *cabecalho)
 {
     if (file == NULL || cabecalho == NULL)
@@ -144,7 +147,7 @@ bool escreverCabecalhoArvoreB(FILE *file, CABECALHO_ARVORE_B *cabecalho)
     char lixo = '$';
     for(int i = tamanhoCabecalho; i < TAMANHO_REGISTRO_ARVORE_B; i++)
     {
-        fwrite(&lixo, sizeof(char), 1, file);
+        fwrite(&lixo, sizeof(char), 1, file); // lixo para o cabecalho ter o mesmo tamanho do registro
     }
 
     return true;

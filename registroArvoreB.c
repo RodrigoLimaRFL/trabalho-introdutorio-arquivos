@@ -7,6 +7,7 @@ struct _registroArvoreB {
     long long int descendentes[ORDEM_ARVORE_B];
 };
 
+// cria um registro de árvore B com os valores padrao
 REGISTRO_ARVORE_B *criarRegistroArvoreBVazio()
 {
     REGISTRO_ARVORE_B *registro = malloc(sizeof(REGISTRO_ARVORE_B));
@@ -24,21 +25,22 @@ REGISTRO_ARVORE_B *criarRegistroArvoreBVazio()
     return registro;
 }
 
+// insere uma chave no registro de árvore B
 bool inserirChaveRegistroArvoreB(REGISTRO_ARVORE_B *registro, int chave)
 {
-    if (registro->nroChaves == 0)
+    if (registro->nroChaves == ORDEM_ARVORE_B - 1) // se o registro estiver cheio
+    {
+        return false;
+    }
+    else if (registro->nroChaves == 0) // se o registro estiver vazio
     {
         registro->chaves[0] = chave;
         registro->nroChaves++;
     }
-    else if (registro->nroChaves == ORDEM_ARVORE_B - 1)
-    {
-        return false;
-    }
-    else
+    else // se o registro não estiver vazio nem cheio
     {
         int i = registro->nroChaves - 1;
-        while (i >= 0 && registro->chaves[i] > chave)
+        while (i >= 0 && registro->chaves[i] > chave) // insere em ordem
         {
             registro->chaves[i + 1] = registro->chaves[i];
             i--;
@@ -50,20 +52,21 @@ bool inserirChaveRegistroArvoreB(REGISTRO_ARVORE_B *registro, int chave)
     return true;
 }
 
+// remove uma chave do registro de árvore B
 bool removerChaveRegistroArvoreB(REGISTRO_ARVORE_B *registro, int chave)
 {
-    if (registro->nroChaves == 0)
+    if (registro->nroChaves == 0) // se o registro estiver vazio
     {
         return false;
     }
     else
     {
         int i = 0;
-        while (i < registro->nroChaves && registro->chaves[i] != chave)
+        while (i < registro->nroChaves && registro->chaves[i] != chave) // procura a chave
         {
             i++;
         }
-        if (i == registro->nroChaves)
+        if (i == registro->nroChaves) // nao achou a chave
         {
             return false;
         }
@@ -71,7 +74,7 @@ bool removerChaveRegistroArvoreB(REGISTRO_ARVORE_B *registro, int chave)
         {
             for (int j = i; j < registro->nroChaves - 1; j++)
             {
-                registro->chaves[j] = registro->chaves[j + 1];
+                registro->chaves[j] = registro->chaves[j + 1]; // reposiciona as chaves
             }
             registro->nroChaves--;
         }
@@ -80,32 +83,31 @@ bool removerChaveRegistroArvoreB(REGISTRO_ARVORE_B *registro, int chave)
     return true;
 }
 
+// insere um descendente no registro de árvore B
 bool inserirDescendenteRegistroArvoreB(REGISTRO_ARVORE_B *registro, long long int descendente, int chaveDescendente)
 {
-    if (registro->nroChaves == 0)
+    if (!registro || registro->nroChaves == 0)
     {
         return false;
     }
-    else
+
+    int i = 0;
+
+    while (i < registro->nroChaves && registro->chaves[i] < chaveDescendente) // acha a posicao do descendente
     {
-        int i = 0;
-        while (i < registro->nroChaves && registro->chaves[i] < chaveDescendente)
-        {
-            i++;
-        }
-        if (i == registro->nroChaves)
+        if(registro->chaves[i] == chaveDescendente) // se a chave ja existe
         {
             return false;
         }
-        else
-        {
-            for (int j = registro->nroChaves; j > i; j--)
-            {
-                registro->descendentes[j] = registro->descendentes[j - 1];
-            }
-            registro->descendentes[i] = descendente;
-        }
+        i++;
     }
+
+    if(registro->descendentes[i] != -1) // se a posicao ja esta ocupada
+    {
+        return false;
+    }
+
+    registro->descendentes[i] = descendente; // insere o descendente na posicao em que Ci < chaveDescendente < Ci+1
 
     return true;
 }
@@ -116,25 +118,20 @@ bool removerDescendenteRegistroArvoreB(REGISTRO_ARVORE_B *registro, long long in
     {
         return false;
     }
-    else
+    
+    int i = 0;
+
+    while (i < registro->nroChaves && registro->descendentes[i] != descendente) // acha a posicao do descendente
     {
-        int i = 0;
-        while (i < registro->nroChaves && registro->descendentes[i] != descendente)
-        {
-            i++;
-        }
-        if (i == registro->nroChaves)
-        {
-            return false;
-        }
-        else
-        {
-            for (int j = i; j < registro->nroChaves - 1; j++)
-            {
-                registro->descendentes[j] = registro->descendentes[j + 1];
-            }
-        }
+        i++;
     }
+
+    if(i == ORDEM_ARVORE_B) // nao achou o descendente
+    {
+        return false;
+    }
+
+    registro->descendentes[i] = -1; // remove o descendente
 
     return true;
 }
