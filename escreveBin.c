@@ -1,5 +1,6 @@
 #include "escreveBin.h"
 #include "cabecalho.h"
+#include "arvoreB.h"
 #include "funcoes_fornecidas.h"
 
 // Função que pega os registros do arquivo binário e imprime eles na tela
@@ -567,4 +568,62 @@ bool escreverRegistro(REGISTRO *registro, int byteOffset, int tamRegistroAtual, 
     }
 
     return true;
+}
+
+void criarArquivoArvoreB(char *arquivoBin, char *arquivoArvB)
+{
+    FILE *arquivoBinario = fopen(arquivoBin, "rb"); // abre o arquivo binário no modo escrita
+    FILE *arquivoArvoreB = fopen(arquivoArvB, "wb+"); // abre o arquivo de índices no modo escrita
+
+    if(!arquivoBinario || !arquivoArvoreB)
+    {
+        printf("Falha no processamento do arquivo.\n");
+        if(arquivoBinario) fclose(arquivoBinario);
+        if(arquivoArvoreB) fclose(arquivoArvoreB);
+        return;
+    }
+
+    CABECALHO *cabecalho = getCabecalhoFromBin(arquivoBinario); // lê o cabeçalho do arquivo binário
+
+    if(getStatus(cabecalho) == '0')
+    {
+        printf("Falha no processamento do arquivo.\n");
+        fclose(arquivoBinario);
+        fclose(arquivoArvoreB);
+        apagarCabecalho(cabecalho);
+        return;
+    }
+
+    CABECALHO_ARVORE_B *cabecalhoArvoreB = criarCabecalhoArvoreBVazio(); // cria um cabeçalhos
+    setStatusCabecalhoArvoreB(cabecalhoArvoreB, '0');
+    escreverCabecalhoArvoreB(arquivoArvoreB, cabecalhoArvoreB); // escreve o cabeçalho no arquivo
+
+    // pula o cabecalho
+    long long int posicao = 25;
+
+    REGISTRO_INDICE *registroIndice = criarRegistroIndice();
+
+    // quantidade de registros no arquivo
+    int quantidade = getNroRegArq(cabecalho) + getNroRem(cabecalho);
+
+    apagarCabecalho(cabecalho);
+
+    for(int i = 0; i < quantidade && i < 10; i++)
+    {
+        REGISTRO *registro = lerRegistroFromBin(posicao, arquivoBinario); // lê um registro do arquivo binário
+
+        if(get_removido(registro) == '1') //pula o registro removido
+        {
+            posicao += get_tamanhoRegistro(registro);
+            continue;
+        }
+
+        int chave = get_id(registro); // obtém a chave do registro
+        long long int byteOffset = posicao; // obtém o byteOffset do registro
+        
+        inserirArvoreB(arquivoArvoreB, chave, byteOffset); // insere o registro na árvore B
+
+        posicao += get_tamanhoRegistro(registro); // muda o byteOffset para a posição do próximo registro
+        liberarRegistro(registro); // libera a memória do registro
+    }
 }

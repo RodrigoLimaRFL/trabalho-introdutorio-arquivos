@@ -117,6 +117,18 @@ int main() {
         binarioNaTela(arquivoBin);
         binarioNaTela(arquivoIndice);
     }
+    else if(strcmp(operacao, "7") == 0)
+    {
+        char arquivoBin[50];
+        scanf("%s", arquivoBin);
+
+        char arquivoArvB[50];
+        scanf("%s", arquivoArvB);
+
+        criarArquivoArvoreB(arquivoBin, arquivoArvB);
+        
+        binarioNaTela(arquivoArvB);
+    }
     else // se a operação for diferente de 1, 2 ou 3, imprime, imprime que a operação é inválida
     {
         printf("Operacao invalida\n");

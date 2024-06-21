@@ -4,7 +4,8 @@ struct _registroArvoreB {
     int alturaNo;
     int nroChaves;
     int chaves[ORDEM_ARVORE_B - 1];
-    long long int descendentes[ORDEM_ARVORE_B];
+    long long int byteOffsets[ORDEM_ARVORE_B - 1];
+    int descendentes[ORDEM_ARVORE_B];
 };
 
 // cria um registro de árvore B com os valores padrao
@@ -17,6 +18,10 @@ REGISTRO_ARVORE_B *criarRegistroArvoreBVazio()
     {
         registro->chaves[i] = -1;
     }
+    for (int i = 0; i < ORDEM_ARVORE_B - 1; i++)
+    {
+        registro->byteOffsets[i] = -1;
+    }
     for (int i = 0; i < ORDEM_ARVORE_B; i++)
     {
         registro->descendentes[i] = -1;
@@ -26,7 +31,7 @@ REGISTRO_ARVORE_B *criarRegistroArvoreBVazio()
 }
 
 // insere uma chave no registro de árvore B
-bool inserirChaveRegistroArvoreB(REGISTRO_ARVORE_B *registro, int chave)
+bool inserirChaveRegistroArvoreB(REGISTRO_ARVORE_B *registro, int chave, long long int byteOffset)
 {
     if (registro->nroChaves == ORDEM_ARVORE_B - 1) // se o registro estiver cheio
     {
@@ -35,17 +40,35 @@ bool inserirChaveRegistroArvoreB(REGISTRO_ARVORE_B *registro, int chave)
     else if (registro->nroChaves == 0) // se o registro estiver vazio
     {
         registro->chaves[0] = chave;
+        registro->byteOffsets[0] = byteOffset;
         registro->nroChaves++;
     }
-    else // se o registro não estiver vazio nem cheio
+    else // se o registro nao estiver vazio nem cheio
     {
-        int i = registro->nroChaves - 1;
-        while (i >= 0 && registro->chaves[i] > chave) // insere em ordem
+        int posicao = 0;
+        for(int i = 0; i < registro->nroChaves; i++)
+        {
+            if(registro->chaves[i] == chave) // se a chave ja existe
+            {
+                return false;
+            }
+
+            if(registro->chaves[i] > chave)
+            {
+                posicao = i;
+                break;
+            }
+
+            posicao++;
+        }
+
+        for(int i = posicao; i < registro->nroChaves; i++)
         {
             registro->chaves[i + 1] = registro->chaves[i];
-            i--;
+            registro->byteOffsets[i + 1] = registro->byteOffsets[i];
         }
-        registro->chaves[i + 1] = chave;
+        registro->chaves[posicao] = chave;
+        registro->byteOffsets[posicao] = byteOffset;
         registro->nroChaves++;
     }
 
@@ -75,6 +98,7 @@ bool removerChaveRegistroArvoreB(REGISTRO_ARVORE_B *registro, int chave)
             for (int j = i; j < registro->nroChaves - 1; j++)
             {
                 registro->chaves[j] = registro->chaves[j + 1]; // reposiciona as chaves
+                registro->byteOffsets[j] = registro->byteOffsets[j + 1]; // reposiciona os byte offsets
             }
             registro->nroChaves--;
         }
@@ -174,6 +198,36 @@ int getNroChavesRegistroArvoreB(REGISTRO_ARVORE_B *registro)
     return nroChaves;
 }
 
+int getChave(REGISTRO_ARVORE_B *registro, int posicao)
+{
+    if (registro == NULL || posicao < 0 || posicao >= ORDEM_ARVORE_B - 1)
+    {
+        return -1;
+    }
+
+    return registro->chaves[posicao];
+}
+
+long long int getByteOffsetRegistroArvoreB(REGISTRO_ARVORE_B *registro, int posicao)
+{
+    if (registro == NULL || posicao < 0 || posicao >= ORDEM_ARVORE_B - 1)
+    {
+        return -1;
+    }
+
+    return registro->byteOffsets[posicao];
+}
+
+int getDescendente(REGISTRO_ARVORE_B *registro, int posicao)
+{
+    if (registro == NULL || posicao < 0 || posicao >= ORDEM_ARVORE_B)
+    {
+        return -1;
+    }
+
+    return registro->descendentes[posicao];
+}
+
 bool apagarRegistroArvoreB(REGISTRO_ARVORE_B *registro)
 {
     if (registro == NULL)
@@ -204,13 +258,65 @@ bool imprimirRegistroArvoreB(REGISTRO_ARVORE_B *registro)
             printf("%d ", registro->chaves[i]);
         }
         printf("\n");
+        printf("Byte offsets: ");
+        for (int i = 0; i < registro->nroChaves; i++)
+        {
+            printf("%lld ", registro->byteOffsets[i]);
+        }
         printf("Descendentes: ");
         for (int i = 0; i < registro->nroChaves + 1; i++)
         {
-            printf("%lld ", registro->descendentes[i]);
+            printf("%d ", registro->descendentes[i]);
         }
         printf("\n");
     }
+
+    return true;
+}
+
+REGISTRO_ARVORE_B *lerRegistroArvoreB(FILE *arquivo, int rrn)
+{
+    REGISTRO_ARVORE_B *registro = criarRegistroArvoreBVazio();
+    if (registro == NULL || arquivo == NULL)
+    {
+        return NULL;
+    }
+    
+    long long int byteOffset = rrn * TAMANHO_REGISTRO_ARVORE_B;
+
+    fseek(arquivo, byteOffset, SEEK_SET);
+
+    fread(&registro->alturaNo, sizeof(int), 1, arquivo);
+    fread(&registro->nroChaves, sizeof(int), 1, arquivo);
+    for(int i = 0; i < ORDEM_ARVORE_B -1; i++)
+    {
+        fread(&registro->chaves[i], sizeof(int), 1, arquivo);
+        fread(&registro->byteOffsets[i], sizeof(long long int), 1, arquivo);
+    }
+    fread(registro->descendentes, sizeof(int), ORDEM_ARVORE_B, arquivo);
+
+    return registro;
+}
+
+bool escreverRegistroArvoreB(REGISTRO_ARVORE_B *registro, FILE *arquivo, int rrn)
+{
+    if (registro == NULL || arquivo == NULL)
+    {
+        return false;
+    }
+    
+    long long int byteOffset = rrn * TAMANHO_REGISTRO_ARVORE_B;
+
+    fseek(arquivo, byteOffset, SEEK_SET);
+
+    fwrite(&registro->alturaNo, sizeof(int), 1, arquivo);
+    fwrite(&registro->nroChaves, sizeof(int), 1, arquivo);
+    for(int i = 0; i < ORDEM_ARVORE_B - 1; i++)
+    {
+        fwrite(&registro->chaves[i], sizeof(int), 1, arquivo);
+        fwrite(&registro->byteOffsets[i], sizeof(long long int), 1, arquivo);
+    }
+    fwrite(registro->descendentes, sizeof(int), ORDEM_ARVORE_B, arquivo);
 
     return true;
 }

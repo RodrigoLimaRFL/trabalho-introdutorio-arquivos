@@ -12,7 +12,7 @@ CABECALHO_ARVORE_B *criarCabecalhoArvoreBVazio()
 {
     CABECALHO_ARVORE_B *cabecalho = malloc(sizeof(CABECALHO_ARVORE_B));
     cabecalho->status = '0';
-    cabecalho->noRaiz = -1;
+    cabecalho->noRaiz = 0;
     cabecalho->proxRRN = 0;
     cabecalho->nroChaves = 0;
 

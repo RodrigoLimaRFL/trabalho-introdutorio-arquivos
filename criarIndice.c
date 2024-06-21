@@ -263,4 +263,5 @@ FILE *lerBinCriarIndice(FILE *arquivoBinario, char *arquivoIndice)
     fclose(arquivoInd);
 
     return arquivoInd;
+
 }

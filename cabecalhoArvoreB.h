@@ -16,5 +16,6 @@
     CABECALHO_ARVORE_B *lerCabecalhoArvoreB(FILE *file);
     bool escreverCabecalhoArvoreB(FILE *file, CABECALHO_ARVORE_B *cabecalho);
     bool apagarCabecalhoArvoreB(CABECALHO_ARVORE_B *cabecalho);
+    bool imprimirCabecalhoArvoreB(CABECALHO_ARVORE_B *cabecalho);
     
 #endif
