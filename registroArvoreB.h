@@ -9,6 +9,8 @@
     
     typedef struct _registroArvoreB REGISTRO_ARVORE_B;
 
+    #define TAMANHO_REGISTRO_ARVORE_B 60
+
     REGISTRO_ARVORE_B *criarRegistroArvoreBVazio();
     bool inserirChaveRegistroArvoreB(REGISTRO_ARVORE_B *registro, int chave);
     bool removerChaveRegistroArvoreB(REGISTRO_ARVORE_B *registro, int chave);
