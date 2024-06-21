@@ -18,4 +18,5 @@
     void setAlturaNoRegistroArvoreB(REGISTRO_ARVORE_B *registro, int altura);
     int getNroChavesRegistroArvoreB(REGISTRO_ARVORE_B *registro);
     bool apagarRegistroArvoreB(REGISTRO_ARVORE_B *registro);
+    bool imprimirRegistroArvoreB(REGISTRO_ARVORE_B *registro);
 #endif

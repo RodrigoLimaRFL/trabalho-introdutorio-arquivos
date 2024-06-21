@@ -190,3 +190,30 @@ bool apagarRegistroArvoreB(REGISTRO_ARVORE_B *registro)
 
     return true;
 }
+
+bool imprimirRegistroArvoreB(REGISTRO_ARVORE_B *registro)
+{
+    if (registro == NULL)
+    {
+        return false;
+    }
+    else
+    {
+        printf("Altura: %d\n", registro->alturaNo);
+        printf("Nro chaves: %d\n", registro->nroChaves);
+        printf("Chaves: ");
+        for (int i = 0; i < registro->nroChaves; i++)
+        {
+            printf("%d ", registro->chaves[i]);
+        }
+        printf("\n");
+        printf("Descendentes: ");
+        for (int i = 0; i < registro->nroChaves + 1; i++)
+        {
+            printf("%lld ", registro->descendentes[i]);
+        }
+        printf("\n");
+    }
+
+    return true;
+}
