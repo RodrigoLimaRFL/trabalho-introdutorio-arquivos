@@ -50,23 +50,23 @@ bool particionarNo(FILE *arquivo, REGISTRO_ARVORE_B *registro, int rrnAtual, int
         // pega o registro pai
         REGISTRO_ARVORE_B *registroPai = lerRegistroArvoreB(arquivo, caminho[nivel - 1]);
 
-        int nroChavesPai = getNroChavesRegistroArvoreB(registroPai);
+        printf("Registro pai: \n");
+        imprimirRegistroArvoreB(registroPai);
+        printf("Registro fornecido: \n");
+        imprimirRegistroArvoreB(registro);
 
-        if(nroChavesPai == ORDEM_ARVORE_B - 1) // pai cheio
-        {
-            particionarNo(arquivo, registroPai, caminho[nivel - 1], chave, nivel - 1, proxRrn, caminho, byteOffset, cabecalho);
-        }
+        int nroChavesPai = getNroChavesRegistroArvoreB(registroPai);
 
         int chaves[ORDEM_ARVORE_B]; // pega todas as chaves do registro + a chave a inserir
         long long int byteOffsets[ORDEM_ARVORE_B];
 
         // variaveis para detectar onde colocar a nova chave
-        bool inserido = false;
         int index = 0;
-
-        for (int i = 0; i < ORDEM_ARVORE_B; i++)
+        bool inserido = false;
+        for(int i = 0; i < ORDEM_ARVORE_B; i++)
         {
             int chaveLida = getChave(registro, index);
+            //printf("Chave lida: %d\n", chaveLida);
             if(!inserido && chave < chaveLida) // colocando nova chave
             {
                 inserido = true;
@@ -74,11 +74,27 @@ bool particionarNo(FILE *arquivo, REGISTRO_ARVORE_B *registro, int rrnAtual, int
                 byteOffsets[i] = byteOffset;
                 continue;
             }
+            if(chaveLida == -1 && i == ORDEM_ARVORE_B - 1) // nao achou chave menor, insere no fim
+            {
+                inserido = true;
+                chaves[i] = chave;
+                byteOffsets[i] = byteOffset;
+                break;
+            }
             chaves[i] = chaveLida;
             byteOffsets[i] = getByteOffsetRegistroArvoreB(registro, index);
             index++;
         }
 
+        // chave a ser promovida
+        int chaveMeio = chaves[ORDEM_ARVORE_B / 2 - 1];
+        int byteOffsetMeio = byteOffsets[ORDEM_ARVORE_B / 2 - 1];
+
+        if(nroChavesPai == ORDEM_ARVORE_B - 1) // pai cheio
+        {
+            particionarNo(arquivo, registroPai, caminho[nivel - 1], chaveMeio, nivel - 1, proxRrn, caminho, byteOffset, cabecalho);
+        }
+ 
         bool isFolha = false;
 
         int primeiroDescendente = getDescendente(registro, 0);
@@ -95,18 +111,18 @@ bool particionarNo(FILE *arquivo, REGISTRO_ARVORE_B *registro, int rrnAtual, int
 
         if(isFolha) // colocamos apenas as chaves nos novos registros
         {
-            for(int i = 0; i < ORDEM_ARVORE_B / 2; i++) // insere as chaves no registro esquerdo
+            for(int i = 0; i < ORDEM_ARVORE_B / 2 - 1; i++) // insere as chaves no registro esquerdo exceto a ultima
             {
                 inserirChaveRegistroArvoreB(registroEsq, chaves[i], byteOffsets[i]);
             }
-            for(int i = ORDEM_ARVORE_B / 2 + 1; i < ORDEM_ARVORE_B; i++) // insere as chaves exceto a primeira no registro direito
+            for(int i = ORDEM_ARVORE_B / 2; i < ORDEM_ARVORE_B; i++) // insere as chaves no registro direito
             {
                 inserirChaveRegistroArvoreB(registroDir, chaves[i], byteOffsets[i]);
             }
         }
         else // colocamos as chaves e os descendentes nos novos registros
         {
-            for(int i = 0; i < ORDEM_ARVORE_B / 2; i++) // insere as chaves no registro esquerdo
+            for(int i = 0; i < ORDEM_ARVORE_B / 2 - 1; i++) // insere as chaves no registro esquerdo
             {
                 REGISTRO_ARVORE_B *registroDescendente = lerRegistroArvoreB(arquivo, getDescendente(registro, i));
                 int chaveDescendente = getChave(registroDescendente, 0);
@@ -122,22 +138,18 @@ bool particionarNo(FILE *arquivo, REGISTRO_ARVORE_B *registro, int rrnAtual, int
                 inserirDescendenteRegistroArvoreB(registroEsq, getDescendente(registro, i), chaveDescendente);
                 apagarRegistroArvoreB(registroDescendente);
             }
-        }
+        } 
 
         // escreve os registros particionados
         escreverRegistroArvoreB(registroEsq, arquivo, rrnAtual);
         escreverRegistroArvoreB(registroDir, arquivo, proxRrn);
 
-        // chave a ser promovida
-        int chaveMeio = chaves[ORDEM_ARVORE_B / 2];
-        int byteOffsetMeio = byteOffsets[ORDEM_ARVORE_B / 2];
-
-        maiorChaveEsq = getChave(registroEsq, ORDEM_ARVORE_B / 2 - 1);
+        maiorChaveEsq = getChave(registroEsq, ORDEM_ARVORE_B / 2 - 2);
         menorChaveDir = getChave(registroDir, 0);
 
         // escreve o pai
         inserirChaveRegistroArvoreB(registroPai, chaveMeio, byteOffsetMeio);
-        inserirDescendenteRegistroArvoreB(registroPai, rrnAtual, maiorChaveEsq);
+        //inserirDescendenteRegistroArvoreB(registroPai, rrnAtual, maiorChaveEsq);
         inserirDescendenteRegistroArvoreB(registroPai, proxRrn, menorChaveDir);
         escreverRegistroArvoreB(registroPai, arquivo, caminho[nivel - 1]);
 
@@ -170,6 +182,9 @@ bool particionarNo(FILE *arquivo, REGISTRO_ARVORE_B *registro, int rrnAtual, int
     else // raiz
     {
         REGISTRO_ARVORE_B *novaRaiz = criarRegistroArvoreBVazio();
+
+        printf("no raiz\n");
+
         int chaves[ORDEM_ARVORE_B]; // pega todas as chaves do registro + a chave a inserir
         int byteOffsets[ORDEM_ARVORE_B];
 
@@ -179,16 +194,29 @@ bool particionarNo(FILE *arquivo, REGISTRO_ARVORE_B *registro, int rrnAtual, int
         for (int i = 0; i < ORDEM_ARVORE_B; i++)
         {
             int chaveLida = getChave(registro, index);
-            if(!inserido && chave < chaveLida)
+            printf("Chave lida: %d\n", chaveLida);
+            if(!inserido && chave < chaveLida) // colocando nova chave
             {
                 inserido = true;
                 chaves[i] = chave;
                 byteOffsets[i] = byteOffset;
                 continue;
             }
+            if(chaveLida == -1 && i == ORDEM_ARVORE_B - 1) // nao achou chave menor, insere no fim
+            {
+                inserido = true;
+                chaves[i] = chave;
+                byteOffsets[i] = byteOffset;
+                break;
+            }
             chaves[i] = chaveLida;
             byteOffsets[i] = getByteOffsetRegistroArvoreB(registro, index);
             index++;
+        }
+
+        for(int i = 0; i < ORDEM_ARVORE_B; i++)
+        {
+            printf("Chave: %d\n", chaves[i]);
         }
 
         REGISTRO_ARVORE_B *registroEsq = criarRegistroArvoreBVazio();
@@ -196,7 +224,7 @@ bool particionarNo(FILE *arquivo, REGISTRO_ARVORE_B *registro, int rrnAtual, int
         REGISTRO_ARVORE_B *registroDir = criarRegistroArvoreBVazio();
         int menorChaveDir = -1;
 
-        for(int i = 0; i < ORDEM_ARVORE_B / 2; i++) // insere as chaves no registro esquerdo
+        for(int i = 0; i < ORDEM_ARVORE_B / 2 - 1; i++) // insere as chaves no registro esquerdo exceto a ultima
         {
             REGISTRO_ARVORE_B *registroDescendente = lerRegistroArvoreB(arquivo, getDescendente(registro, i));
             int chaveDescendente = getChave(registroDescendente, 0);
@@ -204,7 +232,7 @@ bool particionarNo(FILE *arquivo, REGISTRO_ARVORE_B *registro, int rrnAtual, int
             apagarRegistroArvoreB(registroDescendente);
             inserirDescendenteRegistroArvoreB(registroEsq, getDescendente(registro, i), chaveDescendente);
         }
-        for(int i = ORDEM_ARVORE_B / 2 + 1; i < ORDEM_ARVORE_B; i++) // insere as chaves exceto a primeira no registro direito
+        for(int i = ORDEM_ARVORE_B / 2; i < ORDEM_ARVORE_B; i++) // insere as chaves no registro direito
         {
             REGISTRO_ARVORE_B *registroDescendente = lerRegistroArvoreB(arquivo, getDescendente(registro, i));
             int chaveDescendente = getChave(registroDescendente, 0);
@@ -218,11 +246,11 @@ bool particionarNo(FILE *arquivo, REGISTRO_ARVORE_B *registro, int rrnAtual, int
         escreverRegistroArvoreB(registroDir, arquivo, proxRrn);
 
         // chave a ser promovida
-        int chaveMeio = chaves[ORDEM_ARVORE_B / 2];
-        int byteOffsetMeio = byteOffsets[ORDEM_ARVORE_B / 2];
+        int chaveMeio = chaves[ORDEM_ARVORE_B / 2 - 1];
+        int byteOffsetMeio = byteOffsets[ORDEM_ARVORE_B / 2 - 1];
         int rrnRaiz = proxRrn + 1;
 
-        maiorChaveEsq = getChave(registroEsq, ORDEM_ARVORE_B / 2 - 1);
+        maiorChaveEsq = getChave(registroEsq, ORDEM_ARVORE_B / 2 - 2);
         menorChaveDir = getChave(registroDir, 0);
 
         // escreve a nova raiz
@@ -330,7 +358,7 @@ bool insercaoArvoreBRecursiva(FILE *arquivo, int rrnAtual, int chave, int nivel,
         return true;
     }
 
-    if(nroDescendentes != 1){ // caso geral
+    if(nroDescendentes != 0){ // caso geral
         printf("Caso geral\n");
         printf("RRN: %d\n", rrnAtual);
         imprimirRegistroArvoreB(registro);
@@ -387,6 +415,50 @@ void imprimirArvoreB(FILE *arquivo)
     imprimirArvoreBRecursiva(arquivo, rrnAtual, 0);
 
     apagarCabecalhoArvoreB(cabecalho);
+}
+
+void imprimirArvoreBGraphvizRecursiva(FILE *arquivo, int rrnAtual)
+{
+    REGISTRO_ARVORE_B *registro = lerRegistroArvoreB(arquivo, rrnAtual);
+
+    int nroChaves = getNroChavesRegistroArvoreB(registro);
+
+    printf("node%d [label=\"", rrnAtual);
+
+    for(int i = 0; i < nroChaves; i++)
+    {
+        printf("<f%d> %d | ", i, getChave(registro, i));
+    }
+
+    printf("\"];\n");
+
+    for(int i = 0; i < ORDEM_ARVORE_B; i++)
+    {
+        if(getDescendente(registro, i) != -1)
+        {
+            int descendente = getDescendente(registro, i);
+            printf("node%d:f%d -> node%d;\n", rrnAtual, i, descendente);
+            imprimirArvoreBGraphvizRecursiva(arquivo, descendente);
+        }
+    }
+
+    apagarRegistroArvoreB(registro);
+}
+
+void imprimirArvoreBGraphviz(FILE *arquivo)
+{
+    CABECALHO_ARVORE_B *cabecalho = lerCabecalhoArvoreB(arquivo);
+
+    int rrnAtual = getNoRaizCabecalhoArvoreB(cabecalho);
+
+    printf("digraph G {\n");
+
+    imprimirArvoreBGraphvizRecursiva(arquivo, rrnAtual);
+
+    printf("}\n");
+
+    apagarCabecalhoArvoreB(cabecalho);
+
 }
 
 void inserirArvoreB(FILE *arquivo, int chave, long long int byteOffset)

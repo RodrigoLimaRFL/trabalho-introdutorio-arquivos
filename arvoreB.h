@@ -5,4 +5,5 @@
     #include "cabecalhoArvoreB.h"
 
     void inserirArvoreB(FILE *arquivo, int chave, long long int byteOffset);
+    void imprimirArvoreBGraphviz(FILE *arquivo);
 #endif
