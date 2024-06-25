@@ -62,11 +62,19 @@ bool inserirChaveRegistroArvoreB(REGISTRO_ARVORE_B *registro, int chave, long lo
             posicao++;
         }
 
-        for(int i = posicao; i < registro->nroChaves; i++)
+        printf("posicao: %d\n", posicao);
+
+        for(int i = registro->nroChaves; i > posicao; i--)
+        {
+            registro->chaves[i] = registro->chaves[i - 1];
+            registro->byteOffsets[i] = registro->byteOffsets[i - 1];
+        }
+
+        /*for(int i = posicao; i < registro->nroChaves; i++)
         {
             registro->chaves[i + 1] = registro->chaves[i];
             registro->byteOffsets[i + 1] = registro->byteOffsets[i];
-        }
+        }*/
         registro->chaves[posicao] = chave;
         registro->byteOffsets[posicao] = byteOffset;
         registro->nroChaves++;
@@ -117,6 +125,9 @@ bool inserirDescendenteRegistroArvoreB(REGISTRO_ARVORE_B *registro, long long in
 
     int i = 0;
 
+    //printf("primeira chave: %d\n", registro->chaves[i]);
+    //printf("chave descendente: %d\n", chaveDescendente);
+
     while (i < registro->nroChaves && registro->chaves[i] < chaveDescendente) // acha a posicao do descendente
     {
         if(registro->chaves[i] == chaveDescendente) // se a chave ja existe
@@ -128,7 +139,10 @@ bool inserirDescendenteRegistroArvoreB(REGISTRO_ARVORE_B *registro, long long in
 
     if(registro->descendentes[i] != -1) // se a posicao ja esta ocupada
     {
-        return false;
+        for (int j = registro->nroChaves; j > i; j--) // reposiciona os descendentes
+        {
+            registro->descendentes[j] = registro->descendentes[j - 1];
+        }
     }
 
     registro->descendentes[i] = descendente; // insere o descendente na posicao em que Ci < chaveDescendente < Ci+1
