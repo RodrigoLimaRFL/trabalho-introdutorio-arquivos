@@ -47,7 +47,7 @@ int main() {
         char arquivoBin[50];
         scanf("%s", arquivoBin);
 
-        imprimeRegistrosBuscados(arquivoBin);
+        imprimeRegistrosBuscados(arquivoBin, 0, "operacao3");
     }
     else if(strcmp(operacao, "4") == 0)
     {
@@ -128,6 +128,52 @@ int main() {
         criarArquivoArvoreB(arquivoBin, arquivoArvB);
         
         binarioNaTela(arquivoArvB);
+    }
+    else if(strcmp(operacao, "8") == 0)
+    {
+        char arquivoBin[50];
+        scanf("%s", arquivoBin);
+
+        FILE *fileBin = fopen(arquivoBin, "rb");
+        if(fileBin == NULL) {
+            printf("Falha no processamento do arquivo.\n");
+            return 0;
+        }
+
+        CABECALHO *cabecalhoBin = getCabecalhoFromBin(fileBin);
+        if(getStatus(cabecalhoBin) == '0') {
+            printf("Falha no processamento do arquivo.\n");
+            apagarCabecalho(cabecalhoBin);
+            fclose(fileBin);
+            return 0;
+        }
+
+        apagarCabecalho(cabecalhoBin);
+
+        char arquivoArvB[50];
+        scanf("%s", arquivoArvB);
+
+        int quantidadeBuscas;
+        scanf("%d", &quantidadeBuscas);
+
+        for(int i=0; i<quantidadeBuscas; i++) {
+            int id;
+            scanf("\nid %d", &id);
+
+            imprimirIdArvoreB(id, fileBin, arquivoArvB, i, 0);
+        }
+        fclose(fileBin);
+
+    }
+    else if(strcmp(operacao, "9") == 0)
+    {
+        char arquivoBin[50];
+        scanf("%s", arquivoBin);
+
+        char arquivoArvB[50];
+        scanf("%s", arquivoArvB);
+
+        imprimeRegistrosBuscados(arquivoBin, 1, arquivoArvB);
     }
     else // se a operação for diferente de 1, 2 ou 3, imprime, imprime que a operação é inválida
     {

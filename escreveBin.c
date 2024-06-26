@@ -1,7 +1,4 @@
 #include "escreveBin.h"
-#include "cabecalho.h"
-#include "arvoreBDois.h"
-#include "funcoes_fornecidas.h"
 
 // Função que pega os registros do arquivo binário e imprime eles na tela
 void imprimeRegistrosFromBin(char *filePath)
@@ -116,16 +113,13 @@ int imprimeRegistro(REGISTRO *registro)
     }
 }
 
-void imprimeRegistrosBuscados(char *arquivo)
+void imprimeRegistrosBuscados(char *arquivo, int buscaId, char *nomeArquivoArvoreB)
 {
     int numOperacoes;
     scanf("%d", &numOperacoes); // lê o número de buscas a serem feitas
 
     for (int i = 0; i < numOperacoes; i++)
     {
-        int impressoes = 0;
-        int m;
-        scanf("%i", &m); // lê o número de parâmetros da busca
 
         FILE *file = fopen(arquivo, "rb"); // verifica se ocorreu um erro ao abrir o arquivo no modo leitura
         if (file == NULL)
@@ -137,130 +131,213 @@ void imprimeRegistrosBuscados(char *arquivo)
         // cria um cabeçalho e chama a função lerCabecalhoFromBin para atribuir os valores a ele
         CABECALHO *cabecalho = getCabecalhoFromBin(file);
 
-        if (getStatus(cabecalho) == '0')
-        {
-            printf("Falha no processamento do arquivo.");
-            fclose(file); // fecha o arquivo
-            return;
-        }
+        imprimirRegistrosPorCampos(file, cabecalho, buscaId, nomeArquivoArvoreB, i);
+        
+        fclose(file);
+        apagarCabecalho(cabecalho); // libera a memória do cabeçalho
+    }
+}
 
-        long long int byteOffset = getProxByteOffset(cabecalho);
-        int numRegistros = getNroRegArq(cabecalho) + getNroRem(cabecalho); // número total de registros
-        byteOffset = 25;
+void imprimirRegistrosPorCampos(FILE *file, CABECALHO *cabecalho, int buscaId, char *nomeArquivoArvoreB, int i) {
+    long long int byteOffset = getProxByteOffset(cabecalho);
+    int numRegistros = getNroRegArq(cabecalho) + getNroRem(cabecalho); // número total de registros
+    byteOffset = 25;
 
-        if (numRegistros == 0) // verifica se o arquivo não possui registros
-        {
-            printf("Registro inexistente.\n\n");
-            fclose(file); // fecha o arquivo
-            return;
-        }
+    if (numRegistros == 0) // verifica se o arquivo não possui registros
+    {
+        printf("Registro inexistente.\n\n");
+        fclose(file); // fecha o arquivo
+        return;
+    }
 
-        char campos[5][50];
-        char parametros[5][50];
-        int id, idade;
-        char nome[50], nomeClube[50], nacionalidade[50];
-        for (int j = 0; j < m; j++)
+    char campos[5][50];
+    char parametros[5][50];
+    int id = -1, idade;
+    char nome[50], nomeClube[50], nacionalidade[50];
+
+    int impressoes = 0;
+    int m;
+    scanf("%i", &m); // lê o número de parâmetros da busca
+
+    for (int j = 0; j < m; j++)
+    {
+        scanf("%s", campos[j]); // lê um parâmetro da busca
+        if (strcmp(campos[j], "id") == 0)
         {
-            scanf("%s", campos[j]); // lê um parâmetro da busca
-            if (strcmp(campos[j], "id") == 0)
-            {
-                scanf("%i", &id); // lê o id da busca
-                snprintf(parametros[j], 50, "%i", id);
-                printf("%s\n", parametros[j]);
-            }
-            else if (strcmp(campos[j], "nome") == 0)
-            {
-                scan_quote_string(nome);
-                strcpy(parametros[j], nome);
-            }
-            else if (strcmp(campos[j], "idade") == 0)
-            {
-                scanf("%i", &idade);
-                snprintf(parametros[j], 50, "%i", idade);
-            }
-            else if (strcmp(campos[j], "nomeClube") == 0)
-            {
-                scan_quote_string(nomeClube);
-                strcpy(parametros[j], nomeClube);
-            }
-            else if (strcmp(campos[j], "nacionalidade") == 0)
-            {
-                scan_quote_string(nacionalidade);
-                strcpy(parametros[j], nacionalidade);
-            }
-            else
-            {
-                printf("Campo invalido\n");
+            scanf("%i", &id); // lê o id da busca
+            snprintf(parametros[j], 50, "%i", id);
+            if(buscaId == 1 && id != -1) { // verifica se a busca pelo indice vai ser feita com a arquivo da arvore B
+                imprimirIdArvoreB(id, file, nomeArquivoArvoreB, i, 1);
+                return;
             }
         }
-
-        printf("Busca %d\n", i + 1);
-        printf("\n");
-
-        for (int j = 0; j < numRegistros; j++)
+        else if (strcmp(campos[j], "nomeJogador") == 0)
         {
-            REGISTRO *registro = lerRegistroFromBin(byteOffset, file); // lê um registro do arquivo binário
-            byteOffset += get_tamanhoRegistro(registro); // muda o byteOffset para a posição do próximo registro
+            scan_quote_string(nome);
+            strcpy(parametros[j], nome);
+        }
+        else if (strcmp(campos[j], "idade") == 0)
+        {
+            scanf("%i", &idade);
+            snprintf(parametros[j], 50, "%i", idade);
+        }
+        else if (strcmp(campos[j], "nomeClube") == 0)
+        {
+            scan_quote_string(nomeClube);
+            strcpy(parametros[j], nomeClube);
+        }
+        else if (strcmp(campos[j], "nacionalidade") == 0)
+        {
+            scan_quote_string(nacionalidade);
+            strcpy(parametros[j], nacionalidade);
+        }
+        else
+        {
+            printf("Campo invalido\n");
+        }
+    }
 
-            int imprimir = 1;
-            if (get_removido(registro) == '1')
+    printf("Busca %d\n\n", i+1);
+
+    for (int j = 0; j < numRegistros; j++)
+    {
+        REGISTRO *registro = lerRegistroFromBin(byteOffset, file); // lê um registro do arquivo binário
+        byteOffset += get_tamanhoRegistro(registro); // muda o byteOffset para a posição do próximo registro
+
+        int imprimir = 1;
+        if (get_removido(registro) == '1')
+        {
+            imprimir = 0;
+        }
+        else
+        {
+            for (int k = 0; k < m; k++)
             {
-                imprimir = 0;
-            }
-            else
-            {
-                for (int k = 0; k < m; k++)
+                if (strcmp(campos[k], "id") == 0)
+                { // verifica se o parâmetro da busca é o id
+                    if (id != get_id(registro))
+                    {
+                        imprimir = 0;
+                    }
+                }
+                else if (strcmp(campos[k], "nomeJogador") == 0)
                 {
-                    if (strcmp(campos[k], "id") == 0)
-                    { // verifica se o parâmetro da busca é o id
-                        if (id != get_id(registro))
-                        {
-                            imprimir = 0;
-                        }
-                    }
-                    else if (strcmp(campos[k], "nome") == 0)
+                    if (strcmp(nome, get_nomeJogador(registro)) != 0)
                     {
-                        if (strcmp(nome, get_nomeJogador(registro)) != 0)
-                        {
-                            imprimir = 0;
-                        }
+                        imprimir = 0;
                     }
-                    else if (strcmp(campos[k], "idade") == 0)
+                }
+                else if (strcmp(campos[k], "idade") == 0)
+                {
+                    if (idade != get_idade(registro))
                     {
-                        if (idade != get_idade(registro))
-                        {
-                            imprimir = 0;
-                        }
+                        imprimir = 0;
                     }
-                    else if (strcmp(campos[k], "nomeClube") == 0)
+                }
+                else if (strcmp(campos[k], "nomeClube") == 0)
+                {
+                    if (strcmp(nomeClube, get_nomeClube(registro)) != 0)
                     {
-                        if (strcmp(nomeClube, get_nomeClube(registro)) != 0)
-                        {
-                            imprimir = 0;
-                        }
+                        imprimir = 0;
                     }
-                    else if (strcmp(campos[k], "nacionalidade") == 0)
+                }
+                else if (strcmp(campos[k], "nacionalidade") == 0)
+                {
+                    if (strcmp(nacionalidade, get_nacionalidade(registro)) != 0)
                     {
-                        if (strcmp(nacionalidade, get_nacionalidade(registro)) != 0)
-                        {
-                            imprimir = 0;
-                        }
+                        imprimir = 0;
                     }
                 }
             }
-            if (imprimir == 1)
-            {
-                imprimeRegistro(registro);
-                impressoes++;
-            }
         }
-        fclose(file);
-        apagarCabecalho(cabecalho); // libera a memória do cabeçalho
-
-        /*if(impressoes == 0) {
-          printf("Registro inexistente.\n\n");
-        }*/
+        
+        if (imprimir == 1)
+        {
+            imprimeRegistro(registro);
+            impressoes++;
+        }
+        liberarRegistro(registro);
     }
+    if(impressoes == 0) {
+        printf("Registro inexistente.\n\n");
+    }
+}
+
+void imprimirIdArvoreB(int id, FILE *file, char *nomeArquivoArvoreB, int i, int buscaMinuscula) {
+    FILE *fileArvoreB = fopen(nomeArquivoArvoreB, "rb");
+    if(fileArvoreB == NULL) {
+        printf("Falha no processamento do arquivo.\n");
+        return;
+    }
+
+    CABECALHO_ARVORE_B *cabecalhoArvoreB = lerCabecalhoArvoreB(fileArvoreB);
+    if(getStatusCabecalhoArvoreB(cabecalhoArvoreB) == '0') {
+        printf("Falha no processamento do arquivo.\n");
+        apagarCabecalhoArvoreB(cabecalhoArvoreB);
+        fclose(fileArvoreB);
+        return;
+    }
+
+    int rrnAtual = getNoRaizCabecalhoArvoreB(cabecalhoArvoreB);
+    apagarCabecalhoArvoreB(cabecalhoArvoreB);
+
+    if(buscaMinuscula) {
+        printf("Busca %d\n\n", i+1);
+    } else {
+        printf("BUSCA %d\n\n", i+1);
+    }
+
+    if(rrnAtual != -1) {
+        long long int byteOffsetRegistroBuscado = buscarRegistroIdRec(fileArvoreB, id, rrnAtual);
+
+        if(byteOffsetRegistroBuscado != -1) {
+            REGISTRO *registro = buscarRegistroOffset(byteOffsetRegistroBuscado, file);
+            imprimeRegistro(registro);
+            liberarRegistro(registro);
+        } else {
+            printf("Registro inexistente.\n\n");
+        }
+    }
+    else {
+        printf("Registro inexistente.\n\n");
+    }
+
+    fclose(fileArvoreB);
+}
+
+long long int buscarRegistroIdRec(FILE *fileArvoreB, int id, int rrnAtual) {
+    REGISTRO_ARVORE_B *registroAtual = lerRegistroArvoreB(fileArvoreB, rrnAtual);
+    
+    int numerosChaves = getNroChavesRegistroArvoreB(registroAtual);
+    int chave;
+    int descendente;
+
+    for(int i=0; i<numerosChaves; i++) {
+        chave = getChave(registroAtual, i);
+        descendente = getDescendente(registroAtual, i);
+
+        if(id == chave) {
+            long long int byteoffsetRegistro = getByteOffsetRegistroArvoreB(registroAtual, i);
+            apagarRegistroArvoreB(registroAtual);
+            return byteoffsetRegistro;
+        } else if(id < chave) {
+            if(descendente != -1) {
+                apagarRegistroArvoreB(registroAtual);
+                return buscarRegistroIdRec(fileArvoreB, id, descendente);
+            }
+            apagarRegistroArvoreB(registroAtual);
+            return -1;
+        }
+    }
+
+    descendente = getDescendente(registroAtual, numerosChaves);
+    if(descendente != -1) {
+        apagarRegistroArvoreB(registroAtual);
+        return buscarRegistroIdRec(fileArvoreB, id, descendente);
+    }
+    apagarRegistroArvoreB(registroAtual);
+    return -1;
+
 }
 
 void removerRegistrosBuscados(char *arquivoBin, char *arquivoIndice)
