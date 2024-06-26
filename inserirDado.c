@@ -181,16 +181,19 @@ void inserirNovoDado(char *arquivoBinario, char *arquivoIndice, int numOperacoes
     fclose(arquivoInd);
 }
 
-void inserirNovoDadoArvoreB(char *arquivoBinario, char *arquivoArvoreB, int numOperacoes)
+bool inserirNovoDadoArvoreB(char *arquivoBinario, char *arquivoArvoreB, int numOperacoes)
 {
     FILE *arquivoBin = fopen(arquivoBinario, "rb+");
     FILE *fileArvoreB = fopen(arquivoArvoreB, "rb+");
 
     if (arquivoBin == NULL || fileArvoreB == NULL)
     {
-        fclose(arquivoBin);
-        fclose(fileArvoreB);
-        return;
+        printf("Falha no processamento do arquivo.\n");
+        if(arquivoBin != NULL)
+            fclose(arquivoBin);
+        if(fileArvoreB != NULL)
+            fclose(fileArvoreB);
+        return false;
     }
     CABECALHO *cabecalho = getCabecalhoFromBin(arquivoBin);
     CABECALHO_ARVORE_B *cabecalhoArvoreB = lerCabecalhoArvoreB(fileArvoreB); // Lê o cabeçalho da árvore B
@@ -202,7 +205,7 @@ void inserirNovoDadoArvoreB(char *arquivoBinario, char *arquivoArvoreB, int numO
         apagarCabecalhoArvoreB(cabecalhoArvoreB);
         fclose(arquivoBin);
         fclose(fileArvoreB);
-        return;
+        return false;
     }
 
     REMOVIDOS *removidos = criarListaRemovidos(arquivoBin);
@@ -231,8 +234,6 @@ void inserirNovoDadoArvoreB(char *arquivoBinario, char *arquivoArvoreB, int numO
         scan_quote_string(nomeClube[i]);
 
         int rrnAtual = getNoRaizCabecalhoArvoreB(cabecalhoArvoreB); // Obtém o RRN da raiz da árvore B
-        apagarCabecalhoArvoreB(cabecalhoArvoreB); // Libera a memória do cabeçalho
-
         long long int byteoffsetRegistro = buscarRegistroIdRec(fileArvoreB, id, rrnAtual);
 
         if(byteoffsetRegistro != -1) // registro ja existe
@@ -293,6 +294,8 @@ void inserirNovoDadoArvoreB(char *arquivoBinario, char *arquivoArvoreB, int numO
                                      nomeClube[i]);
     }
 
+    apagarCabecalhoArvoreB(cabecalhoArvoreB); // Libera a memória do cabeçalho
+
     // pega o byteOffset do best fit de cada registro
     long long int *byteOffsets = getBestFitArrayRegistros(removidos, registros, numOperacoes, arquivoBin);
     int tamanhoRegistroAtual = 0;
@@ -331,8 +334,18 @@ void inserirNovoDadoArvoreB(char *arquivoBinario, char *arquivoArvoreB, int numO
         setStatus(cabecalho, '1');
         writeStatusCabecalho(cabecalho, arquivoBin);
 
-        // cria o registro de indice adequado
+        // atualiza o status do arquivo da arvore b para '0'
+        fseek(fileArvoreB, 0, SEEK_SET);
+        char statusArquivoArvoreB = '0';
+        fwrite(&statusArquivoArvoreB, sizeof(char), 1, fileArvoreB);
+
+        // insere a chave e o byteoffset no arquivo da arvore b
         inserirArvoreB(fileArvoreB, get_id(registros[i]), byteOffsets[i]);
+
+        // atualiza o status do arquivo da arvore b para '1'
+        fseek(fileArvoreB, 0, SEEK_SET);
+        statusArquivoArvoreB = '1';
+        fwrite(&statusArquivoArvoreB, sizeof(char), 1, fileArvoreB);
     }
 
     for(int i = 0; i < numOperacoes; i++)
@@ -352,4 +365,6 @@ void inserirNovoDadoArvoreB(char *arquivoBinario, char *arquivoArvoreB, int numO
 
     fclose(arquivoBin);
     fclose(fileArvoreB);
+
+    return true;
 }
