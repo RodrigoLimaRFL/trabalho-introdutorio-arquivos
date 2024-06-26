@@ -1,4 +1,4 @@
-#ifndef ARVOREB_H
+/*#ifndef ARVOREB_H
     #define ARVOREB_H
 
     #include "registroArvoreB.h"
@@ -6,4 +6,4 @@
 
     void inserirArvoreB(FILE *arquivo, int chave, long long int byteOffset);
     void imprimirArvoreBGraphviz(FILE *arquivo);
-#endif
+#endif*/

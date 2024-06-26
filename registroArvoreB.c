@@ -1,6 +1,7 @@
 #include "registroArvoreB.h"
 
 struct _registroArvoreB {
+    int rrn;
     int alturaNo;
     int nroChaves;
     int chaves[ORDEM_ARVORE_B - 1];
@@ -8,10 +9,12 @@ struct _registroArvoreB {
     int descendentes[ORDEM_ARVORE_B];
 };
 
+
 // cria um registro de árvore B com os valores padrao
 REGISTRO_ARVORE_B *criarRegistroArvoreBVazio()
 {
     REGISTRO_ARVORE_B *registro = malloc(sizeof(REGISTRO_ARVORE_B));
+    registro->rrn = -1;
     registro->alturaNo = 0;
     registro->nroChaves = 0;
     for (int i = 0; i < ORDEM_ARVORE_B - 1; i++)
@@ -62,12 +65,14 @@ bool inserirChaveRegistroArvoreB(REGISTRO_ARVORE_B *registro, int chave, long lo
             posicao++;
         }
 
-        printf("posicao: %d\n", posicao);
 
-        for(int i = registro->nroChaves; i > posicao; i--)
+        if(registro->nroChaves > posicao)
         {
-            registro->chaves[i] = registro->chaves[i - 1];
-            registro->byteOffsets[i] = registro->byteOffsets[i - 1];
+            for(int i = registro->nroChaves; i > posicao; i--)
+            {
+                registro->chaves[i] = registro->chaves[i - 1];
+                registro->byteOffsets[i] = registro->byteOffsets[i - 1];
+            }
         }
 
         /*for(int i = posicao; i < registro->nroChaves; i++)
@@ -174,6 +179,18 @@ bool removerDescendenteRegistroArvoreB(REGISTRO_ARVORE_B *registro, long long in
     return true;
 }
 
+int getRRNRegistroArvoreB(REGISTRO_ARVORE_B *registro)
+{
+    if (registro == NULL)
+    {
+        return -1;
+    }
+    
+    int rrn = registro->rrn;
+
+    return rrn;
+}
+
 int getAlturaNoRegistroArvoreB(REGISTRO_ARVORE_B *registro)
 {
     if (registro == NULL)
@@ -184,6 +201,20 @@ int getAlturaNoRegistroArvoreB(REGISTRO_ARVORE_B *registro)
     int alturaNo = registro->alturaNo;
 
     return alturaNo;
+}
+
+bool setRRNRegistroArvoreB(REGISTRO_ARVORE_B *registro, int rrn)
+{
+    if (registro == NULL)
+    {
+        return false;
+    }
+    else
+    {
+        registro->rrn = rrn;
+    }
+
+    return true;
 }
 
 bool setAlturaNoRegistroArvoreB(REGISTRO_ARVORE_B *registro, int alturaNo)
@@ -264,6 +295,7 @@ bool imprimirRegistroArvoreB(REGISTRO_ARVORE_B *registro)
     }
     else
     {
+        printf("RRN: %d\n", registro->rrn);
         printf("Altura: %d\n", registro->alturaNo);
         printf("Nro chaves: %d\n", registro->nroChaves);
         printf("Chaves: ");
@@ -296,7 +328,7 @@ REGISTRO_ARVORE_B *lerRegistroArvoreB(FILE *arquivo, int rrn)
         return NULL;
     }
     
-    long long int byteOffset = rrn * TAMANHO_REGISTRO_ARVORE_B;
+    long long int byteOffset = (rrn + 1) * TAMANHO_REGISTRO_ARVORE_B;
 
     fseek(arquivo, byteOffset, SEEK_SET);
 
@@ -319,7 +351,7 @@ bool escreverRegistroArvoreB(REGISTRO_ARVORE_B *registro, FILE *arquivo, int rrn
         return false;
     }
     
-    long long int byteOffset = rrn * TAMANHO_REGISTRO_ARVORE_B;
+    long long int byteOffset = (rrn + 1) * TAMANHO_REGISTRO_ARVORE_B;
 
     fseek(arquivo, byteOffset, SEEK_SET);
 

@@ -16,7 +16,9 @@
     bool removerChaveRegistroArvoreB(REGISTRO_ARVORE_B *registro, int chave);
     bool inserirDescendenteRegistroArvoreB(REGISTRO_ARVORE_B *registro, long long int descendente, int chaveDescendente);
     bool removerDescendenteRegistroArvoreB(REGISTRO_ARVORE_B *registro, long long int descendente);
+    int getRRNRegistroArvoreB(REGISTRO_ARVORE_B *registro);
     int getAlturaNoRegistroArvoreB(REGISTRO_ARVORE_B *registro);
+    bool setRRNRegistroArvoreB(REGISTRO_ARVORE_B *registro, int rrn);
     bool setAlturaNoRegistroArvoreB(REGISTRO_ARVORE_B *registro, int alturaNo);
     int getNroChavesRegistroArvoreB(REGISTRO_ARVORE_B *registro);
     int getChave(REGISTRO_ARVORE_B *registro, int posicao);

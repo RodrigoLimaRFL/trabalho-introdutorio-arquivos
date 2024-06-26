@@ -1,6 +1,6 @@
 #include "escreveBin.h"
 #include "cabecalho.h"
-#include "arvoreB.h"
+#include "arvoreBDois.h"
 #include "funcoes_fornecidas.h"
 
 // Função que pega os registros do arquivo binário e imprime eles na tela
@@ -608,7 +608,7 @@ void criarArquivoArvoreB(char *arquivoBin, char *arquivoArvB)
 
     apagarCabecalho(cabecalho);
 
-    for(int i = 0; i < quantidade && i < 15; i++)
+    for(int i = 0; i < quantidade; i++)
     {
         REGISTRO *registro = lerRegistroFromBin(posicao, arquivoBinario); // lê um registro do arquivo binário
 
