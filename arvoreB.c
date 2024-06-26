@@ -1,6 +1,7 @@
-/*#include "arvoreB.h"
+#include "arvoreB.h"
 
-// altura no folha = 0, altura no = distancia do no ate a folha
+
+// aumenta a altura dos nos. 0 == folha
 int aumentarAlturaRecursivamente(FILE *arquivo, int rrnRaiz)
 {
     REGISTRO_ARVORE_B *registro = lerRegistroArvoreB(arquivo, rrnRaiz);
@@ -16,6 +17,7 @@ int aumentarAlturaRecursivamente(FILE *arquivo, int rrnRaiz)
     }
 
     int maxAltura = -1;
+    int minAltura = -1;
 
     if(nroDescendentes == 0) // eh folha
     {
@@ -29,6 +31,10 @@ int aumentarAlturaRecursivamente(FILE *arquivo, int rrnRaiz)
     {
         int rrnDescendente = getDescendente(registro, i);
         int altura = aumentarAlturaRecursivamente(arquivo, rrnDescendente);
+        /*if(minAltura == -1 || altura < minAltura)
+        {
+            minAltura = altura;
+        }*/
         if(altura > maxAltura)
         {
             maxAltura = altura;
@@ -36,398 +42,400 @@ int aumentarAlturaRecursivamente(FILE *arquivo, int rrnRaiz)
     }
 
     setAlturaNoRegistroArvoreB(registro, maxAltura + 1);
+    //setAlturaNoRegistroArvoreB(registro, minAltura + 1);
     escreverRegistroArvoreB(registro, arquivo, rrnRaiz);
     apagarRegistroArvoreB(registro);
 
     return maxAltura + 1;
 }
 
+// divide o no e retorna a nova raiz
+bool splitNo(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chavePromovida, int byteOffsetPromovido, REGISTRO_ARVORE_B **caminho, REGISTRO_ARVORE_B *filhoEsq, REGISTRO_ARVORE_B *filhoDir, int nivel)
+{ 
+    int chaves[ORDEM_ARVORE_B]; //numero de chaves em um registro + 1
+    int byteOffsets[ORDEM_ARVORE_B]; //numero de chaves em um registro + 1
 
-bool particionarNo(FILE *arquivo, REGISTRO_ARVORE_B *registro, int rrnAtual, int chave, int nivel, int proxRrn, int *caminho, long long int byteOffset, CABECALHO_ARVORE_B *cabecalho)
-{
-    if(nivel != 0) // nao eh o no raiz
+    /*printf("chavePromovida: %d\n", chavePromovida);
+    printf("byteOffsetPromovido: %d\n", byteOffsetPromovido);
+
+    printf("chave filho esq: %d\n", getChave(filhoEsq, 0));
+    printf("chave filho dir: %d\n", getChave(filhoDir, 0));*/
+
+    // variaveis para detectar onde colocar a nova chave
+    int index = 0;
+    bool inserido = false;
+    int posicao = -1;
+    for(int i = 0; i < ORDEM_ARVORE_B; i++)
     {
-        // pega o registro pai
-        REGISTRO_ARVORE_B *registroPai = lerRegistroArvoreB(arquivo, caminho[nivel - 1]);
-
-        printf("Registro pai: \n");
-        imprimirRegistroArvoreB(registroPai);
-        printf("Registro fornecido: \n");
-        imprimirRegistroArvoreB(registro);
-
-        int nroChavesPai = getNroChavesRegistroArvoreB(registroPai);
-
-        int chaves[ORDEM_ARVORE_B]; // pega todas as chaves do registro + a chave a inserir
-        long long int byteOffsets[ORDEM_ARVORE_B];
-
-        // variaveis para detectar onde colocar a nova chave
-        int index = 0;
-        bool inserido = false;
-        for(int i = 0; i < ORDEM_ARVORE_B; i++)
+        int chaveLida = getChave(caminho[nivel], index);
+        //printf("Chave lida: %d\n", chaveLida);
+        if(chavePromovida == chaveLida) // se a chave ja existe
         {
-            int chaveLida = getChave(registro, index);
-            //printf("Chave lida: %d\n", chaveLida);
-            if(!inserido && chave < chaveLida) // colocando nova chave
-            {
-                inserido = true;
-                chaves[i] = chave;
-                byteOffsets[i] = byteOffset;
-                continue;
-            }
-            if(chaveLida == -1 && i == ORDEM_ARVORE_B - 1) // nao achou chave menor, insere no fim
-            {
-                inserido = true;
-                chaves[i] = chave;
-                byteOffsets[i] = byteOffset;
-                break;
-            }
-            chaves[i] = chaveLida;
-            byteOffsets[i] = getByteOffsetRegistroArvoreB(registro, index);
-            index++;
+            return false;
         }
-
-        // chave a ser promovida
-        int chaveMeio = chaves[ORDEM_ARVORE_B / 2 - 1];
-        int byteOffsetMeio = byteOffsets[ORDEM_ARVORE_B / 2 - 1];
-
-        if(nroChavesPai == ORDEM_ARVORE_B - 1) // pai cheio
+        if(!inserido && chavePromovida < chaveLida) // colocando nova chave
         {
-            //particionarNo(arquivo, registroPai, caminho[nivel - 1], chaveMeio, nivel - 1, proxRrn, caminho, byteOffset, cabecalho);
-            apagarRegistroArvoreB(registroPai);
-            registroPai = lerRegistroArvoreB(arquivo, caminho[nivel - 1]);
+            inserido = true;
+            chaves[i] = chavePromovida;
+            byteOffsets[i] = byteOffsetPromovido;
+            posicao = i;
+            continue;
         }
- 
-        bool isFolha = false;
-
-        int primeiroDescendente = getDescendente(registro, 0);
-
-        if(primeiroDescendente == -1) // se nao ha o primeiro descendente, obrigatoriamente eh folha
+        if(chaveLida == -1 && i == ORDEM_ARVORE_B - 1) // nao achou chave menor, insere no fim
         {
-            isFolha = true;
+            inserido = true;
+            chaves[i] = chavePromovida;
+            byteOffsets[i] = byteOffsetPromovido;
+            posicao = i;
+            break;
         }
-
-        REGISTRO_ARVORE_B *registroEsq = criarRegistroArvoreBVazio();
-        int maiorChaveEsq = -1;
-        REGISTRO_ARVORE_B *registroDir = criarRegistroArvoreBVazio();
-        int menorChaveDir = -1;
-
-        if(isFolha) // colocamos apenas as chaves nos novos registros
-        {
-            for(int i = 0; i < ORDEM_ARVORE_B / 2 - 1; i++) // insere as chaves no registro esquerdo exceto a ultima
-            {
-                inserirChaveRegistroArvoreB(registroEsq, chaves[i], byteOffsets[i]);
-            }
-            for(int i = ORDEM_ARVORE_B / 2; i < ORDEM_ARVORE_B; i++) // insere as chaves no registro direito
-            {
-                inserirChaveRegistroArvoreB(registroDir, chaves[i], byteOffsets[i]);
-            }
-        }
-        else // colocamos as chaves e os descendentes nos novos registros
-        {
-            for(int i = 0; i < ORDEM_ARVORE_B / 2 - 1; i++) // insere as chaves no registro esquerdo
-            {
-                REGISTRO_ARVORE_B *registroDescendente = lerRegistroArvoreB(arquivo, getDescendente(registro, i));
-                int chaveDescendente = getChave(registroDescendente, 0);
-                inserirChaveRegistroArvoreB(registroEsq, chaves[i], byteOffsets[i]);
-                inserirDescendenteRegistroArvoreB(registroEsq, getDescendente(registro, i), chaveDescendente);
-                apagarRegistroArvoreB(registroDescendente);
-            }
-            // insere o descendente da ultima chave do registro esquerdo
-            printf("Descendente do registro esquerdo: %d\n", getDescendente(registro, ORDEM_ARVORE_B / 2 - 1));
-            inserirDescendenteRegistroArvoreB(registroEsq, getDescendente(registro, ORDEM_ARVORE_B / 2 - 1), getChave(registro, ORDEM_ARVORE_B / 2 - 1));
-            for(int i = ORDEM_ARVORE_B / 2; i < ORDEM_ARVORE_B; i++) // insere as chaves exceto a primeira no registro direito
-            {
-                REGISTRO_ARVORE_B *registroDescendente = lerRegistroArvoreB(arquivo, getDescendente(registro, i));
-                int chaveDescendente = getChave(registroDescendente, 0);
-                inserirChaveRegistroArvoreB(registroEsq, chaves[i], byteOffsets[i]);
-                inserirDescendenteRegistroArvoreB(registroEsq, getDescendente(registro, i), chaveDescendente);
-                apagarRegistroArvoreB(registroDescendente);
-            }
-        } 
-
-        // escreve os registros particionados
-        escreverRegistroArvoreB(registroEsq, arquivo, rrnAtual);
-        escreverRegistroArvoreB(registroDir, arquivo, proxRrn);
-
-        maiorChaveEsq = getChave(registroEsq, ORDEM_ARVORE_B / 2 - 2);
-        menorChaveDir = getChave(registroDir, 0);
-
-        // escreve o pai
-        inserirChaveRegistroArvoreB(registroPai, chaveMeio, byteOffsetMeio);
-        //inserirDescendenteRegistroArvoreB(registroPai, rrnAtual, maiorChaveEsq);
-        inserirDescendenteRegistroArvoreB(registroPai, proxRrn, menorChaveDir);
-        escreverRegistroArvoreB(registroPai, arquivo, caminho[nivel - 1]);
-
-        // reescreve o cabecalho
-        setProxRRNCabecalhoArvoreB(cabecalho, proxRrn + 1);
-        setNroChavesCabecalhoArvoreB(cabecalho, getNroChavesCabecalhoArvoreB(cabecalho) + 1);
-        escreverCabecalhoArvoreB(arquivo, cabecalho);
-
-        // aumenta a altura dos nos
-        aumentarAlturaRecursivamente(arquivo, caminho[nivel - 1]);
-
-        printf("RRN Pai: %d\n", caminho[nivel - 1]);
-        printf("Registro Pai: \n");
-        imprimirRegistroArvoreB(registroPai);
-        printf("\n");
-        printf("RRN Esquerdo: %d\n", rrnAtual);
-        printf("Registro Esquerdo: \n");
-        imprimirRegistroArvoreB(registroEsq);
-        printf("\n");
-        printf("RRN Direito: %d\n", proxRrn);
-        printf("Registro Direito: \n");
-        imprimirRegistroArvoreB(registroDir);
-        printf("\n\n");
-
-
-        apagarRegistroArvoreB(registroEsq);
-        apagarRegistroArvoreB(registroDir);
-        apagarRegistroArvoreB(registroPai);
+        chaves[i] = chaveLida;
+        byteOffsets[i] = getByteOffsetRegistroArvoreB(caminho[nivel], index);
+        index++;
     }
-    else // raiz
+
+    /*for(int i = 0; i< ORDEM_ARVORE_B; i++)
     {
-        REGISTRO_ARVORE_B *novaRaiz = criarRegistroArvoreBVazio();
+        printf("Chave %d: %d\n", i, chaves[i]);
+    }*/
 
-        printf("no raiz\n");
+    // chave a ser promovida
+    chavePromovida = chaves[ORDEM_ARVORE_B / 2 - 1];
+    byteOffsetPromovido = byteOffsets[ORDEM_ARVORE_B / 2 - 1];
 
-        int chaves[ORDEM_ARVORE_B]; // pega todas as chaves do registro + a chave a inserir
-        int byteOffsets[ORDEM_ARVORE_B];
-        int descendentes[ORDEM_ARVORE_B + 1];
+    // detecta se o no eh folha
+    bool isFolha = false;
+    if(getAlturaNoRegistroArvoreB(caminho[nivel]) == 0)
+    {
+        isFolha = true;
+    }
 
-        bool inserido = false;
-        int index = 0;
+    // registros a serem criados
+    REGISTRO_ARVORE_B *registroEsquerdo = criarRegistroArvoreBVazio();
+    int maiorChaveEsquerda = -1;
+    REGISTRO_ARVORE_B *registroDireito = criarRegistroArvoreBVazio();
+    int menorChaveDireita = -1;
 
-        for (int i = 0; i < ORDEM_ARVORE_B; i++)
+    if(isFolha) // se for folha, apenas inserimos as chaves nos novos registros
+    {
+        for(int i = 0; i < ORDEM_ARVORE_B / 2 - 1; i++) // insere as chaves no registro esquerdo exceto a ultima
         {
-            int chaveLida = getChave(registro, index);
-            printf("Chave lida: %d\n", chaveLida);
-            if(!inserido && chave < chaveLida) // colocando nova chave
+            inserirChaveRegistroArvoreB(registroEsquerdo, chaves[i], byteOffsets[i]);
+        }
+        for(int i = ORDEM_ARVORE_B / 2; i < ORDEM_ARVORE_B; i++) // insere as chaves no registro direito
+        {
+            inserirChaveRegistroArvoreB(registroDireito, chaves[i], byteOffsets[i]);
+        }
+    }
+    else // caso contrario, inserimos as chaves e os descendentes
+    {
+        int rrnFilhoEsq = getRRNRegistroArvoreB(filhoEsq);
+        int rrnFilhoDir = getRRNRegistroArvoreB(filhoDir);
+
+        long long int descendentes[ORDEM_ARVORE_B + 1];
+
+        index = 0;
+        for(int i = 0; i < ORDEM_ARVORE_B; i++) // pega cada descendente em ordem crescente
+        {
+            if(i == posicao)
             {
-                inserido = true;
-                chaves[i] = chave;
-                byteOffsets[i] = byteOffset;
-                descendentes[i] = rrnAtual;
+                descendentes[i] = rrnFilhoEsq;
+                descendentes[i + 1] = rrnFilhoDir;
+                index += 2;
                 continue;
             }
-            if(chaveLida == -1 && i == ORDEM_ARVORE_B - 1) // nao achou chave menor, insere no fim
-            {
-                inserido = true;
-                chaves[i] = chave;
-                byteOffsets[i] = byteOffset;
-                break;
-            }
-            chaves[i] = chaveLida;
-            byteOffsets[i] = getByteOffsetRegistroArvoreB(registro, index);
+            descendentes[index] = getDescendente(caminho[nivel], i);
             index++;
         }
 
-        for(int i = 0; i < ORDEM_ARVORE_B; i++)
+        apagarRegistroArvoreB(filhoEsq);
+        apagarRegistroArvoreB(filhoDir);
+
+        /*for(int i = 0; i < ORDEM_ARVORE_B + 1; i++)
         {
-            printf("Chave: %d\n", chaves[i]);
+            printf("Descendente %d: %lld\n", i, descendentes[i]);
+        }*/
+        int chavesDescendentes[ORDEM_ARVORE_B + 1];
+
+        for(int i = 0; i < ORDEM_ARVORE_B + 1; i++) // pega as chaves dos descendentes
+        {
+            REGISTRO_ARVORE_B *registroDescendente = lerRegistroArvoreB(arquivo, descendentes[i]);
+            chavesDescendentes[i] = getChave(registroDescendente, 0);
+            apagarRegistroArvoreB(registroDescendente);
         }
 
-        REGISTRO_ARVORE_B *registroEsq = criarRegistroArvoreBVazio();
-        int maiorChaveEsq = -1;
-        REGISTRO_ARVORE_B *registroDir = criarRegistroArvoreBVazio();
-        int menorChaveDir = -1;
-
-        REGISTRO_ARVORE_B *registroDescendente = NULL;
+        /*for(int i = 0; i < ORDEM_ARVORE_B + 1; i++)
+        {
+            printf("Chave Descendente %d: %d\n", i, chavesDescendentes[i]);
+        }*/
 
         for(int i = 0; i < ORDEM_ARVORE_B / 2 - 1; i++) // insere as chaves no registro esquerdo exceto a ultima
         {
-            registroDescendente = lerRegistroArvoreB(arquivo, getDescendente(registro, i));
-            int chaveDescendente = getChave(registroDescendente, 0);
-            inserirChaveRegistroArvoreB(registroEsq, chaves[i], byteOffsets[i]);
-            apagarRegistroArvoreB(registroDescendente);
-            inserirDescendenteRegistroArvoreB(registroEsq, getDescendente(registro, i), chaveDescendente);
+            inserirChaveRegistroArvoreB(registroEsquerdo, chaves[i], byteOffsets[i]);
         }
 
-        registroDescendente = lerRegistroArvoreB(arquivo, getDescendente(registro, ORDEM_ARVORE_B / 2 - 1));
-        inserirDescendenteRegistroArvoreB(registroEsq, getDescendente(registro, ORDEM_ARVORE_B / 2 - 1), getChave(registroDescendente, 0));
-        apagarRegistroArvoreB(registroDescendente);
-
+        for(int i = 0; i <= ORDEM_ARVORE_B / 2 - 1; i++) // insere os descendentes no registro esquerdo
+        {
+            inserirDescendenteRegistroArvoreB(registroEsquerdo, descendentes[i], chavesDescendentes[i]);
+        }
+        
         for(int i = ORDEM_ARVORE_B / 2; i < ORDEM_ARVORE_B; i++) // insere as chaves no registro direito
         {
-            registroDescendente = lerRegistroArvoreB(arquivo, getDescendente(registro, i));
-            int chaveDescendente = getChave(registroDescendente, 0);
-            inserirChaveRegistroArvoreB(registroDir, chaves[i], byteOffsets[i]);
-            apagarRegistroArvoreB(registroDescendente);
-            inserirDescendenteRegistroArvoreB(registroDir, getDescendente(registro, i), chaveDescendente);
+            inserirChaveRegistroArvoreB(registroDireito, chaves[i], byteOffsets[i]);
         }
+
+        for(int i = ORDEM_ARVORE_B / 2; i <= ORDEM_ARVORE_B; i++) // insere os descendentes no registro direito
+        {
+            inserirDescendenteRegistroArvoreB(registroDireito, descendentes[i], chavesDescendentes[i]);
+        }
+
+        //printf("inseriu chaves e descendentes\n");
+    }
+
+    // escreve os registros particionados
+    int rrnAtual = getRRNRegistroArvoreB(caminho[nivel]);
+    int proxRRN = getProxRRNCabecalhoArvoreB(cabecalho);
+
+    setRRNRegistroArvoreB(registroEsquerdo, rrnAtual);
+    setRRNRegistroArvoreB(registroDireito, proxRRN);
+    escreverRegistroArvoreB(registroEsquerdo, arquivo, rrnAtual);
+    escreverRegistroArvoreB(registroDireito, arquivo, proxRRN);
+
+    maiorChaveEsquerda = getChave(registroEsquerdo, ORDEM_ARVORE_B / 2 - 1);
+    menorChaveDireita = getChave(registroDireito, 0);
+
+    //printf("escreveu registros particionados\n");
+
+    // se o pai nao tiver espaço para promocao, divida-o
+    if(nivel > 0 && getNroChavesRegistroArvoreB(caminho[nivel - 1]) == ORDEM_ARVORE_B - 1) // se o pai existe e está cheio
+    {
+        // atualiza o registro do pai no caminho
+        /*printf("Pai cheio, dividindo...\n");
+        printf("registro esquerdo\n");
+        imprimirRegistroArvoreB(registroEsquerdo);
+        printf("registro direito\n");
+        imprimirRegistroArvoreB(registroDireito);*/
+        setProxRRNCabecalhoArvoreB(cabecalho, proxRRN + 1); // talvez de erro se o registro ja existe
+        if(!splitNo(arquivo, cabecalho, chavePromovida, byteOffsetPromovido, caminho, registroEsquerdo, registroDireito, nivel - 1))
+        {
+            apagarRegistroArvoreB(registroEsquerdo);
+            apagarRegistroArvoreB(registroDireito);
+            return false;
+        }
+    }
+    else // caso contrario, insira a chave promovida no pai
+    {
         // escreve os registros particionados
-        escreverRegistroArvoreB(registroEsq, arquivo, rrnAtual);
-        escreverRegistroArvoreB(registroDir, arquivo, proxRrn);
+        escreverRegistroArvoreB(registroEsquerdo, arquivo, rrnAtual);
+        escreverRegistroArvoreB(registroDireito, arquivo, proxRRN);
 
-        // chave a ser promovida
-        int chaveMeio = chaves[ORDEM_ARVORE_B / 2 - 1];
-        int byteOffsetMeio = byteOffsets[ORDEM_ARVORE_B / 2 - 1];
-        int rrnRaiz = proxRrn + 1;
+        maiorChaveEsquerda = getChave(registroEsquerdo, ORDEM_ARVORE_B / 2 - 2);
+        menorChaveDireita = getChave(registroDireito, 0);
 
-        maiorChaveEsq = getChave(registroEsq, ORDEM_ARVORE_B / 2 - 2);
-        menorChaveDir = getChave(registroDir, 0);
-
-        // escreve a nova raiz
-        inserirChaveRegistroArvoreB(novaRaiz, chaveMeio, byteOffsetMeio);
-        inserirDescendenteRegistroArvoreB(novaRaiz, rrnAtual, maiorChaveEsq);
-        inserirDescendenteRegistroArvoreB(novaRaiz, proxRrn, menorChaveDir);
-        escreverRegistroArvoreB(novaRaiz, arquivo, rrnRaiz);
-
-        // reescreve o cabecalho
-        CABECALHO_ARVORE_B *cabecalho = lerCabecalhoArvoreB(arquivo);
-        setNoRaizCabecalhoArvoreB(cabecalho, rrnRaiz);
-        setProxRRNCabecalhoArvoreB(cabecalho, rrnRaiz + 1);
-        setNroChavesCabecalhoArvoreB(cabecalho, getNroChavesCabecalhoArvoreB(cabecalho) + 1);
-        escreverCabecalhoArvoreB(arquivo, cabecalho);
-
-        // aumenta a altura dos nos
-        aumentarAlturaRecursivamente(arquivo, rrnRaiz);
-
-        printf("RRN Raiz: %d\n", rrnRaiz);
-        printf("Nova Raiz: \n");
-        imprimirRegistroArvoreB(novaRaiz);
-        printf("\n");
-        printf("RRN Esquerdo: %d\n", rrnAtual);
-        printf("Registro Esquerdo: \n");
-        imprimirRegistroArvoreB(registroEsq);
-        printf("\n");
-        printf("RRN Direito: %d\n", proxRrn);
-        printf("Registro Direito: \n");
-        imprimirRegistroArvoreB(registroDir);
-        printf("\n\n");
-
-        apagarRegistroArvoreB(registroEsq);
-        apagarRegistroArvoreB(registroDir);
-        apagarRegistroArvoreB(novaRaiz);
-        apagarCabecalhoArvoreB(cabecalho);
-    }
-}
-
-// insere em uma Arvore B recursivamente
-bool insercaoArvoreBRecursiva(FILE *arquivo, int rrnAtual, int chave, int nivel, int proxRrn, int *caminho, long long int byteOffset, CABECALHO_ARVORE_B *cabecalho)
-{
-    REGISTRO_ARVORE_B *registro = lerRegistroArvoreB(arquivo, rrnAtual);
-
-    int nroChaves = getNroChavesRegistroArvoreB(registro);
-
-    int nroDescendentes = 0;
-
-    for(int i = 0; i < ORDEM_ARVORE_B; i++)
-    {
-        if(getDescendente(registro, i) != -1)
+        if(nivel == 0) // caso raiz
         {
-            nroDescendentes++;
+            //printf("raiz\n");
+            REGISTRO_ARVORE_B *novaRaiz = criarRegistroArvoreBVazio();
+
+            int rrnRaiz = proxRRN + 1;
+
+            //printf("RRN Raiz: %d\n", rrnRaiz);
+
+            /*printf("registro esquerdo\n");
+            imprimirRegistroArvoreB(registroEsquerdo);
+
+            printf("registro direito\n");
+            imprimirRegistroArvoreB(registroDireito);*/
+
+            // escreve a nova raiz
+            inserirChaveRegistroArvoreB(novaRaiz, chavePromovida, byteOffsetPromovido);
+            inserirDescendenteRegistroArvoreB(novaRaiz, rrnAtual, maiorChaveEsquerda);
+            inserirDescendenteRegistroArvoreB(novaRaiz, proxRRN, menorChaveDireita);
+            setRRNRegistroArvoreB(novaRaiz, rrnRaiz);
+            escreverRegistroArvoreB(novaRaiz, arquivo, rrnRaiz);
+
+            /*printf("escreveu nova raiz\n");
+            imprimirRegistroArvoreB(novaRaiz);
+
+            printf("todos os registros:\n");*/
+
+            /*for(int i = 0; i <= 6; i++)
+            {
+                REGISTRO_ARVORE_B *registro = lerRegistroArvoreB(arquivo, i);
+                setRRNRegistroArvoreB(registro, i);
+                imprimirRegistroArvoreB(registro);
+                apagarRegistroArvoreB(registro);
+                printf("\n");
+            }*/
+
+            // reescreve o cabecalho
+            CABECALHO_ARVORE_B *cabecalho = lerCabecalhoArvoreB(arquivo);
+            setNoRaizCabecalhoArvoreB(cabecalho, rrnRaiz);
+            setProxRRNCabecalhoArvoreB(cabecalho, rrnRaiz + 1);
+            setNroChavesCabecalhoArvoreB(cabecalho, getNroChavesCabecalhoArvoreB(cabecalho) + 1);
+            escreverCabecalhoArvoreB(arquivo, cabecalho);
+
+            //printf("antes de aumentar altura\n");
+
+            //imprimirArvoreBGraphviz(arquivo);
+
+            // aumenta a altura dos nos
+            aumentarAlturaRecursivamente(arquivo, rrnRaiz);
+
+            /*printf("depois de aumentar altura\n");
+
+            printf("RRN Raiz: %d\n", rrnRaiz);
+            printf("Nova Raiz: \n");
+            imprimirRegistroArvoreB(novaRaiz);
+            printf("\n");
+            printf("RRN Esquerdo: %d\n", rrnAtual);
+            printf("Registro Esquerdo: \n");
+            imprimirRegistroArvoreB(registroEsquerdo);
+            printf("\n");
+            printf("RRN Direito: %d\n", proxRRN);
+            printf("Registro Direito: \n");
+            imprimirRegistroArvoreB(registroDireito);
+            printf("\n\n");*/
+
+            apagarRegistroArvoreB(registroEsquerdo);
+            apagarRegistroArvoreB(registroDireito);
+            apagarRegistroArvoreB(novaRaiz);
+            apagarCabecalhoArvoreB(cabecalho);
+        }
+        else // caso nao seja raiz
+        {
+            REGISTRO_ARVORE_B *registroPai = lerRegistroArvoreB(arquivo, getRRNRegistroArvoreB(caminho[nivel - 1]));
+
+            // escreve os registros particionados
+            escreverRegistroArvoreB(registroEsquerdo, arquivo, rrnAtual);
+            escreverRegistroArvoreB(registroDireito, arquivo, proxRRN);
+
+            // escreve o pai
+            inserirChaveRegistroArvoreB(registroPai, chavePromovida, byteOffsetPromovido);
+            //inserirDescendenteRegistroArvoreB(registroPai, rrnAtual, maiorChaveEsq);
+            inserirDescendenteRegistroArvoreB(registroPai, proxRRN, menorChaveDireita);
+            escreverRegistroArvoreB(registroPai, arquivo, getRRNRegistroArvoreB(caminho[nivel - 1]));
+
+            // reescreve o cabecalho
+            setProxRRNCabecalhoArvoreB(cabecalho, proxRRN + 1);
+            setNroChavesCabecalhoArvoreB(cabecalho, getNroChavesCabecalhoArvoreB(cabecalho) + 1);
+            escreverCabecalhoArvoreB(arquivo, cabecalho);
+
+            // aumenta a altura dos nos
+            aumentarAlturaRecursivamente(arquivo, getRRNRegistroArvoreB(caminho[nivel - 1]));
+
+            /*printf("RRN Pai: %d\n", getRRNRegistroArvoreB(caminho[nivel - 1]));
+            printf("Registro Pai: \n");
+            imprimirRegistroArvoreB(registroPai);
+            printf("\n");
+            printf("RRN Esquerdo: %d\n", rrnAtual);
+            printf("Registro Esquerdo: \n");
+            imprimirRegistroArvoreB(registroEsquerdo);
+            printf("\n");
+            printf("RRN Direito: %d\n", proxRRN);
+            printf("Registro Direito: \n");
+            imprimirRegistroArvoreB(registroDireito);
+            printf("\n\n");*/
+
+
+            apagarRegistroArvoreB(registroEsquerdo);
+            apagarRegistroArvoreB(registroDireito);
+            apagarRegistroArvoreB(registroPai);
         }
     }
-
-    if(nivel == 0 && nroChaves == 0) // arvore vazia
-    {
-        apagarRegistroArvoreB(registro);
-        REGISTRO_ARVORE_B *registro = criarRegistroArvoreBVazio();
-        setAlturaNoRegistroArvoreB(registro, 0);
-        inserirChaveRegistroArvoreB(registro, chave, byteOffset);
-        rrnAtual = 1;
-        proxRrn = 2;
-        escreverRegistroArvoreB(registro, arquivo, rrnAtual);
-        setNroChavesCabecalhoArvoreB(cabecalho, 1);
-        setProxRRNCabecalhoArvoreB(cabecalho, proxRrn);
-        setNoRaizCabecalhoArvoreB(cabecalho, rrnAtual);
-        escreverCabecalhoArvoreB(arquivo, cabecalho);
-        
-        printf("Arvore vazia\n");
-        printf("RRN: %d\n", rrnAtual);
-        imprimirRegistroArvoreB(registro);
-        printf("\n");
-
-        apagarRegistroArvoreB(registro);
-        return true;
-    }
-
-    if(nroDescendentes == 0 && nroChaves < ORDEM_ARVORE_B - 1) // no folha com espaço sobrando
-    {
-        inserirChaveRegistroArvoreB(registro, chave, byteOffset);
-        escreverRegistroArvoreB(registro, arquivo, rrnAtual);
-
-        printf("No folha com espaco\n");
-        printf("RRN: %d\n", rrnAtual);
-        imprimirRegistroArvoreB(registro);
-        printf("\n");
-
-        setNroChavesCabecalhoArvoreB(cabecalho, getNroChavesCabecalhoArvoreB(cabecalho) + 1);
-        apagarRegistroArvoreB(registro);
-
-        return true;
-    }
-
-    caminho = realloc(caminho, sizeof(int) * (nivel + 1));
-    caminho[nivel] = rrnAtual;
-
-    if(nroDescendentes == 0 && nroChaves == ORDEM_ARVORE_B - 1) // no folha cheio
-    {
-        printf("No folha sem espaco\n");
-        particionarNo(arquivo, registro, rrnAtual, chave, nivel, proxRrn, caminho, byteOffset, cabecalho);
-        apagarRegistroArvoreB(registro);
-        printf("\n");
-
-        return true;
-    }
-
-    if(nroDescendentes != 0){ // caso geral
-        printf("Caso geral\n");
-        printf("RRN: %d\n", rrnAtual);
-        imprimirRegistroArvoreB(registro);
-        int posicao = 0;
-        for(int i = 0; i < nroChaves; i++)
-        {
-            if(chave == getChave(registro, i)) // chave ja existe
-            {
-                return false;
-            }
-            if(chave < getChave(registro, i)) // busca a posicao da chave
-            {
-                posicao = i;
-                break;
-            }
-            posicao++;
-        }
-
-        int rrnDescendente = getDescendente(registro, posicao);
-        insercaoArvoreBRecursiva(arquivo, rrnDescendente, chave, nivel + 1, proxRrn, caminho, byteOffset, cabecalho);
-    } 
 
     return true;
 }
 
-void imprimirArvoreBRecursiva(FILE *arquivo, long long int rrnAtual, int nivel)
+void insercaoNaoCheio(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chave, int byteOffset, int rrnAtual, REGISTRO_ARVORE_B *registro)
 {
-    REGISTRO_ARVORE_B *registro = lerRegistroArvoreB(arquivo, rrnAtual);
-
-    int nroChaves = getNroChavesRegistroArvoreB(registro);
-    int altura = getAlturaNoRegistroArvoreB(registro);
-
-    printf("Nivel %d: ", nivel);
-    imprimirRegistroArvoreB(registro);
-    printf("\n");
-
-    for(int i = 0; i < ORDEM_ARVORE_B; i++)
+    if(!inserirChaveRegistroArvoreB(registro, chave, byteOffset)) // se a chave ja existe
     {
-        if(getDescendente(registro, i) != -1)
-        {
-            imprimirArvoreBRecursiva(arquivo, getDescendente(registro, i), nivel + 1);
-        }
+        return;
     }
+    setRRNRegistroArvoreB(registro, rrnAtual);
 
-    apagarRegistroArvoreB(registro);
+    /*printf("Inserindo %d em %d\n", chave, rrnAtual);
+    imprimirRegistroArvoreB(registro);
+    printf("\n");*/
+
+    // escreve o registro no arquivo
+    escreverRegistroArvoreB(registro, arquivo, rrnAtual);
+
+    // atualiza o cabecalho
+    setNroChavesCabecalhoArvoreB(cabecalho, getNroChavesCabecalhoArvoreB(cabecalho) + 1);
+    escreverCabecalhoArvoreB(arquivo, cabecalho);
 }
 
-void imprimirArvoreB(FILE *arquivo)
+void insercaoArvoreBRecursiva(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chave, int byteOffset, int rrnAtual, REGISTRO_ARVORE_B **caminho, int nivel, int *tamCaminho)
 {
-    CABECALHO_ARVORE_B *cabecalho = lerCabecalhoArvoreB(arquivo);
+    // le o registro atual
+    REGISTRO_ARVORE_B *registro = lerRegistroArvoreB(arquivo, rrnAtual);
 
-    int rrnAtual = getNoRaizCabecalhoArvoreB(cabecalho);
+    // insere o registro no caminho percorrido
+    setRRNRegistroArvoreB(registro, rrnAtual);
+    caminho = realloc(caminho, sizeof(REGISTRO_ARVORE_B *) * (nivel + 1));
+    caminho[nivel] = registro;
+    *tamCaminho = nivel + 1;
 
-    imprimirArvoreBRecursiva(arquivo, rrnAtual, 0);
+    if(getAlturaNoRegistroArvoreB(registro) != 0) // no nao folha
+    {
+        /*printf("No nao folha, recursao...\n");
+        imprimirRegistroArvoreB(registro);
+        printf("\n");*/
+        int chaves[ORDEM_ARVORE_B - 1];
 
-    apagarCabecalhoArvoreB(cabecalho);
+        // pega as chaves do registro para realizar a busca
+        for(int i = 0; i < getNroChavesRegistroArvoreB(registro); i++)
+        {
+            chaves[i] = getChave(registro, i);
+        }
+
+        // busca qual descendente deve ser seguido
+        int posicao = 0;
+        for(int i = 0; i < getNroChavesRegistroArvoreB(registro); i++)
+        {
+            if(chaves[i] == chave) // se a chave ja existe
+            {
+                for(int i = 0; i< *tamCaminho; i++)
+                {
+                    apagarRegistroArvoreB(caminho[i]);
+                }
+                free(caminho);
+                return;
+            }
+
+            if(chaves[i] > chave)
+            {
+                posicao = i;
+                break;
+            }
+
+            posicao++;
+        }
+
+        // segue o descendente
+        int rrnDescendente = getDescendente(registro, posicao);
+        return insercaoArvoreBRecursiva(arquivo, cabecalho, chave, byteOffset, rrnDescendente, caminho, nivel + 1, tamCaminho);
+    }
+
+    // no folha
+    if(getNroChavesRegistroArvoreB(registro) < ORDEM_ARVORE_B - 1) // se o no nao estiver cheio
+    {
+        insercaoNaoCheio(arquivo, cabecalho, chave, byteOffset, rrnAtual, registro);
+    }
+    else // se o no estiver cheio
+    {
+        // divide o no
+        //printf("No cheio, dividindo...\n");
+        splitNo(arquivo, cabecalho, chave, byteOffset, caminho, NULL, NULL, nivel);
+    }
+
+    for(int i = 0; i< *tamCaminho; i++)
+    {
+        apagarRegistroArvoreB(caminho[i]);
+    }
+    free(caminho);
 }
 
 void imprimirArvoreBGraphvizRecursiva(FILE *arquivo, int rrnAtual)
@@ -478,16 +486,47 @@ void inserirArvoreB(FILE *arquivo, int chave, long long int byteOffset)
 {
     CABECALHO_ARVORE_B *cabecalho = lerCabecalhoArvoreB(arquivo);
 
-    printf("Inserindo %d: \n", chave);
+    /*printf("Inserindo %d: \n", chave);
     printf("Cabecalho: \n");
-    imprimirCabecalhoArvoreB(cabecalho);
+    imprimirCabecalhoArvoreB(cabecalho);*/
 
-    int *caminho = malloc(sizeof(int));
+    int nroChaves = getNroChavesCabecalhoArvoreB(cabecalho);
+
+    if(nroChaves == 0) // arvore vazia
+    {
+        REGISTRO_ARVORE_B *registro = criarRegistroArvoreBVazio();
+        // atualiza valores do registro
+        setAlturaNoRegistroArvoreB(registro, 0);
+        inserirChaveRegistroArvoreB(registro, chave, byteOffset);
+        setRRNRegistroArvoreB(registro, 0);
+
+        /*printf("Arvore vazia, inserido na raiz\n");
+        imprimirRegistroArvoreB(registro);
+        printf("\n");*/
+
+        // escreve o registro no arquivo
+        escreverRegistroArvoreB(registro, arquivo, 0);
+        apagarRegistroArvoreB(registro);
+
+        // atualiza cabecalho
+        setNoRaizCabecalhoArvoreB(cabecalho, 0);
+        setProxRRNCabecalhoArvoreB(cabecalho, 1);
+        setNroChavesCabecalhoArvoreB(cabecalho, 1);
+
+        escreverCabecalhoArvoreB(arquivo, cabecalho);
+        apagarCabecalhoArvoreB(cabecalho);
+
+        return;
+    }
+
+    REGISTRO_ARVORE_B **caminho = (REGISTRO_ARVORE_B **) malloc(sizeof(REGISTRO_ARVORE_B *) * 1);
     long long int rrnAtual = getNoRaizCabecalhoArvoreB(cabecalho);
     long long int proxRrn = getProxRRNCabecalhoArvoreB(cabecalho);
+    int tamCaminho = 0; // variavel para guardar o tamanho do caminho (necessario para liberar memoria)
 
-    insercaoArvoreBRecursiva(arquivo, rrnAtual, chave, 0, proxRrn, caminho, byteOffset, cabecalho);
+    //insercaoArvoreBRecursiva(arquivo, rrnAtual, chave, 0, proxRrn, caminho, byteOffset, cabecalho);
+    insercaoArvoreBRecursiva(arquivo, cabecalho, chave, byteOffset, rrnAtual, caminho, 0, &tamCaminho);
 
     apagarCabecalhoArvoreB(cabecalho);
-    free(caminho);
-}*/
+    //free(caminho);
+}
