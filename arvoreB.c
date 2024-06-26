@@ -148,6 +148,9 @@ bool splitNo(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chavePromovida, i
             index++;
         }
 
+        apagarRegistroArvoreB(filhoEsq);
+        apagarRegistroArvoreB(filhoDir);
+
         /*for(int i = 0; i < ORDEM_ARVORE_B + 1; i++)
         {
             printf("Descendente %d: %lld\n", i, descendentes[i]);
@@ -215,6 +218,8 @@ bool splitNo(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chavePromovida, i
         setProxRRNCabecalhoArvoreB(cabecalho, proxRRN + 1); // talvez de erro se o registro ja existe
         if(!splitNo(arquivo, cabecalho, chavePromovida, byteOffsetPromovido, caminho, registroEsquerdo, registroDireito, nivel - 1))
         {
+            apagarRegistroArvoreB(registroEsquerdo);
+            apagarRegistroArvoreB(registroDireito);
             return false;
         }
     }
@@ -295,6 +300,7 @@ bool splitNo(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chavePromovida, i
             apagarRegistroArvoreB(registroEsquerdo);
             apagarRegistroArvoreB(registroDireito);
             apagarRegistroArvoreB(novaRaiz);
+            apagarCabecalhoArvoreB(cabecalho);
         }
         else // caso nao seja raiz
         {
@@ -361,7 +367,7 @@ void insercaoNaoCheio(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chave, i
     escreverCabecalhoArvoreB(arquivo, cabecalho);
 }
 
-void insercaoArvoreBRecursiva(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chave, int byteOffset, int rrnAtual, REGISTRO_ARVORE_B **caminho, int nivel)
+void insercaoArvoreBRecursiva(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chave, int byteOffset, int rrnAtual, REGISTRO_ARVORE_B **caminho, int nivel, int *tamCaminho)
 {
     // le o registro atual
     REGISTRO_ARVORE_B *registro = lerRegistroArvoreB(arquivo, rrnAtual);
@@ -370,6 +376,7 @@ void insercaoArvoreBRecursiva(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int 
     setRRNRegistroArvoreB(registro, rrnAtual);
     caminho = realloc(caminho, sizeof(REGISTRO_ARVORE_B *) * (nivel + 1));
     caminho[nivel] = registro;
+    *tamCaminho = nivel + 1;
 
     if(getAlturaNoRegistroArvoreB(registro) != 0) // no nao folha
     {
@@ -390,6 +397,11 @@ void insercaoArvoreBRecursiva(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int 
         {
             if(chaves[i] == chave) // se a chave ja existe
             {
+                for(int i = 0; i< *tamCaminho; i++)
+                {
+                    apagarRegistroArvoreB(caminho[i]);
+                }
+                free(caminho);
                 return;
             }
 
@@ -404,7 +416,7 @@ void insercaoArvoreBRecursiva(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int 
 
         // segue o descendente
         int rrnDescendente = getDescendente(registro, posicao);
-        return insercaoArvoreBRecursiva(arquivo, cabecalho, chave, byteOffset, rrnDescendente, caminho, nivel + 1);
+        return insercaoArvoreBRecursiva(arquivo, cabecalho, chave, byteOffset, rrnDescendente, caminho, nivel + 1, tamCaminho);
     }
 
     // no folha
@@ -418,6 +430,12 @@ void insercaoArvoreBRecursiva(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int 
         //printf("No cheio, dividindo...\n");
         splitNo(arquivo, cabecalho, chave, byteOffset, caminho, NULL, NULL, nivel);
     }
+
+    for(int i = 0; i< *tamCaminho; i++)
+    {
+        apagarRegistroArvoreB(caminho[i]);
+    }
+    free(caminho);
 }
 
 void imprimirArvoreBGraphvizRecursiva(FILE *arquivo, int rrnAtual)
@@ -496,6 +514,7 @@ void inserirArvoreB(FILE *arquivo, int chave, long long int byteOffset)
         setNroChavesCabecalhoArvoreB(cabecalho, 1);
 
         escreverCabecalhoArvoreB(arquivo, cabecalho);
+        apagarCabecalhoArvoreB(cabecalho);
 
         return;
     }
@@ -503,9 +522,10 @@ void inserirArvoreB(FILE *arquivo, int chave, long long int byteOffset)
     REGISTRO_ARVORE_B **caminho = (REGISTRO_ARVORE_B **) malloc(sizeof(REGISTRO_ARVORE_B *) * 1);
     long long int rrnAtual = getNoRaizCabecalhoArvoreB(cabecalho);
     long long int proxRrn = getProxRRNCabecalhoArvoreB(cabecalho);
+    int tamCaminho = 0; // variavel para guardar o tamanho do caminho (necessario para liberar memoria)
 
     //insercaoArvoreBRecursiva(arquivo, rrnAtual, chave, 0, proxRrn, caminho, byteOffset, cabecalho);
-    insercaoArvoreBRecursiva(arquivo, cabecalho, chave, byteOffset, rrnAtual, caminho, 0);
+    insercaoArvoreBRecursiva(arquivo, cabecalho, chave, byteOffset, rrnAtual, caminho, 0, &tamCaminho);
 
     apagarCabecalhoArvoreB(cabecalho);
     //free(caminho);

@@ -678,7 +678,7 @@ bool criarArquivoArvoreB(char *arquivoBin, char *arquivoArvB)
     // pula o cabecalho
     long long int posicao = 25;
 
-    REGISTRO_INDICE *registroIndice = criarRegistroIndice();
+    //REGISTRO_INDICE *registroIndice = criarRegistroIndice();
 
     // quantidade de registros no arquivo
     int quantidade = getNroRegArq(cabecalho) + getNroRem(cabecalho);
@@ -710,6 +710,7 @@ bool criarArquivoArvoreB(char *arquivoBin, char *arquivoArvB)
     cabecalhoArvoreB = lerCabecalhoArvoreB(arquivoArvoreB); // lê o cabeçalho da árvore B
     setStatusCabecalhoArvoreB(cabecalhoArvoreB, '1'); // define o status do cabeçalho como consistente
     escreverCabecalhoArvoreB(arquivoArvoreB, cabecalhoArvoreB); // escreve o cabeçalho no arquivo
+    apagarCabecalhoArvoreB(cabecalhoArvoreB); // libera a memória do cabeçalho da árvore B
 
     fclose(arquivoBinario); // fecha o arquivo binário
     fclose(arquivoArvoreB); // fecha o arquivo de índices
