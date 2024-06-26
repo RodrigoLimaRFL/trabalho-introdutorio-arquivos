@@ -5,7 +5,7 @@
     #include "funcoes_fornecidas.h"
     #include "criarIndice.h"
     #include "cabecalho.h"
-    #include "arvoreBDois.h"
+    #include "arvoreB.h"
     
     void imprimeRegistrosFromBin(char *filePath);
     int imprimeRegistro(REGISTRO *registro);

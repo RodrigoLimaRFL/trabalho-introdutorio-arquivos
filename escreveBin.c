@@ -711,5 +711,8 @@ bool criarArquivoArvoreB(char *arquivoBin, char *arquivoArvB)
     setStatusCabecalhoArvoreB(cabecalhoArvoreB, '1'); // define o status do cabeçalho como consistente
     escreverCabecalhoArvoreB(arquivoArvoreB, cabecalhoArvoreB); // escreve o cabeçalho no arquivo
 
+    fclose(arquivoBinario); // fecha o arquivo binário
+    fclose(arquivoArvoreB); // fecha o arquivo de índices
+
     return true;
 }

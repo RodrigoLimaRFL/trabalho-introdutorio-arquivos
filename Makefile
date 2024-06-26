@@ -1,7 +1,7 @@
 all: gerencia-arquivo.exe
 
-gerencia-arquivo.exe: cabecalho.o removidos.o funcoes_fornecidas.o gerencia-arquivo.o registro.o escreveBin.o interpreta-bin.o indice.o criarIndice.o percorreCsv.o registroIndice.o inserirDado.o registroArvoreB.o cabecalhoArvoreB.o arvoreB.o arvoreBDois.o main.o
-	gcc registro.o cabecalho.o removidos.o gerencia-arquivo.o escreveBin.o interpreta-bin.o funcoes_fornecidas.o indice.o criarIndice.o percorreCsv.o registroIndice.o inserirDado.o registroArvoreB.o cabecalhoArvoreB.o arvoreB.o arvoreBDois.o main.o -o gerencia-arquivo.exe -std=c99 -Wall
+gerencia-arquivo.exe: cabecalho.o removidos.o funcoes_fornecidas.o gerencia-arquivo.o registro.o escreveBin.o interpreta-bin.o indice.o criarIndice.o percorreCsv.o registroIndice.o inserirDado.o registroArvoreB.o cabecalhoArvoreB.o arvoreB.o main.o
+	gcc registro.o cabecalho.o removidos.o gerencia-arquivo.o escreveBin.o interpreta-bin.o funcoes_fornecidas.o indice.o criarIndice.o percorreCsv.o registroIndice.o inserirDado.o registroArvoreB.o cabecalhoArvoreB.o arvoreB.o main.o -o gerencia-arquivo.exe -std=c99 -Wall
 
 removidos.o:
 	gcc -c removidos.c -o removidos.o
@@ -47,9 +47,6 @@ cabecalhoArvoreB.o:
 
 arvoreB.o:
 	gcc -c arvoreB.c -o arvoreB.o
-
-arvoreBDois.o:
-	gcc -c arvoreBDois.c -o arvoreBDois.o
 	  
 main.o:
 	gcc -c main.c -o main.o
