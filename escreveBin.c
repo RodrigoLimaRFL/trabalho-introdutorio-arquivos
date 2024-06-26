@@ -647,7 +647,7 @@ bool escreverRegistro(REGISTRO *registro, int byteOffset, int tamRegistroAtual, 
     return true;
 }
 
-void criarArquivoArvoreB(char *arquivoBin, char *arquivoArvB)
+bool criarArquivoArvoreB(char *arquivoBin, char *arquivoArvB)
 {
     FILE *arquivoBinario = fopen(arquivoBin, "rb"); // abre o arquivo binário no modo escrita
     FILE *arquivoArvoreB = fopen(arquivoArvB, "wb+"); // abre o arquivo de índices no modo escrita
@@ -657,7 +657,7 @@ void criarArquivoArvoreB(char *arquivoBin, char *arquivoArvB)
         printf("Falha no processamento do arquivo.\n");
         if(arquivoBinario) fclose(arquivoBinario);
         if(arquivoArvoreB) fclose(arquivoArvoreB);
-        return;
+        return false;
     }
 
     CABECALHO *cabecalho = getCabecalhoFromBin(arquivoBinario); // lê o cabeçalho do arquivo binário
@@ -668,7 +668,7 @@ void criarArquivoArvoreB(char *arquivoBin, char *arquivoArvB)
         fclose(arquivoBinario);
         fclose(arquivoArvoreB);
         apagarCabecalho(cabecalho);
-        return;
+        return false;
     }
 
     CABECALHO_ARVORE_B *cabecalhoArvoreB = criarCabecalhoArvoreBVazio(); // cria um cabeçalhos
@@ -704,10 +704,12 @@ void criarArquivoArvoreB(char *arquivoBin, char *arquivoArvB)
         liberarRegistro(registro); // libera a memória do registro
     }
 
-    imprimirArvoreBGraphviz(arquivoArvoreB); // imprime a árvore B
+    //imprimirArvoreBGraphviz(arquivoArvoreB); // imprime a árvore B
 
     apagarCabecalhoArvoreB(cabecalhoArvoreB); // libera a memória do cabeçalho da árvore B
     cabecalhoArvoreB = lerCabecalhoArvoreB(arquivoArvoreB); // lê o cabeçalho da árvore B
     setStatusCabecalhoArvoreB(cabecalhoArvoreB, '1'); // define o status do cabeçalho como consistente
     escreverCabecalhoArvoreB(arquivoArvoreB, cabecalhoArvoreB); // escreve o cabeçalho no arquivo
+
+    return true;
 }

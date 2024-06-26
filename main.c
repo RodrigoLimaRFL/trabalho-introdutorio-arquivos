@@ -125,9 +125,8 @@ int main() {
         char arquivoArvB[50];
         scanf("%s", arquivoArvB);
 
-        criarArquivoArvoreB(arquivoBin, arquivoArvB);
-        
-        binarioNaTela(arquivoArvB);
+        if(criarArquivoArvoreB(arquivoBin, arquivoArvB))
+            binarioNaTela(arquivoArvB);
     }
     else if(strcmp(operacao, "8") == 0)
     {

@@ -482,9 +482,9 @@ void inserirArvoreB(FILE *arquivo, int chave, long long int byteOffset)
         inserirChaveRegistroArvoreB(registro, chave, byteOffset);
         setRRNRegistroArvoreB(registro, 0);
 
-        printf("Arvore vazia, inserido na raiz\n");
+        /*printf("Arvore vazia, inserido na raiz\n");
         imprimirRegistroArvoreB(registro);
-        printf("\n");
+        printf("\n");*/
 
         // escreve o registro no arquivo
         escreverRegistroArvoreB(registro, arquivo, 0);
