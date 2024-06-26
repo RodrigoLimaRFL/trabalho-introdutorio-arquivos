@@ -132,49 +132,65 @@ int main() {
     else if(strcmp(operacao, "8") == 0)
     {
         char arquivoBin[50];
-        scanf("%s", arquivoBin);
+        scanf("%s", arquivoBin); // Lê o nome do arquivo binário
 
-        FILE *fileBin = fopen(arquivoBin, "rb");
+        FILE *fileBin = fopen(arquivoBin, "rb"); // Abre o arquivo binário no modo leitura
         if(fileBin == NULL) {
-            printf("Falha no processamento do arquivo.\n");
+            printf("Falha no processamento do arquivo.\n"); // Verifica se ocorreu um erro ao abrir o arquivo
             return 0;
         }
 
-        CABECALHO *cabecalhoBin = getCabecalhoFromBin(fileBin);
+        CABECALHO *cabecalhoBin = getCabecalhoFromBin(fileBin); // Lê o cabeçalho do arquivo binário
         if(getStatus(cabecalhoBin) == '0') {
-            printf("Falha no processamento do arquivo.\n");
-            apagarCabecalho(cabecalhoBin);
-            fclose(fileBin);
+            printf("Falha no processamento do arquivo.\n"); // Verifica se o status do cabeçalho é inválido
+            apagarCabecalho(cabecalhoBin); // Libera a memória do cabeçalho
+            fclose(fileBin); // Fecha o arquivo
             return 0;
         }
 
-        apagarCabecalho(cabecalhoBin);
+        apagarCabecalho(cabecalhoBin); // Libera a memória do cabeçalho
 
         char arquivoArvB[50];
-        scanf("%s", arquivoArvB);
+        scanf("%s", arquivoArvB); // Lê o nome do arquivo da árvore B
 
         int quantidadeBuscas;
-        scanf("%d", &quantidadeBuscas);
+        scanf("%d", &quantidadeBuscas); // Lê a quantidade de buscas
 
         for(int i=0; i<quantidadeBuscas; i++) {
             int id;
-            scanf("\nid %d", &id);
+            scanf("\nid %d", &id); // Lê o id a ser buscado
 
-            imprimirIdArvoreB(id, fileBin, arquivoArvB, i, 0);
+            imprimirIdArvoreB(id, fileBin, arquivoArvB, i, 0); // Chama a função para imprimir o registro correspondente ao id na árvore B
         }
-        fclose(fileBin);
-
+        fclose(fileBin); // Fecha o arquivo binário
     }
     else if(strcmp(operacao, "9") == 0)
     {
         char arquivoBin[50];
-        scanf("%s", arquivoBin);
+        scanf("%s", arquivoBin); // Lê o nome do arquivo binário
 
         char arquivoArvB[50];
-        scanf("%s", arquivoArvB);
+        scanf("%s", arquivoArvB); // Lê o nome do arquivo da árvore B
 
-        imprimeRegistrosBuscados(arquivoBin, 1, arquivoArvB);
+        imprimeRegistrosBuscados(arquivoBin, 1, arquivoArvB); // Chama a função para imprimir registros buscados com a árvore B
     }
+    else if(strcmp(operacao, "10") == 0)
+    {
+        char arquivoBin[50];
+        scanf("%s", arquivoBin); // Lê o nome do arquivo binário
+
+        char arquivoArvB[50];
+        scanf("%s", arquivoArvB); // Lê o nome do arquivo da árvore B
+        
+        int numOperacoes;
+        scanf("%d", &numOperacoes);
+
+        void inserirNovoDadoArvoreB(char *arquivoBinario, char *arquivoArvoreB, int numOperacoes);
+
+        binarioNaTela(arquivoBin);
+        binarioNaTela(arquivoArvB);
+    }
+
     else // se a operação for diferente de 1, 2 ou 3, imprime, imprime que a operação é inválida
     {
         printf("Operacao invalida\n");

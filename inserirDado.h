@@ -14,4 +14,5 @@
     #include "criarIndice.h"
 
     void inserirNovoDado(char *arquivoBinario, char *arquivoIndice, int numOperacoes);
+    void inserirNovoDadoArvoreB(char *arquivoBinario, char *arquivoArvoreB, int numOperacoes);
 #endif

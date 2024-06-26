@@ -116,96 +116,95 @@ int imprimeRegistro(REGISTRO *registro)
 void imprimeRegistrosBuscados(char *arquivo, int buscaId, char *nomeArquivoArvoreB)
 {
     int numOperacoes;
-    scanf("%d", &numOperacoes); // lê o número de buscas a serem feitas
+    scanf("%d", &numOperacoes); // Lê o número de buscas a serem feitas
 
     for (int i = 0; i < numOperacoes; i++)
     {
-
-        FILE *file = fopen(arquivo, "rb"); // verifica se ocorreu um erro ao abrir o arquivo no modo leitura
+        FILE *file = fopen(arquivo, "rb"); // Abre o arquivo binário no modo leitura
         if (file == NULL)
         {
-            printf("Falha no processamento do arquivo.");
+            printf("Falha no processamento do arquivo."); // Verifica se ocorreu um erro ao abrir o arquivo
             return;
         }
 
-        // cria um cabeçalho e chama a função lerCabecalhoFromBin para atribuir os valores a ele
+        // Cria um cabeçalho e chama a função getCabecalhoFromBin para atribuir os valores a ele
         CABECALHO *cabecalho = getCabecalhoFromBin(file);
 
-        imprimirRegistrosPorCampos(file, cabecalho, buscaId, nomeArquivoArvoreB, i);
+        imprimirRegistrosPorCampos(file, cabecalho, buscaId, nomeArquivoArvoreB, i); // Chama a função para imprimir registros
         
-        fclose(file);
-        apagarCabecalho(cabecalho); // libera a memória do cabeçalho
+        fclose(file); // Fecha o arquivo
+        apagarCabecalho(cabecalho); // Libera a memória do cabeçalho
     }
 }
 
 void imprimirRegistrosPorCampos(FILE *file, CABECALHO *cabecalho, int buscaId, char *nomeArquivoArvoreB, int i) {
     long long int byteOffset = getProxByteOffset(cabecalho);
-    int numRegistros = getNroRegArq(cabecalho) + getNroRem(cabecalho); // número total de registros
-    byteOffset = 25;
+    int numRegistros = getNroRegArq(cabecalho) + getNroRem(cabecalho); // Número total de registros (incluindo removidos)
+    byteOffset = 25; // Posição inicial do byteOffset
 
-    if (numRegistros == 0) // verifica se o arquivo não possui registros
+    if (numRegistros == 0) // Verifica se o arquivo não possui registros
     {
         printf("Registro inexistente.\n\n");
-        fclose(file); // fecha o arquivo
+        fclose(file); // Fecha o arquivo
         return;
     }
 
-    char campos[5][50];
-    char parametros[5][50];
+    char campos[5][50]; // Armazena os nomes dos campos a serem buscados
+    char parametros[5][50]; // Armazena os valores dos parâmetros a serem buscados
     int id = -1, idade;
-    char nome[50], nomeClube[50], nacionalidade[50];
+    char nome[50], nomeClube[50], nacionalidade[50]; // Variáveis para armazenar os valores dos campos
 
-    int impressoes = 0;
+    int impressoes = 0; // Contador de impressões de registros
     int m;
-    scanf("%i", &m); // lê o número de parâmetros da busca
+    scanf("%i", &m); // Lê o número de parâmetros da busca
 
     for (int j = 0; j < m; j++)
     {
-        scanf("%s", campos[j]); // lê um parâmetro da busca
+        scanf("%s", campos[j]); // Lê um parâmetro da busca
         if (strcmp(campos[j], "id") == 0)
         {
-            scanf("%i", &id); // lê o id da busca
+            scanf("%i", &id); // Lê o id da busca
             snprintf(parametros[j], 50, "%i", id);
-            if(buscaId == 1 && id != -1) { // verifica se a busca pelo indice vai ser feita com a arquivo da arvore B
-                imprimirIdArvoreB(id, file, nomeArquivoArvoreB, i, 1);
+            if(buscaId == 1 && id != -1) { // Verifica se a busca pelo índice vai ser feita com o arquivo da árvore B
+                imprimirIdArvoreB(id, file, nomeArquivoArvoreB, i, 1); // Chama a função para buscar o id na árvore B
                 return;
             }
         }
         else if (strcmp(campos[j], "nomeJogador") == 0)
         {
-            scan_quote_string(nome);
+            scan_quote_string(nome); // Lê o nome do jogador
             strcpy(parametros[j], nome);
         }
         else if (strcmp(campos[j], "idade") == 0)
         {
-            scanf("%i", &idade);
+            scanf("%i", &idade); // Lê a idade
             snprintf(parametros[j], 50, "%i", idade);
         }
         else if (strcmp(campos[j], "nomeClube") == 0)
         {
-            scan_quote_string(nomeClube);
+            scan_quote_string(nomeClube); // Lê o nome do clube
             strcpy(parametros[j], nomeClube);
         }
         else if (strcmp(campos[j], "nacionalidade") == 0)
         {
-            scan_quote_string(nacionalidade);
+            scan_quote_string(nacionalidade); // Lê a nacionalidade
             strcpy(parametros[j], nacionalidade);
         }
         else
         {
-            printf("Campo invalido\n");
+            printf("Campo invalido\n"); // Parâmetro inválido
         }
     }
 
-    printf("Busca %d\n\n", i+1);
+    printf("Busca %d\n\n", i+1); // Imprime o número da busca
 
     for (int j = 0; j < numRegistros; j++)
     {
-        REGISTRO *registro = lerRegistroFromBin(byteOffset, file); // lê um registro do arquivo binário
-        byteOffset += get_tamanhoRegistro(registro); // muda o byteOffset para a posição do próximo registro
+        REGISTRO *registro = lerRegistroFromBin(byteOffset, file); // Lê um registro do arquivo binário
+        byteOffset += get_tamanhoRegistro(registro); // Atualiza o byteOffset para a posição do próximo registro
 
-        int imprimir = 1;
-        if (get_removido(registro) == '1')
+        int imprimir = 1; // Flag para determinar se o registro deve ser impresso
+        if (get_removido(registro) == '1') // Verifica se o registro está marcado como removido
         {
             imprimir = 0;
         }
@@ -214,7 +213,7 @@ void imprimirRegistrosPorCampos(FILE *file, CABECALHO *cabecalho, int buscaId, c
             for (int k = 0; k < m; k++)
             {
                 if (strcmp(campos[k], "id") == 0)
-                { // verifica se o parâmetro da busca é o id
+                { // Verifica se o parâmetro da busca é o id
                     if (id != get_id(registro))
                     {
                         imprimir = 0;
@@ -251,93 +250,92 @@ void imprimirRegistrosPorCampos(FILE *file, CABECALHO *cabecalho, int buscaId, c
             }
         }
         
-        if (imprimir == 1)
+        if (imprimir == 1) // Se todos os parâmetros coincidem, imprime o registro
         {
-            imprimeRegistro(registro);
+            imprimeRegistro(registro); // Chama a função para imprimir o registro
             impressoes++;
         }
-        liberarRegistro(registro);
+        liberarRegistro(registro); // Libera a memória do registro
     }
-    if(impressoes == 0) {
+    if(impressoes == 0) { // Se nenhum registro foi impresso
         printf("Registro inexistente.\n\n");
     }
 }
 
 void imprimirIdArvoreB(int id, FILE *file, char *nomeArquivoArvoreB, int i, int buscaMinuscula) {
-    FILE *fileArvoreB = fopen(nomeArquivoArvoreB, "rb");
+    FILE *fileArvoreB = fopen(nomeArquivoArvoreB, "rb"); // Abre o arquivo da árvore B no modo leitura
     if(fileArvoreB == NULL) {
-        printf("Falha no processamento do arquivo.\n");
+        printf("Falha no processamento do arquivo.\n"); // Verifica se ocorreu um erro ao abrir o arquivo
         return;
     }
 
-    CABECALHO_ARVORE_B *cabecalhoArvoreB = lerCabecalhoArvoreB(fileArvoreB);
+    CABECALHO_ARVORE_B *cabecalhoArvoreB = lerCabecalhoArvoreB(fileArvoreB); // Lê o cabeçalho da árvore B
     if(getStatusCabecalhoArvoreB(cabecalhoArvoreB) == '0') {
-        printf("Falha no processamento do arquivo.\n");
-        apagarCabecalhoArvoreB(cabecalhoArvoreB);
-        fclose(fileArvoreB);
+        printf("Falha no processamento do arquivo.\n"); // Verifica se o status do cabeçalho é inválido
+        apagarCabecalhoArvoreB(cabecalhoArvoreB); // Libera a memória do cabeçalho
+        fclose(fileArvoreB); // Fecha o arquivo
         return;
     }
 
-    int rrnAtual = getNoRaizCabecalhoArvoreB(cabecalhoArvoreB);
-    apagarCabecalhoArvoreB(cabecalhoArvoreB);
+    int rrnAtual = getNoRaizCabecalhoArvoreB(cabecalhoArvoreB); // Obtém o RRN da raiz da árvore B
+    apagarCabecalhoArvoreB(cabecalhoArvoreB); // Libera a memória do cabeçalho
 
     if(buscaMinuscula) {
-        printf("Busca %d\n\n", i+1);
+        printf("Busca %d\n\n", i+1); // Imprime o número da busca
     } else {
-        printf("BUSCA %d\n\n", i+1);
+        printf("BUSCA %d\n\n", i+1); // Imprime o número da busca em maiúsculas
     }
 
     if(rrnAtual != -1) {
-        long long int byteOffsetRegistroBuscado = buscarRegistroIdRec(fileArvoreB, id, rrnAtual);
+        long long int byteOffsetRegistroBuscado = buscarRegistroIdRec(fileArvoreB, id, rrnAtual); // Busca o byte offset do registro na árvore B
 
-        if(byteOffsetRegistroBuscado != -1) {
-            REGISTRO *registro = buscarRegistroOffset(byteOffsetRegistroBuscado, file);
-            imprimeRegistro(registro);
-            liberarRegistro(registro);
+        if(byteOffsetRegistroBuscado != -1) { // Se o registro foi encontrado
+            REGISTRO *registro = buscarRegistroOffset(byteOffsetRegistroBuscado, file); // Busca o registro no arquivo binário
+            imprimeRegistro(registro); // Imprime o registro
+            liberarRegistro(registro); // Libera a memória do registro
         } else {
-            printf("Registro inexistente.\n\n");
+            printf("Registro inexistente.\n\n"); // Se o registro não foi encontrado
         }
     }
     else {
-        printf("Registro inexistente.\n\n");
+        printf("Registro inexistente.\n\n"); // Se a árvore B está vazia
     }
 
-    fclose(fileArvoreB);
+    fclose(fileArvoreB); // Fecha o arquivo da árvore B
 }
 
 long long int buscarRegistroIdRec(FILE *fileArvoreB, int id, int rrnAtual) {
-    REGISTRO_ARVORE_B *registroAtual = lerRegistroArvoreB(fileArvoreB, rrnAtual);
+    REGISTRO_ARVORE_B *registroAtual = lerRegistroArvoreB(fileArvoreB, rrnAtual); // Lê o registro da árvore B no RRN atual
     
-    int numerosChaves = getNroChavesRegistroArvoreB(registroAtual);
+    int numerosChaves = getNroChavesRegistroArvoreB(registroAtual); // Obtém o número de chaves no registro
     int chave;
     int descendente;
 
     for(int i=0; i<numerosChaves; i++) {
-        chave = getChave(registroAtual, i);
-        descendente = getDescendente(registroAtual, i);
+        chave = getChave(registroAtual, i); // Obtém a chave na posição i
+        descendente = getDescendente(registroAtual, i); // Obtém o descendente na posição i
 
         if(id == chave) {
-            long long int byteoffsetRegistro = getByteOffsetRegistroArvoreB(registroAtual, i);
-            apagarRegistroArvoreB(registroAtual);
-            return byteoffsetRegistro;
+            long long int byteoffsetRegistro = getByteOffsetRegistroArvoreB(registroAtual, i); // Obtém o byte offset do registro
+            apagarRegistroArvoreB(registroAtual); // Libera a memória do registro
+            return byteoffsetRegistro; // Retorna o byte offset do registro
         } else if(id < chave) {
             if(descendente != -1) {
-                apagarRegistroArvoreB(registroAtual);
-                return buscarRegistroIdRec(fileArvoreB, id, descendente);
+                apagarRegistroArvoreB(registroAtual); // Libera a memória do registro
+                return buscarRegistroIdRec(fileArvoreB, id, descendente); // Busca recursivamente no descendente
             }
-            apagarRegistroArvoreB(registroAtual);
-            return -1;
+            apagarRegistroArvoreB(registroAtual); // Libera a memória do registro
+            return -1; // Registro não encontrado
         }
     }
 
-    descendente = getDescendente(registroAtual, numerosChaves);
+    descendente = getDescendente(registroAtual, numerosChaves); // Obtém o descendente na última posição
     if(descendente != -1) {
-        apagarRegistroArvoreB(registroAtual);
-        return buscarRegistroIdRec(fileArvoreB, id, descendente);
+        apagarRegistroArvoreB(registroAtual); // Libera a memória do registro
+        return buscarRegistroIdRec(fileArvoreB, id, descendente); // Busca recursivamente no descendente
     }
-    apagarRegistroArvoreB(registroAtual);
-    return -1;
-
+    apagarRegistroArvoreB(registroAtual); // Libera a memória do registro
+    return -1; // Registro não encontrado
 }
 
 void removerRegistrosBuscados(char *arquivoBin, char *arquivoIndice)
